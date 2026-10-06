@@ -37,13 +37,13 @@
   <canvas id="network-bg"></canvas>
 
   <!-- Navigation -->
-  <nav class="max-w-5xl mx-auto px-6 py-8 flex justify-between items-center">
-    <div class="text-sm font-bold tracking-widest uppercase text-slate-400">
+  <nav class="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
+    <div class="text-sm font-bold tracking-widest uppercase text-slate-400 whitespace-nowrap">
        <span class="text-teal-400 sm:text-2xl font-bold">OBEN CELIK</span>
     </div>
-    <div class="flex items-center gap-6 text-sm font-semibold">
+    <div class="flex flex-wrap items-center gap-x-5 gap-y-3 sm:gap-6 text-sm font-semibold whitespace-nowrap">
       <a href="#work" class="hover:text-teal-400 transition-colors">Case Studies</a>
-      <a href="education.html" class="hover:text-teal-400 transition-colors">Education</a>
+      <a href="apps.html" class="hover:text-teal-400 transition-colors">My Apps</a>
       <a href="https://www.linkedin.com/in/isa-oben-celik/" target="_blank" rel="noreferrer" class="hover:text-teal-400 transition-colors">Linkedin</a>
       <a href="Oben_Celik_CV.pdf" download class="px-4 py-2 rounded-full border border-teal-500/30 text-teal-300 hover:bg-teal-500/10 transition">Download CV</a>
     </div>
@@ -62,7 +62,7 @@
     </p>
     <div class="flex gap-4">
       <a href="#work" class="px-6 py-3 rounded-lg bg-teal-500 text-slate-950 font-bold hover:bg-teal-400 transition shadow-lg shadow-teal-500/10">Explore Case Studies</a>
-      <a href="mailto:your.email@example.com" class="px-6 py-3 rounded-lg bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition">Get in Touch</a>
+      <a href="mailto:isaobencelik@gmail.com" class="px-6 py-3 rounded-lg bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition">Get in Touch</a>
     </div>
   </header>
 
@@ -90,7 +90,7 @@
           </p>
         </div>
         <div>
-          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80 mb-6">
+          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
               <div class="text-2xl font-extrabold text-teal-400">Architecture</div>
               <div class="text-xs text-slate-400 mt-1">Simplified Customer Journeys</div>
@@ -100,9 +100,6 @@
               <div class="text-xs text-slate-400 mt-1">Roadmap Discovery</div>
             </div>
           </div>
-          <a href="#" class="inline-flex items-center text-sm font-bold text-teal-400 hover:text-teal-300">
-            Read Case Study &amp; Breakdown &rarr;
-          </a>
         </div>
       </article>
 
@@ -121,7 +118,7 @@
           </p>
         </div>
         <div>
-          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80 mb-6">
+          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
               <div class="text-2xl font-extrabold text-teal-400">70%</div>
               <div class="text-xs text-slate-400 mt-1">Increased Automation Rate</div>
@@ -131,9 +128,6 @@
               <div class="text-xs text-slate-400 mt-1">Reduction in Wait Time </div>
             </div>
           </div>
-          <a href="#" class="inline-flex items-center text-sm font-bold text-teal-400 hover:text-teal-300">
-            Read Case Study &amp; Breakdown &rarr;
-          </a>
         </div>
       </article>
 
@@ -152,7 +146,7 @@
           </p>
         </div>
         <div>
-          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80 mb-6">
+          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
               <div class="text-2xl font-extrabold text-teal-400">95%</div>
               <div class="text-xs text-slate-400 mt-1">Session Success</div>
@@ -162,9 +156,6 @@
               <div class="text-xs text-slate-400 mt-1">Reduced Resolution Time</div>
             </div>
           </div>
-          <a href="#" class="inline-flex items-center text-sm font-bold text-teal-400 hover:text-teal-300">
-            Read Case Study &amp; Breakdown &rarr;
-          </a>
         </div>
       </article>
 
@@ -183,7 +174,7 @@
           </p>
         </div>
         <div>
-          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80 mb-6">
+          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
               <div class="text-2xl font-extrabold text-teal-400">Strategic</div>
               <div class="text-xs text-slate-400 mt-1">Align with Enterprise Goals</div>
@@ -193,9 +184,6 @@
               <div class="text-xs text-slate-400 mt-1">Delivery Scope</div>
             </div>
           </div>
-          <a href="#" class="inline-flex items-center text-sm font-bold text-teal-400 hover:text-teal-300">
-            Read Case Study &amp; Breakdown &rarr;
-          </a>
         </div>
       </article>
 
@@ -208,106 +196,7 @@
     &copy; 2026 OBEN CELIK. Built for making scalable systems, and team outcomes better.
   </footer>
 
-  <script>
-    const canvas = document.getElementById('network-bg');
-    const ctx = canvas.getContext('2d');
-
-    const nodes = [];
-    const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, active: false };
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    function createNodes() {
-      const count = Math.min(70, Math.max(35, Math.floor(window.innerWidth / 18)));
-      nodes.length = 0;
-
-      for (let i = 0; i < count; i++) {
-        nodes.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.35,
-          vy: (Math.random() - 0.5) * 0.35,
-          radius: Math.random() * 2.4 + 1.2
-        });
-      }
-    }
-
-    function drawNetwork() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-
-        node.x += node.vx;
-        node.y += node.vy;
-
-        if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-        if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-
-        if (mouse.active) {
-          const dx = node.x - mouse.x;
-          const dy = node.y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 140) {
-            const force = (140 - dist) / 140;
-            node.x += (dx / dist) * force * 2.3;
-            node.y += (dy / dist) * force * 2.3;
-          }
-        }
-
-        ctx.beginPath();
-        ctx.fillStyle = 'rgba(94, 234, 212, 0.9)';
-        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const a = nodes[i];
-          const b = nodes[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(94, 234, 212, ${0.18 - dist / 1000})`;
-            ctx.lineWidth = 1;
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-          }
-        }
-      }
-    }
-
-    function animate() {
-      drawNetwork();
-      requestAnimationFrame(animate);
-    }
-
-    window.addEventListener('pointermove', (event) => {
-      mouse.x = event.clientX;
-      mouse.y = event.clientY;
-      mouse.active = true;
-    });
-
-    window.addEventListener('pointerleave', () => {
-      mouse.active = false;
-    });
-
-    window.addEventListener('resize', () => {
-      resizeCanvas();
-      createNodes();
-    });
-
-    resizeCanvas();
-    createNodes();
-    animate();
-  </script>
+  <script src="assets/network-bg.js"></script>
 
 </body>
 </html>

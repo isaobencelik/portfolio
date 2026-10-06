@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Apps · OBEN CELIK</title>
+  <meta name="description" content="Live apps designed, built and shipped by Oben Celik — product thinking you can click." />
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #0b1320;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #network-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    body > *:not(canvas) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 9999px; background: #2dd4bf;
+      box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.6);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.55); }
+      70%  { box-shadow: 0 0 0 8px rgba(45, 212, 191, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(45, 212, 191, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+  </style>
+</head>
+<body class="bg-[#0b1320] text-slate-100 antialiased selection:bg-teal-500 selection:text-white">
+  <canvas id="network-bg"></canvas>
+
+  <!-- Navigation -->
+  <nav class="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
+    <div class="text-sm font-bold tracking-widest uppercase text-slate-400 whitespace-nowrap">
+       <a href="index.html" class="text-teal-400 sm:text-2xl font-bold">OBEN CELIK</a>
+    </div>
+    <div class="flex flex-wrap items-center gap-x-5 gap-y-3 sm:gap-6 text-sm font-semibold whitespace-nowrap">
+      <a href="index.html#work" class="hover:text-teal-400 transition-colors">Case Studies</a>
+      <a href="apps.html" class="text-teal-400" aria-current="page">My Apps</a>
+      <a href="https://www.linkedin.com/in/isa-oben-celik/" target="_blank" rel="noreferrer" class="hover:text-teal-400 transition-colors">Linkedin</a>
+      <a href="Oben_Celik_CV.pdf" download class="px-4 py-2 rounded-full border border-teal-500/30 text-teal-300 hover:bg-teal-500/10 transition">Download CV</a>
+    </div>
+  </nav>
+
+  <!-- Intro -->
+  <header class="max-w-5xl mx-auto px-6 pt-12 pb-12">
+    <span class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-teal-400 bg-teal-950/60 border border-teal-500/20 rounded-full mb-6">
+      Built &amp; Shipped
+    </span>
+    <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight text-white mb-5">
+      My Apps
+    </h1>
+    <p class="text-slate-400 text-lg sm:text-xl max-w-2xl leading-relaxed">
+      Products I designed, built and run myself, from problem to live deployment. Every one is public, so you can try it right now.
+    </p>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 pb-16 space-y-8">
+
+    <!-- App: Job Analyser -->
+    <article class="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 hover:shadow-xl transition">
+      <a href="https://jobanalyser.obencelik.com" target="_blank" rel="noopener" class="block border-b border-slate-800 bg-slate-950/60" aria-label="Open Job Analyser">
+        <img src="assets/jobanalyser.png" alt="Job Analyser showing live LinkedIn search results for Product Owner roles in Lisbon"
+             class="w-full h-auto" loading="lazy" />
+      </a>
+
+      <div class="p-7 sm:p-9">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <span class="text-xs uppercase tracking-wider font-semibold text-teal-400">AI · Job Search</span>
+          <span class="inline-flex items-center gap-2 text-xs font-semibold text-teal-300 bg-teal-950/60 border border-teal-500/20 rounded-full px-3 py-1">
+            <span class="live-dot"></span> Live
+          </span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">Job Analyser</h2>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-6 max-w-3xl">
+          Searching LinkedIn means reading dozens of long postings to find the few worth applying to.
+          Job Analyser pulls live listings and uses AI to decode each one in seconds.
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-7">
+          <div>
+            <h3 class="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-3">What it does</h3>
+            <ul class="space-y-2 text-sm text-slate-400 leading-relaxed">
+              <li><span class="text-teal-400 mr-2">→</span>Live LinkedIn search, widened to related titles and nearby cities</li>
+              <li><span class="text-teal-400 mr-2">→</span>AI breakdown: what the role is for, must-haves vs nice-to-haves, skills</li>
+              <li><span class="text-teal-400 mr-2">→</span>Red and green flags, perks and an estimated salary range</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-3">Key product decision</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              It started as a personal desktop tool. To open it to the public I rescoped it: owner-only features switched off,
+              per-visitor rate limits and a daily AI budget cap, so a public demo stays safe, fair and cheap to run.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-8">
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Python · Flask</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Google Gemini AI</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Google Cloud Run</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Auto-deploys from GitHub</span>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="https://jobanalyser.obencelik.com" target="_blank" rel="noopener"
+             class="px-6 py-3 rounded-lg bg-teal-500 text-slate-950 font-bold hover:bg-teal-400 transition shadow-lg shadow-teal-500/10">
+            Try it live &rarr;
+          </a>
+          <a href="https://github.com/isaobencelik/JobAnalyser" target="_blank" rel="noopener"
+             class="px-6 py-3 rounded-lg bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition">
+            View the code
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Placeholder for the next app -->
+    <article class="border border-dashed border-slate-700 rounded-2xl p-7 text-center">
+      <p class="text-sm text-slate-500">More apps on the way, including AI agents. <a href="mailto:isaobencelik@gmail.com" class="text-teal-400 hover:text-teal-300 font-semibold">Have an idea or a role in mind? Get in touch.</a></p>
+    </article>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-5xl mx-auto px-6 py-12 border-t border-slate-800 text-center text-xs text-slate-500">
+    &copy; 2026 OBEN CELIK. Built for making scalable systems, and team outcomes better.
+  </footer>
+
+  <script src="assets/network-bg.js"></script>
+</body>
+</html>
