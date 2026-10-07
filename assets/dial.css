@@ -69,6 +69,24 @@
 
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Entrance (homepage only; dial.js adds .intro and removes it when done) ----------
+   ring and glow -> ticks spin in and settle -> wedges, clockwise from Projects -> centre -> text */
+@keyframes intro-fade { from { opacity: 0; } }
+@keyframes intro-grow { from { opacity: 0; scale: .9; } }
+@keyframes intro-ticks { from { opacity: 0; rotate: -160deg; } }
+@keyframes intro-wedge { from { opacity: 0; rotate: -14deg; scale: .94; } }
+@keyframes intro-core { from { opacity: 0; scale: .7; } }
+@keyframes intro-rise { from { opacity: 0; translate: 0 6px; } }
+.dial.intro .dial-glow, .dial.intro .dial-ring, .dial.intro .dial-glass { animation: intro-grow .7s var(--ease) both; }
+.dial.intro .ticks { animation: spin 120s linear infinite, intro-ticks 1.2s var(--ease) .1s both; }
+.dial.intro .wedge { animation: intro-wedge .6s var(--ease) calc(.25s + var(--i, 0) * .09s) both; }
+.dial.intro .core { animation: intro-core .7s var(--ease) .35s both; }
+.dial.intro .core-inner { animation: intro-rise .5s var(--ease) .75s both; }
+.dial.intro .labels { animation: intro-fade .5s ease .8s both; }
+/* while the opening demo plays (dial.js), the wedges carry no text */
+.dial.quiet .labels { opacity: 0 !important; }
+
 @media (prefers-reduced-motion: reduce) {
   .ticks { animation: none; }
   .wedge, .wedge .edge, .labels, .morph, .rotor { transition: none; }

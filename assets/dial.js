@@ -112,10 +112,12 @@
   var pendingLabels = null;
   var unit = 6;
 
+  var mainIndex = 0;
   ORDER.forEach(function (row) {
     var id = row[0], d = row[1];
     var el = document.createElement(d.href ? 'a' : 'button');
     el.className = 'wedge';
+    if (row[2] === 'main') el.style.setProperty('--i', mainIndex++); // entrance order, clockwise
     if (d.href) {
       el.href = d.href;
       if (d.download) el.setAttribute('download', '');
@@ -153,6 +155,15 @@
 
   dial.addEventListener('mouseleave', function () { setActive(null); });
   document.getElementById('core-back').addEventListener('click', back);
+  // "Show me everything": opens the overview (every section's sub-options at once)
+  var allBtn = document.createElement('button');
+  allBtn.type = 'button'; allBtn.className = 'core-back'; allBtn.id = 'core-all';
+  allBtn.textContent = 'Show me everything';
+  document.getElementById('core-inner').appendChild(allBtn);
+  allBtn.addEventListener('click', function () { allMask = null; turnTo(0); go('all'); });
+  // The overview can open its groups one at a time (the intro does): null = every group.
+  var allMask = null;
+  var demoRunning = false; // while the intro plays: no text in the wedges, no hover-to-open
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && level !== 'closed') back(); });
 
   function go(l) {
@@ -195,11 +206,13 @@
   var SETTLE_SPEED = 0.35; // px per ms; slower than this counts as resting
   var dwell = null, settle = null, lastMove = null, still = null;
   function onDwellMove(id, d, ev) {
-    if (TOUCH) return;
+    if (TOUCH || demoRunning) return;
     if (still && Math.abs(ev.clientX - still.x) + Math.abs(ev.clientY - still.y) < 6) return;
     still = null;
     var pos = { x: ev.clientX, y: ev.clientY, t: ev.timeStamp };
-    var speed = lastMove && pos.t > lastMove.t
+    // ignore events where the mouse hasn't moved (sent when the page changes under a still cursor)
+    if (!lastMove || (pos.x === lastMove.x && pos.y === lastMove.y)) { lastMove = lastMove || pos; return; }
+    var speed = pos.t > lastMove.t
       ? Math.hypot(pos.x - lastMove.x, pos.y - lastMove.y) / (pos.t - lastMove.t) : 0;
     lastMove = pos;
     clearTimeout(settle);
@@ -226,7 +239,7 @@
       e.sweep.style.clipPath = e.sweep.style.webkitClipPath = arc(g.a0, g.a1, g.r0, g.r0 + Math.max(0.2, (g.r1 - g.r0) * ease));
       if (p < 1) { dwell.raf = requestAnimationFrame(step); return; }
       cancelDwell();
-      still = { x: pos.x, y: pos.y };
+      if (pos) still = { x: pos.x, y: pos.y };
       onToggle(id, d);
     })(dwell.start);
   }
@@ -251,8 +264,10 @@
 
   // ---------- Render ----------
   function render() {
+    var all = level === 'all'; // the overview: every section's sub-options at once
+    var groups = all ? (allMask || { projects: 1, apps: 1, about: 1, cv: 1, contact: 1 }) : {};
     var cat = level === 'cases' || level === 'apps' ? level : null;
-    var projOpen = level === 'projects' || !!cat;
+    var projOpen = level === 'projects' || !!cat || !!groups.projects;
     var contactOpen = level === 'contact';
     var cvOpen = level === 'cv';
     var aboutOpen = level === 'about';
@@ -263,7 +278,7 @@
     //   ring 1: Projects · About me · CV · Contact   (always)
     //   ring 2: Case studies | My apps, or LinkedIn | Email
     //   ring 3: the items of the chosen category
-    var depth = cat ? 2 : (projOpen || subOpen ? 1 : 0);
+    var depth = cat || all ? 2 : (projOpen || subOpen ? 1 : 0);
     var G = [
       { disk: 26, r1: [31.5, 49.5] },
       { disk: 22, r1: [23.5, 35], r2: [36, 49.5] },
@@ -285,16 +300,16 @@
     ORDER.forEach(function (row) {
       var id = row[0], d = row[1], kind = row[2], o;
       if (kind === 'main') {
-        var openHere = (id === 'pr' && projOpen) || (!!d.toggle && d.toggle !== 'projects' && level === d.toggle);
+        var openHere = !all && ((id === 'pr' && projOpen) || (!!d.toggle && d.toggle !== 'projects' && level === d.toggle));
         o = Object.assign({ shown: true, hideR: G.r1[1], gap: 1.1, sel: openHere }, band(G.r1), size);
         if (d.toggle) els[id].el.setAttribute('aria-expanded', String(openHere));
       } else if (kind === 'half') {
         o = Object.assign({ shown: projOpen, hideR: r2Hide, gap: 1.1, sel: cat === d.cat }, G.r2 ? band(G.r2) : {}, size);
         if (d.cat) els[id].el.setAttribute('aria-expanded', String(cat === d.cat));
       } else if (kind.indexOf('sub:') === 0) {
-        o = Object.assign({ shown: level === kind.slice(4), hideR: r2Hide, gap: 1.1 }, G.r2 ? band(G.r2) : {}, size);
+        o = Object.assign({ shown: !!groups[kind.slice(4)] || level === kind.slice(4), hideR: r2Hide, gap: 1.1 }, G.r2 ? band(G.r2) : {}, size);
       } else {
-        o = Object.assign({ shown: cat === kind.split(':')[1], hideR: r3Hide, gap: 0.8 }, G.r3 ? band(G.r3) : {}, size);
+        o = Object.assign({ shown: !!groups[kind.split(':')[1]] || cat === kind.split(':')[1], hideR: r3Hide, gap: 0.8 }, G.r3 ? band(G.r3) : {}, size);
       }
       visible[id] = o.shown;
       paint(id, d, o);
@@ -317,6 +332,8 @@
             meta: here.meta };
     }
     else if (cur && !cur.toggle) c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
+    else if (demoRunning) c = { dot: '#6EE7A8', status: 'Live', title: 'Portfolio', text: 'Oben Celik', meta: 'obencelik.com' };
+    else if (all) c = { dot: ACCENT, status: 'Overview', title: 'Everything here', text: 'Every section and what is inside it, at a glance.', meta: 'Hover to explore' };
     else if (contactOpen) c = { dot: '#6EE7A8', status: 'Contact', title: 'Get in touch', text: 'LinkedIn or email, whichever you prefer.', meta: 'Choose one' };
     else if (aboutOpen) c = { dot: ACCENT, status: 'About me', title: 'About me', text: 'My career so far, and a bit about me outside work.', meta: 'Choose one' };
     else if (cvOpen) c = { dot: ACCENT, status: 'CV', title: 'My CV', text: 'View it in your browser, or download the PDF.', meta: 'Choose one' };
@@ -333,13 +350,16 @@
     document.getElementById('core-meta').textContent = c.meta;
     core.style.borderColor = cur || open ? 'rgba(212,180,131,0.55)' : 'rgba(243,239,231,0.12)';
     var backBtn = document.getElementById('core-back');
-    backBtn.hidden = !open;
+    backBtn.hidden = !open || demoRunning;
     backBtn.textContent = cat ? 'Back' : 'Close';
+    allBtn.hidden = open || demoRunning;
 
     fitCore(g.disk * 2 / 100 * W);
 
     var hintEl = document.getElementById('hint');
-    if (hintEl) hintEl.textContent = cat ? 'Choose one, or switch sides'
+    if (hintEl) hintEl.textContent = demoRunning ? (TOUCH ? 'Tap a section to explore' : 'Hover to explore')
+      : all ? 'Everything at a glance'
+      : cat ? 'Choose one, or switch sides'
       : contactOpen ? 'LinkedIn or email'
       : cvOpen ? 'View or download'
       : aboutOpen ? 'Career or personal'
@@ -469,4 +489,52 @@
 
   window.addEventListener('resize', render);
   resetToCurrent();
+
+  // After the entrance, once per visit, with no text in the wedges: each section's sub-menus open
+  // quickly one after another, the whole dial spins one full turn like a watch bezel, then it folds
+  // back to normal and the labels fade in. A click, tap, key or scroll ends it straight away.
+  // (Mouse movement doesn't: most people move the mouse while a page loads.)
+  var DEMO_GROUPS = ['projects', 'apps', 'about', 'cv', 'contact'];
+  var DEMO_AT = 1500, DEMO_STEP = 180, DEMO_HOLD = 250, SPIN_MS = 900; // ms
+
+  // Entrance on the homepage (the menu overlay has its own zoom-in). See .intro in dial.css.
+  if (!STILL && !dial.closest('.menu-overlay')) {
+    dial.classList.add('intro');
+    setTimeout(function () { dial.classList.remove('intro'); }, 1800);
+    playDemo();
+  }
+
+  function playDemo() {
+    try { if (sessionStorage.getItem('dial-demo')) return; sessionStorage.setItem('dial-demo', '1'); } catch (e) {}
+    var timers = [];
+    var later = function (ms, fn) { timers.push(setTimeout(fn, ms)); };
+    var EVENTS = ['pointerdown', 'keydown', 'touchstart', 'wheel'];
+    function finish() {
+      timers.forEach(clearTimeout); timers = [];
+      EVENTS.forEach(function (t) { document.removeEventListener(t, finish, true); });
+      demoRunning = false;
+      allMask = null;
+      rotor.style.transition = '';
+      dial.classList.remove('quiet');
+      if (level === 'all') { turnTo(0); go('closed'); } else render();
+    }
+    EVENTS.forEach(function (t) { document.addEventListener(t, finish, true); });
+    demoRunning = true;
+    dial.classList.add('quiet');
+    render();
+
+    // open the groups one by one (the ring sizes are set once, so only the new wedges move)
+    later(DEMO_AT, function () { allMask = {}; go('all'); });
+    DEMO_GROUPS.forEach(function (g, i) {
+      later(DEMO_AT + (i + 1) * DEMO_STEP, function () { allMask[g] = 1; render(); });
+    });
+    // one full turn, quick start and soft stop, like spinning a watch bezel
+    var spinAt = DEMO_AT + (DEMO_GROUPS.length + 1) * DEMO_STEP + DEMO_HOLD;
+    later(spinAt, function () {
+      rotor.style.transition = 'transform ' + SPIN_MS + 'ms cubic-bezier(.6, 0, .2, 1)';
+      turn += 360;
+      rotor.style.transform = 'rotate(' + turn + 'deg)';
+    });
+    later(spinAt + SPIN_MS + 80, finish);
+  }
 })();
