@@ -397,7 +397,10 @@
 
     if (pendingLabels) return; // labels are redrawn once the rings have finished moving
     var r = o.shown ? o.rl : o.hideR;
-    var bottom = false; // every label runs clockwise around the dial
+    // Labels run clockwise, except in the lower part of the dial (where it has turned to now),
+    // which run the other way so they read upright instead of upside down.
+    var onScreen = (((mid + turn) % 360) + 360) % 360;
+    var bottom = onScreen > 110 && onScreen < 250;
     var la0 = a0 + 1.5, la1 = a1 - 1.5;
     var p0 = pt(bottom ? la1 : la0, r), p1 = pt(bottom ? la0 : la1, r);
     var large = (la1 - la0) > 180 ? 1 : 0;
