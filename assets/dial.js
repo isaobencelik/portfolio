@@ -326,9 +326,11 @@
     e.el.style.backgroundColor = sel ? SEL_BG : (hov ? HOVER : (d.st === 'soon' ? GLASS_DIM : GLASS));
     e.el.style.color = (hov || sel) ? ACCENT : (d.st === 'soon' ? '#5A6069' : '#E6E1D8');
 
-    e.edge.style.clipPath = arc(a0, a1, Math.max(r0, r1 - 0.45), r1);
+    // Gold rim on every wedge; hover/selected gets a thicker, brighter rim so it still stands out
+    var rim = (hov || sel) ? 0.75 : 0.45;
+    e.edge.style.clipPath = arc(a0, a1, Math.max(r0, r1 - rim), r1);
     e.edge.style.webkitClipPath = e.edge.style.clipPath;
-    e.edge.style.opacity = (hov || sel) ? 1 : (o.shown ? 0.22 : 0); // faint rim always, full on hover/selected
+    e.edge.style.opacity = (hov || sel) ? 1 : (o.shown ? 0.7 : 0);
 
     if (pendingLabels) return; // labels are redrawn once the rings have finished moving
     var r = o.shown ? o.rl : o.hideR;
