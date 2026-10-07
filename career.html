@@ -57,8 +57,9 @@
       font-size: 13px; color: var(--muted); transition: color .25s ease;
     }
     .minimap a .y { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .08em; }
-    .minimap a .bar { height: 1px; background: var(--line); position: relative; }
-    .minimap a .bar::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
+    .minimap a .bar { position: relative; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    .minimap a .bar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
+    .minimap a .lbl { font-size: 12px; }
     .minimap a:hover { color: var(--ink); }
     .minimap a.seen .bar::after { transform: scaleX(.35); opacity: .5; }
     .minimap a.active { color: var(--ink); }
@@ -116,7 +117,7 @@
       .timeline, .next { grid-template-columns: minmax(0, 1fr); gap: 0; }
       .rail {
         top: 0; height: auto; z-index: 5; flex-direction: row; align-items: baseline; gap: 14px;
-        margin: 0 -24px 32px; padding: 14px 24px; background: rgba(6,8,11,.9); border-bottom: 1px solid var(--line);
+        margin: 0 -24px 32px; padding: 14px 24px; background: #06080B; border-bottom: 1px solid var(--line);
       }
       .rail-year { font-size: 34px; -webkit-text-stroke: 0; color: var(--accent); background: none; }
       .rail-phase { margin: 0; }
@@ -280,7 +281,7 @@
       var li = document.createElement('li');
       var a = document.createElement('a');
       a.href = '#' + ch.id;
-      a.innerHTML = '<span class="y">' + ch.dataset.year + '</span><span class="bar"></span>';
+      a.innerHTML = '<span class="y">' + ch.dataset.year + '</span><span class="bar"><span class="lbl">' + ch.dataset.label + '</span></span>';
       a.setAttribute('aria-label', ch.dataset.year + ' ' + ch.dataset.label);
       a.title = ch.dataset.label;
       li.appendChild(a); map.appendChild(li);
