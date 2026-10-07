@@ -16,8 +16,8 @@
   // a: [startDeg, endDeg], clockwise from 12 o'clock.
   var MAIN = {
     pr: { name: 'Projects', st: 'info', a: [-60, 60], toggle: 'projects', text: 'Case studies of my product work, and the apps I build.', meta: 'Select to open' },
-    ab: { name: 'About me', st: 'info', a: [60, 140], href: 'about.html', text: 'Product Enthusiast Based in Lisbon.', meta: 'MSc Information Systems Management · SAFe · POPM 6.0' },
-    cv: { name: 'CV', st: 'info', a: [140, 220], href: 'Oben_Celik_CV.pdf', download: true, text: 'The legacy version of my CV.', meta: 'PDF download' },
+    ab: { name: 'About me', st: 'info', a: [60, 140], href: 'about.html', text: 'Product Owner based in Lisbon.', meta: 'MSc in progress · SAFe POPM 6.0' },
+    cv: { name: 'CV', st: 'info', a: [140, 220], href: 'Oben_Celik_CV.pdf', download: true, text: 'My CV, on one page.', meta: 'PDF download' },
     ct: { name: 'Contact', st: 'info', a: [220, 300], toggle: 'contact', text: 'LinkedIn or email, whichever you prefer.', meta: 'Select to open' }
   };
   var HALVES = {
@@ -220,7 +220,7 @@
     else if (cur) c = { dot: ACCENT, status: 'Section', title: cur.name, text: cur.text, meta: cur.meta };
     else if (cat) { var h = cat === 'cases' ? HALVES.hc : HALVES.ha; c = { dot: DOT[h.st], status: 'Projects', title: h.name, text: h.text, meta: h.meta }; }
     else if (open) c = { dot: ACCENT, status: 'Projects', title: 'Two ways in', text: 'Case studies on the left. My apps on the right.', meta: 'Choose a side' };
-    else c = { dot: '#6EE7A8', status: 'Available', title: 'Oben Celik', text: 'Product Enthusiast who builds. Start with Projects.', meta: 'obencelik.com' };
+    else c = { dot: '#6EE7A8', status: 'Available', title: 'Oben Celik', text: 'Product Owner who builds. Start with Projects.', meta: 'obencelik.com' };
 
     var dot = document.getElementById('core-dot');
     dot.style.background = c.dot; dot.style.boxShadow = '0 0 8px ' + c.dot;

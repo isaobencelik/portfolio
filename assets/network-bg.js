@@ -46,10 +46,15 @@ function drawNetwork() {
       const dx = mouse.x - node.x;
       const dy = mouse.y - node.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist > 0 && dist < 180) {
-        const force = (180 - dist) / 180;
-        node.x += dx * force * 0.04;
-        node.y += dy * force * 0.04;
+      // Pull nearby nodes towards the cursor, but push back inside a small ring
+      // so they gather around it instead of collapsing into one point.
+      const REACH = 180, RING = 70;
+      if (dist > 0 && dist < REACH) {
+        const f = dist > RING
+          ? ((REACH - dist) / REACH) * 0.03
+          : -((RING - dist) / RING) * 0.12;
+        node.x += dx * f;
+        node.y += dy * f;
       }
     }
 
