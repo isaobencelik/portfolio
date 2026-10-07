@@ -17,7 +17,7 @@
   var MAIN = {
     pr: { name: 'Projects', st: 'info', a: [-60, 60], toggle: 'projects', text: 'Case studies of my product work, and the apps I build.', meta: 'Select to open' },
     ab: { name: 'About me', st: 'info', a: [60, 140], href: 'about.html', text: 'Product Manager based in Lisbon.', meta: 'MSc in progress · SAFe POPM 6.0' },
-    cv: { name: 'CV', st: 'info', a: [140, 220], href: 'Oben_Celik_CV.pdf', download: true, text: 'My CV, on one page.', meta: 'PDF download' },
+    cv: { name: 'CV', st: 'info', a: [140, 220], toggle: 'cv', text: 'My CV, on one page.', meta: 'Select to open' },
     ct: { name: 'Contact', st: 'info', a: [220, 300], toggle: 'contact', text: 'LinkedIn or email, whichever you prefer.', meta: 'Select to open' }
   };
   var HALVES = {
@@ -35,6 +35,10 @@
       a1: { name: 'Job Analyser', st: 'live', a: [0, 60], href: 'apps.html#job-analyser', text: 'Searches LinkedIn jobs and uses AI to break down each role, its requirements and salary.', meta: 'Python · Flask · Gemini · Cloud Run' },
       a2: { name: 'Coming soon', st: 'soon', a: [60, 120], href: 'apps.html', text: 'The next tool in the pipeline, including AI agents.', meta: 'In the works' }
     }
+  };
+  var CVSUB = {
+    vw: { name: 'View', st: 'info', a: [140, 180], href: 'Oben_Celik_CV.pdf', external: true, text: 'Open the PDF in a new tab.', meta: 'PDF · one page' },
+    dl: { name: 'Download', st: 'info', a: [180, 220], href: 'Oben_Celik_CV.pdf', download: true, text: 'Save the PDF to your device.', meta: 'Oben_Celik_CV.pdf' }
   };
   var CONTACT = {
     li: { name: 'LinkedIn', st: 'info', a: [220, 260], href: 'https://www.linkedin.com/in/isa-oben-celik/', external: true, text: 'See my career so far and message me there.', meta: 'linkedin.com/in/isa-oben-celik' },
@@ -54,8 +58,9 @@
     ['pr', MAIN.pr, 'main'], ['hc', HALVES.hc, 'half'],
     ['c1', ITEMS.cases.c1, 'item:cases'], ['c2', ITEMS.cases.c2, 'item:cases'], ['c3', ITEMS.cases.c3, 'item:cases'], ['c4', ITEMS.cases.c4, 'item:cases'],
     ['ha', HALVES.ha, 'half'], ['a1', ITEMS.apps.a1, 'item:apps'], ['a2', ITEMS.apps.a2, 'item:apps'],
-    ['ab', MAIN.ab, 'main'], ['cv', MAIN.cv, 'main'], ['ct', MAIN.ct, 'main'],
-    ['li', CONTACT.li, 'contact'], ['em', CONTACT.em, 'contact']
+    ['ab', MAIN.ab, 'main'],
+    ['cv', MAIN.cv, 'main'], ['vw', CVSUB.vw, 'sub:cv'], ['dl', CVSUB.dl, 'sub:cv'],
+    ['ct', MAIN.ct, 'main'], ['li', CONTACT.li, 'sub:contact'], ['em', CONTACT.em, 'sub:contact']
   ];
 
   // ---------- State ----------
@@ -178,8 +183,8 @@
   function setActive(id) { if (active !== id) { active = id; render(); } }
   function onToggle(id, d) {
     var cat = level === 'cases' || level === 'apps' ? level : null;
-    if (d.toggle === 'projects') { var openP = level === 'closed' || level === 'contact'; turnTo(openP ? midOf(d) : 0); go(openP ? 'projects' : 'closed'); }
-    else if (d.toggle === 'contact') { var openC = level !== 'contact'; turnTo(openC ? midOf(d) : 0); go(openC ? 'contact' : 'closed'); }
+    if (d.toggle === 'projects') { var openP = !(level === 'projects' || cat); turnTo(openP ? midOf(d) : 0); go(openP ? 'projects' : 'closed'); }
+    else if (d.toggle) { var openX = level !== d.toggle; turnTo(openX ? midOf(d) : 0); go(openX ? d.toggle : 'closed'); } // Contact, CV
     else if (d.cat) { var into = cat !== d.cat; turnTo(into ? midOf(d) : 0); go(into ? d.cat : 'projects'); }
   }
 
@@ -188,13 +193,15 @@
     var cat = level === 'cases' || level === 'apps' ? level : null;
     var projOpen = level === 'projects' || !!cat;
     var contactOpen = level === 'contact';
+    var cvOpen = level === 'cv';
+    var subOpen = contactOpen || cvOpen;
     var open = level !== 'closed';
 
     // Rings, from the inside out. Every level keeps the rings below it visible:
     //   ring 1: Projects · About me · CV · Contact   (always)
     //   ring 2: Case studies | My apps, or LinkedIn | Email
     //   ring 3: the items of the chosen category
-    var depth = cat ? 2 : (projOpen || contactOpen ? 1 : 0);
+    var depth = cat ? 2 : (projOpen || subOpen ? 1 : 0);
     var G = [
       { disk: 26, r1: [31.5, 49.5] },
       { disk: 22, r1: [23.5, 35], r2: [36, 49.5] },
@@ -216,14 +223,14 @@
     ORDER.forEach(function (row) {
       var id = row[0], d = row[1], kind = row[2], o;
       if (kind === 'main') {
-        var openHere = (id === 'pr' && projOpen) || (id === 'ct' && contactOpen);
+        var openHere = (id === 'pr' && projOpen) || (id === 'ct' && contactOpen) || (id === 'cv' && cvOpen);
         o = Object.assign({ shown: true, hideR: G.r1[1], gap: 1.1, sel: openHere }, band(G.r1), size);
         if (d.toggle) els[id].el.setAttribute('aria-expanded', String(openHere));
       } else if (kind === 'half') {
         o = Object.assign({ shown: projOpen, hideR: r2Hide, gap: 1.1, sel: cat === d.cat }, G.r2 ? band(G.r2) : {}, size);
         els[id].el.setAttribute('aria-expanded', String(cat === d.cat));
-      } else if (kind === 'contact') {
-        o = Object.assign({ shown: contactOpen, hideR: r2Hide, gap: 1.1 }, G.r2 ? band(G.r2) : {}, size);
+      } else if (kind.indexOf('sub:') === 0) {
+        o = Object.assign({ shown: level === kind.slice(4), hideR: r2Hide, gap: 1.1 }, G.r2 ? band(G.r2) : {}, size);
       } else {
         o = Object.assign({ shown: cat === kind.split(':')[1], hideR: r3Hide, gap: 0.8 }, G.r3 ? band(G.r3) : {}, size);
       }
@@ -242,13 +249,14 @@
     var cur = active && visible[active] ? findDef(active) : null;
     var c;
     var here = CURRENT && level === levelFor(CURRENT) ? findDef(CURRENT) : null;
-    if (here && !(cur && active !== 'pr' && active !== 'ct')) {
+    if (here && !(cur && active !== 'pr' && active !== 'ct' && active !== 'cv')) {
       c = { dot: ACCENT, status: 'You are here', title: here.name,
             text: crumbsFor(CURRENT).length > 1 ? crumbsFor(CURRENT).map(function (x) { return x.name; }).join('  /  ') : here.text,
             meta: here.meta };
     }
-    else if (cur && active !== 'pr' && active !== 'ct') c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
+    else if (cur && active !== 'pr' && active !== 'ct' && active !== 'cv') c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
     else if (contactOpen) c = { dot: '#6EE7A8', status: 'Contact', title: 'Get in touch', text: 'LinkedIn or email, whichever you prefer.', meta: 'Choose one' };
+    else if (cvOpen) c = { dot: ACCENT, status: 'CV', title: 'My CV', text: 'View it in your browser, or download the PDF.', meta: 'Choose one' };
     else if (cur) c = { dot: ACCENT, status: 'Section', title: cur.name, text: cur.text, meta: cur.meta };
     else if (cat) { var h = cat === 'cases' ? HALVES.hc : HALVES.ha; c = { dot: DOT[h.st], status: 'Projects', title: h.name, text: h.text, meta: h.meta }; }
     else if (open) c = { dot: ACCENT, status: 'Projects', title: 'Two ways in', text: 'Case studies on the left. My apps on the right.', meta: 'Choose a side' };
@@ -270,6 +278,7 @@
     var hintEl = document.getElementById('hint');
     if (hintEl) hintEl.textContent = cat ? 'Choose one, or switch sides'
       : contactOpen ? 'LinkedIn or email'
+      : cvOpen ? 'View or download'
       : open ? 'Case studies on the left · My apps on the right'
       : (TOUCH ? 'Tap a section to explore' : 'Hover to explore');
   }
@@ -346,7 +355,7 @@
     var k = kindOf(id);
     if (k === 'item:cases' || id === 'hc') return 'cases';
     if (k === 'item:apps' || id === 'ha') return 'apps';
-    if (k === 'contact') return 'contact';
+    if (k && k.indexOf('sub:') === 0) return k.slice(4);
     return 'closed';
   }
   function crumbsFor(id) {
@@ -354,7 +363,7 @@
     if (k === 'item:cases') chain = ['pr', 'hc', id];
     else if (k === 'item:apps') chain = ['pr', 'ha', id];
     else if (k === 'half') chain = ['pr', id];
-    else if (k === 'contact') chain = ['ct', id];
+    else if (k && k.indexOf('sub:') === 0) chain = [{ contact: 'ct', cv: 'cv' }[k.slice(4)], id];
     else if (k) chain = [id];
     var pages = { hc: 'case-studies.html', ha: 'apps.html' };
     return chain.map(function (c) { var d = findDef(c); return { id: c, name: d.name, href: pages[c] || d.href || null }; });
