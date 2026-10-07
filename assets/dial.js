@@ -153,7 +153,8 @@
     els[id] = { el: el, edge: edge, edgeIn: edgeIn, sweep: sweep, path: path, text: text, geo: null };
   });
 
-  dial.addEventListener('mouseleave', function () { setActive(null); });
+  dial.addEventListener('mouseenter', function () { inDial = true; updatePaper(); });
+  dial.addEventListener('mouseleave', function () { inDial = false; setActive(null); updatePaper(); });
   document.getElementById('core-back').addEventListener('click', back);
   // "Show me everything": opens the overview (every section's sub-options at once)
   var allBtn = document.createElement('button');
@@ -355,6 +356,7 @@
     allBtn.hidden = open || demoRunning;
 
     fitCore(g.disk * 2 / 100 * W);
+    updatePaper();
 
     var hintEl = document.getElementById('hint');
     if (hintEl) hintEl.textContent = demoRunning ? (TOUCH ? 'Tap a section to explore' : 'Hover to explore')
@@ -496,6 +498,90 @@
   // (Mouse movement doesn't: most people move the mouse while a page loads.)
   var DEMO_GROUPS = ['projects', 'apps', 'about', 'cv', 'contact'];
   var DEMO_AT = 1500, DEMO_STEP = 180, DEMO_HOLD = 250, SPIN_MS = 900; // ms
+
+  // ---------- CV paper (homepage only) ----------
+  // Opening CV makes the background network fly into a sheet of paper (network-bg.js), then the
+  // real first page of the CV fades in on it, readable; clicking it opens the PDF. It stays while the
+  // cursor is on the dial or the paper, and the nodes scatter back when it goes.
+  // CV_IMAGE is page 1 of Oben_Celik_CV.pdf exported as an image: re-export it whenever the CV changes.
+  var CV_IMAGE = 'assets/cv-page.jpg';
+  var REVEAL_MS = 1500; // the nodes gather first (network-bg.js, ~1.45s), then the page fades in
+  var paper = null, paperImg = null, paperShown = false, paperHide = null, paperReveal = null;
+  var inDial = false, onPaper = false;
+  if (!dial.closest('.menu-overlay')) {
+    paper = document.createElement('a');
+    paper.className = 'cv-paper';
+    paper.href = 'Oben_Celik_CV.pdf'; paper.target = '_blank'; paper.rel = 'noopener';
+    paper.setAttribute('aria-label', 'My CV, page one. Opens the full PDF');
+    paperImg = document.createElement('img');
+    paperImg.alt = ''; paperImg.decoding = 'async';
+    paper.appendChild(paperImg);
+    document.body.appendChild(paper);
+    paper.addEventListener('mouseenter', function () { onPaper = true; updatePaper(); });
+    paper.addEventListener('mouseleave', function () { onPaper = false; updatePaper(); });
+    // fetch the page once everything else has loaded, so it's ready on the first hover
+    window.addEventListener('load', function () { setTimeout(function () { if (!paperImg.src) paperImg.src = CV_IMAGE; }, 2500); });
+    window.addEventListener('resize', function () { if (paperShown) { hidePaper(); updatePaper(); } });
+  }
+  // Only once CV is actually open (clicked, or rested on for the full second): a mouse that just
+  // pauses on CV on its way to something else must not set the nodes moving.
+  // And only while the cursor is on CV, View, Download, the centre of the dial, or the paper:
+  // moving onto any other section blows it away straight off.
+  var PAPER_KEEP = { cv: 1, vw: 1, dl: 1 };
+  function paperWanted() {
+    if (demoRunning || level !== 'cv') return false;
+    return onPaper || TOUCH || (inDial && (active === null || !!PAPER_KEEP[active]));
+  }
+  function updatePaper() {
+    if (!paper) return;
+    if (paperWanted()) {
+      clearTimeout(paperHide); paperHide = null;
+      if (!paperShown) showPaper();
+    } else if (paperShown && !paperHide) {
+      paperHide = setTimeout(hidePaper, 180); // just long enough to cross from the dial onto the paper
+    }
+    updateIcon();
+  }
+  // Hovering View or Download while the paper is up: its text-line nodes rise out of the page and
+  // form a magnifying glass or a download arrow in the empty space above it (network-bg.js).
+  var iconKind = null;
+  function updateIcon() {
+    var k = paperShown && !STILL ? ({ vw: 'view', dl: 'download' })[active] || null : null;
+    if (k === iconKind) return;
+    iconKind = k;
+    if (window.networkBg && window.networkBg.formIcon) window.networkBg.formIcon(k);
+  }
+  // Always to the right of the dial, never over it: as big as the space there allows.
+  // Too little room (phones, narrow windows) and there's no paper; View and Download still work.
+  var PAPER_MIN_W = 150;
+  function paperRect() {
+    var d = dial.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight;
+    var GAP = 28, EDGE = 20, RATIO = 1.414; // A4
+    var h = Math.min(d.height * 0.92, vh - 80), w = h / RATIO;
+    var space = vw - d.right - GAP - EDGE;
+    if (w > space) { w = space; h = w * RATIO; }
+    if (w < PAPER_MIN_W) return null;
+    return { x: d.right + GAP + (space - w) / 2, y: Math.max(16, d.top + (d.height - h) / 2), w: w, h: h };
+  }
+  function showPaper() {
+    var r = paperRect();
+    if (!r) return;
+    paperShown = true;
+    paper.style.left = r.x + 'px'; paper.style.top = r.y + 'px';
+    paper.style.width = r.w + 'px'; paper.style.height = r.h + 'px';
+    if (!paperImg.src) paperImg.src = CV_IMAGE;
+    if (!STILL && window.networkBg) window.networkBg.formPaper(r);
+    paper.classList.add('armed'); // can be hovered while it forms, before it's visible
+    clearTimeout(paperReveal);
+    paperReveal = setTimeout(function () { paper.classList.add('show'); }, STILL ? 0 : REVEAL_MS);
+  }
+  function hidePaper() {
+    paperHide = null; paperShown = false; onPaper = false;
+    clearTimeout(paperReveal);
+    paper.classList.remove('show', 'armed');
+    iconKind = null;
+    if (window.networkBg) window.networkBg.release();
+  }
 
   // Entrance on the homepage (the menu overlay has its own zoom-in). See .intro in dial.css.
   if (!STILL && !dial.closest('.menu-overlay')) {

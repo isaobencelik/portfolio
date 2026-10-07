@@ -92,6 +92,20 @@
   .wedge, .wedge .edge, .labels, .morph, .rotor { transition: none; }
 }
 
+/* ---------- CV paper (homepage; dial.js + network-bg.js) ----------
+   The network forms the sheet first; .show then brings the real page in, from blurred to sharp.
+   The top-right corner is cut to match the folded corner the nodes draw. */
+.cv-paper {
+  position: fixed; z-index: 4; display: block; background: #fff; border-radius: 2px;
+  clip-path: polygon(0 0, 87% 0, 100% 9.2%, 100% 100%, 0 100%);
+  opacity: 0; visibility: hidden; filter: blur(10px); transform: scale(.97);
+  transition: opacity .4s ease, filter .6s ease, transform .6s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .4s;
+}
+.cv-paper.armed { visibility: visible; transition: opacity .4s ease, filter .6s ease, transform .6s cubic-bezier(.22, 1, .36, 1); }
+.cv-paper.show { opacity: .97; filter: none; transform: none; }
+.cv-paper img { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (prefers-reduced-motion: reduce) { .cv-paper, .cv-paper.armed { filter: none; transform: none; transition: opacity .2s ease; } }
+
 /* ---------- Menu overlay (every page except the homepage) ---------- */
 .menu-overlay {
   position: fixed; inset: 0; z-index: 50;
