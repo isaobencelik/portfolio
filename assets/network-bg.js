@@ -1,6 +1,9 @@
 // Animated teal network background (shared by all pages)
 const canvas = document.getElementById('network-bg');
 const ctx = canvas.getContext('2d');
+// Colour is set per page with data-rgb="r, g, b" on the canvas (default: teal)
+const RGB = canvas.dataset.rgb || '94, 234, 212';
+const STILL = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const nodes = [];
 const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, active: false };
@@ -31,8 +34,10 @@ function drawNetwork() {
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
 
-    node.x += node.vx;
-    node.y += node.vy;
+    if (!STILL) {
+      node.x += node.vx;
+      node.y += node.vy;
+    }
 
     if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
     if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
@@ -49,7 +54,7 @@ function drawNetwork() {
     }
 
     ctx.beginPath();
-    ctx.fillStyle = 'rgba(94, 234, 212, 0.9)';
+    ctx.fillStyle = `rgba(${RGB}, 0.9)`;
     ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
     ctx.fill();
   }
@@ -64,7 +69,7 @@ function drawNetwork() {
 
       if (dist < 120) {
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(94, 234, 212, ${0.18 - dist / 1000})`;
+        ctx.strokeStyle = `rgba(${RGB}, ${0.18 - dist / 1000})`;
         ctx.lineWidth = 1;
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
@@ -76,7 +81,7 @@ function drawNetwork() {
 
 function animate() {
   drawNetwork();
-  requestAnimationFrame(animate);
+  if (!STILL) requestAnimationFrame(animate);
 }
 
 window.addEventListener('pointermove', (event) => {
