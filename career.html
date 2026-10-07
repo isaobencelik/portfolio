@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Career · OBEN CELIK</title>
+  <meta name="description" content="Oben Celik's career, year by year: from data centres in Istanbul to owning a product at FedEx in Lisbon." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/dial.css">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06080B; --ink: #F3EFE7; --text: #A9AEB6; --muted: #6E747D; --line: #1C2027;
+      --accent: #D4B483; --accent-soft: rgba(212,180,131,0.14);
+      --ease: cubic-bezier(.22, 1, .36, 1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: 'Geist', 'Helvetica Neue', sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    }
+    a { color: inherit; }
+    ::selection { background: var(--accent); color: var(--bg); }
+    #network-bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: .55; }
+    .page { position: relative; z-index: 1; }
+
+    .site-header { max-width: 1120px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; justify-content: space-between; }
+
+    /* ---------- Hero ---------- */
+    .hero { max-width: 1120px; margin: 0 auto; padding: 72px 24px 96px; min-height: 72vh; display: flex; flex-direction: column; justify-content: center; }
+    .eyebrow { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); margin: 0 0 22px; }
+    .hero h1 { margin: 0; font-size: clamp(44px, 8vw, 104px); font-weight: 200; line-height: .98; letter-spacing: -.035em; color: var(--ink); max-width: 11ch; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p { margin: 28px 0 0; max-width: 52ch; font-size: clamp(17px, 1.7vw, 20px); line-height: 1.6; }
+    .scroll-cue { margin-top: 56px; display: inline-flex; align-items: center; gap: 14px; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+    .scroll-cue span { position: relative; width: 1px; height: 44px; background: var(--line); overflow: hidden; }
+    .scroll-cue span::after { content: ''; position: absolute; left: 0; top: -40%; width: 1px; height: 40%; background: var(--accent); animation: drip 1.8s var(--ease) infinite; }
+    @keyframes drip { to { top: 100%; } }
+
+    /* ---------- Timeline layout ---------- */
+    .timeline { max-width: 1120px; margin: 0 auto; padding: 0 24px 40px; display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 72px; }
+
+    /* Sticky rail: the big year, the phase, and a mini-map of every chapter */
+    .rail { position: sticky; top: 96px; align-self: start; height: calc(100vh - 140px); display: flex; flex-direction: column; }
+    .rail-year {
+      font-size: 128px; font-weight: 200; letter-spacing: -.05em; line-height: .9; font-variant-numeric: tabular-nums;
+      color: transparent; -webkit-text-stroke: 1px rgba(212,180,131,.75);
+      background: linear-gradient(180deg, rgba(212,180,131,.22), rgba(212,180,131,0)); -webkit-background-clip: text; background-clip: text;
+    }
+    .rail-phase { margin-top: 14px; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--accent); min-height: 1.4em; transition: opacity .3s ease; }
+    .rail-place { margin-top: 6px; font-size: 14px; color: var(--muted); min-height: 1.4em; transition: opacity .3s ease; }
+    .minimap { list-style: none; margin: auto 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+    .minimap a {
+      display: grid; grid-template-columns: 44px 1fr; align-items: center; gap: 10px; padding: 7px 0; text-decoration: none;
+      font-size: 13px; color: var(--muted); transition: color .25s ease;
+    }
+    .minimap a .y { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .08em; }
+    .minimap a .bar { height: 1px; background: var(--line); position: relative; }
+    .minimap a .bar::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
+    .minimap a:hover { color: var(--ink); }
+    .minimap a.seen .bar::after { transform: scaleX(.35); opacity: .5; }
+    .minimap a.active { color: var(--ink); }
+    .minimap a.active .bar::after { transform: scaleX(1); opacity: 1; }
+
+    /* The thread: a line that fills in gold as you scroll */
+    .chapters { position: relative; list-style: none; margin: 0; padding: 0 0 0 56px; }
+    .thread, .thread-fill { position: absolute; left: 9px; top: 0; width: 2px; }
+    .thread { bottom: 0; background: var(--line); }
+    .thread-fill { height: 0; background: linear-gradient(180deg, rgba(212,180,131,.2), var(--accent)); box-shadow: 0 0 12px rgba(212,180,131,.45); }
+
+    .chapter { position: relative; padding: 0 0 22vh; }
+    .chapter:last-child { padding-bottom: 8vh; }
+    .node { position: absolute; left: -54px; top: 10px; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 2px solid #2A2F37; transition: border-color .4s ease, box-shadow .4s ease, background .4s ease; }
+    .chapter.passed .node { border-color: rgba(212,180,131,.6); }
+    .chapter.active .node { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 6px rgba(212,180,131,.12), 0 0 18px rgba(212,180,131,.6); }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+    .in .reveal { opacity: 1; transform: none; }
+    .in .reveal.d1 { transition-delay: .08s; } .in .reveal.d2 { transition-delay: .16s; } .in .reveal.d3 { transition-delay: .24s; } .in .reveal.d4 { transition-delay: .32s; }
+
+    .when { font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+    .lead { margin: 14px 0 0; font-size: clamp(30px, 4vw, 48px); font-weight: 300; line-height: 1.06; letter-spacing: -.025em; color: var(--ink); }
+    .role { margin: 18px 0 0; font-size: 15px; color: var(--ink); }
+    .role b { font-weight: 500; }
+    .role .where { color: var(--muted); }
+    .story { margin: 18px 0 0; max-width: 60ch; font-size: 17px; line-height: 1.7; }
+    .chips { margin: 22px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+    .chips li { font-size: 13px; color: var(--ink); padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(212,180,131,.28); background: var(--accent-soft); }
+    .chips li strong { color: var(--accent); font-weight: 500; }
+
+    /* A small "stat" for chapters with a headline number */
+    .stat { margin: 26px 0 0; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+    .stat .big { font-size: clamp(44px, 6vw, 72px); font-weight: 200; letter-spacing: -.04em; color: var(--ink); line-height: 1; font-variant-numeric: tabular-nums; }
+    .stat .big .from { color: var(--muted); }
+    .stat .big .arrow { color: var(--accent); margin: 0 .12em; }
+    .stat .cap { font-size: 14px; color: var(--muted); max-width: 26ch; }
+
+    /* ---------- Ending ---------- */
+    .next { max-width: 1120px; margin: 0 auto; padding: 40px 24px 120px; display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 72px; }
+    .next .body { padding-left: 56px; }
+    .next h2 { margin: 12px 0 0; font-size: clamp(32px, 4.6vw, 56px); font-weight: 300; letter-spacing: -.03em; line-height: 1.05; color: var(--ink); }
+    .next p { margin: 18px 0 0; max-width: 56ch; font-size: 17px; line-height: 1.7; }
+    .actions { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; min-height: 46px; padding: 0 22px; border-radius: 999px; text-decoration: none; font-size: 14px; letter-spacing: .02em; border: 1px solid rgba(243,239,231,.14); color: var(--ink); transition: border-color .2s ease, background .2s ease, color .2s ease; }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #0B0D10; }
+    .btn.primary:hover { background: #E6D2B0; color: #0B0D10; }
+
+    footer { position: relative; z-index: 1; padding: 0 24px 32px; text-align: center; font-size: 11px; color: #4C525A; letter-spacing: .04em; }
+
+    /* ---------- Small screens: the rail becomes a slim sticky bar ---------- */
+    @media (max-width: 900px) {
+      .timeline, .next { grid-template-columns: minmax(0, 1fr); gap: 0; }
+      .rail {
+        top: 0; height: auto; z-index: 5; flex-direction: row; align-items: baseline; gap: 14px;
+        margin: 0 -24px 32px; padding: 14px 24px; background: rgba(6,8,11,.9); border-bottom: 1px solid var(--line);
+      }
+      .rail-year { font-size: 34px; -webkit-text-stroke: 0; color: var(--accent); background: none; }
+      .rail-phase { margin: 0; }
+      .rail-place, .minimap { display: none; }
+      .chapters { padding-left: 36px; }
+      .node { left: -34px; }
+      .next .body { padding-left: 0; }
+      .next .spacer { display: none; }
+      .chapter { padding-bottom: 14vh; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .scroll-cue span::after { animation: none; }
+    }
+  </style>
+</head>
+<body data-current="ca">
+  <canvas id="network-bg" data-rgb="212, 180, 131" aria-hidden="true"></canvas>
+
+  <div class="page">
+    <!-- Header: the name opens the dial menu (assets/menu.js) -->
+    <header class="site-header">
+      <button type="button" id="menu-open" class="menu-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-overlay">
+        <svg class="menu-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" stroke-dasharray="12.1 2.04" transform="rotate(-45 12 12)"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor"/>
+        </svg>
+        <span>Oben Celik</span>
+        <span class="menu-label">Menu</span>
+      </button>
+      <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">Career</p>
+      <h1>The long way to <em>product.</em></h1>
+      <p>From circuits in Istanbul to owning a product at FedEx in Lisbon. Each step moved me a little closer to the people using the system, and a little further into deciding what it should be.</p>
+      <a class="scroll-cue" href="#ch-2011"><span aria-hidden="true"></span>Scroll through the years</a>
+    </section>
+
+    <div class="timeline" id="timeline">
+      <aside class="rail" aria-hidden="true">
+        <div class="rail-year" id="rail-year">2011</div>
+        <div class="rail-phase" id="rail-phase">Foundations</div>
+        <div class="rail-place" id="rail-place">Istanbul</div>
+        <ol class="minimap" id="minimap"></ol>
+      </aside>
+
+      <ol class="chapters" id="chapters">
+        <li class="thread" aria-hidden="true"></li>
+        <li class="thread-fill" id="thread-fill" aria-hidden="true"></li>
+
+        <li class="chapter" id="ch-2011" data-year="2011" data-phase="Foundations" data-place="Istanbul" data-label="University">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when reveal">2011 – 2016</div>
+          <h2 class="lead reveal d1">It started with circuits.</h2>
+          <p class="role reveal d2"><b>BSc Electrical, Electronics &amp; Communications Engineering</b> <span class="where">· Beykent University, Istanbul</span></p>
+          <p class="story reveal d3">Five years of signals, networks and systems: how things connect, and what happens when they don't. A way of thinking I still use every day.</p>
+        </li>
+
+        <li class="chapter" id="ch-2017" data-year="2017" data-phase="Infrastructure" data-place="Istanbul" data-label="Greenpeace">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when reveal">Feb – Aug 2017</div>
+          <h2 class="lead reveal d1">First job, first automation.</h2>
+          <p class="role reveal d2"><b>IT Engineer</b> <span class="where">· Greenpeace, Istanbul</span></p>
+          <p class="story reveal d3">Supporting colleagues across several offices, I wrote a Python script that automated workstation provisioning, and looked after the encryption and PKI that protected the organisation's sensitive communication.</p>
+          <div class="stat reveal d4"><span class="big">&lt; 5 min</span><span class="cap">to set up a new workstation, instead of a manual afternoon</span></div>
+        </li>
+
+        <li class="chapter" id="ch-2017b" data-year="2017" data-phase="Infrastructure" data-place="Istanbul" data-label="Atos">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when reveal">Aug 2017 – Mar 2018</div>
+          <h2 class="lead reveal d1">Keeping the lights on, 24/7.</h2>
+          <p class="role reveal d2"><b>System Engineer</b> <span class="where">· Atos, Istanbul</span></p>
+          <p class="story reveal d3">Enterprise data centres for retail and finance clients. I ran incidents and problems end to end with ITIL, and built automated alert handlers so recurring false positives no longer needed a person to clear them.</p>
+          <ul class="chips reveal d4"><li><strong>24/7</strong> availability</li><li>ITIL incident &amp; problem</li><li>Multi-client data centres</li></ul>
+        </li>
+
+        <li class="chapter" id="ch-2018" data-year="2018" data-phase="Closer to product" data-place="Istanbul" data-label="ITTS">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when reveal">Apr 2018 – Mar 2020</div>
+          <h2 class="lead reveal d1">From running systems to shaping one.</h2>
+          <p class="role reveal d2"><b>Product Specialist</b> <span class="where">· International Testing &amp; Training Services</span></p>
+          <p class="story reveal d3">I joined ITTS to work on an online testing platform. Instead of keeping someone else's system alive, I started asking what it should do next, and two years later I was promoted to Senior.</p>
+        </li>
+
+        <li class="chapter" id="ch-2020" data-year="2020" data-phase="Closer to product" data-place="Istanbul · Lisbon" data-label="ITTS Senior">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when reveal">Mar 2020 – Apr 2024</div>
+          <h2 class="lead reveal d1">One platform, more than 70 countries.</h2>
+          <p class="role reveal d2"><b>Senior Product Specialist</b> <span class="where">· ITTS, Istanbul &amp; Lisbon</span></p>
+          <p class="story reveal d3">I directed technical delivery for a testing platform used in more than 70 countries. I was the voice of operators and end users during development: writing functional requirements, leading readiness and stress tests before go-live, and reshaping helpdesk workflows around clear SLAs. I also ran the web storefronts and the company's Microsoft 365 environment.</p>
+          <div class="stat reveal d4"><span class="big">70+</span><span class="cap">countries on one platform, rolled out region by region</span></div>
+        </li>
+
+        <li class="chapter" id="ch-2024" data-year="2024" data-phase="Product engineering" data-place="Lisbon" data-label="Microsoft">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when reveal">Apr 2024 – Apr 2025</div>
+          <h2 class="lead reveal d1">From escalations to the product group.</h2>
+          <p class="role reveal d2"><b>O365 Product Engineer</b> <span class="where">· Microsoft, Lisbon</span></p>
+          <p class="story reveal d3">Enterprise escalations from across EMEA came to me. I turned them into structured problem statements for the Office 365 Product Group, worked with engineering on root causes in security and compliance features, and pushed for permanent fixes over workarounds.</p>
+          <ul class="chips reveal d4"><li>EMEA enterprise escalations</li><li>Root-cause analysis</li><li>Backlog influence</li></ul>
+        </li>
+
+        <li class="chapter" id="ch-2025" data-year="2025" data-phase="Product ownership" data-place="Lisbon" data-label="FedEx">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when reveal">Apr 2025 – today</div>
+          <h2 class="lead reveal d1">Owning the product.</h2>
+          <p class="role reveal d2"><b>Product Owner</b> <span class="where">· FedEx, Lisbon</span></p>
+          <p class="story reveal d3">I own FedEx's internal knowledge product end to end, roadmap included. I moved operations off legacy robotic process automation onto a modern, containerised front end, ran discovery across European care teams, and standardised Salesforce Omni-Channel across EMEA, all inside a SAFe delivery model.</p>
+          <div class="stat reveal d4"><span class="big"><span class="from">45%</span><span class="arrow">→</span>70%</span><span class="cap">of cases routed automatically after the Omni-Channel rollout, with cases waiting 24h+ halved</span></div>
+        </li>
+
+        <li class="chapter" id="ch-2025b" data-year="2025" data-phase="Learning" data-place="Lisbon" data-label="NOVA IMS">
+          <span class="node" aria-hidden="true"></span>
+          <div class="when reveal">Sep 2025 – Jul 2027</div>
+          <h2 class="lead reveal d1">Back to school, in the evenings.</h2>
+          <p class="role reveal d2"><b>MSc Information Systems Management</b> <span class="where">· NOVA IMS, Lisbon (in progress)</span></p>
+          <p class="story reveal d3">Alongside FedEx, I'm studying how information systems are designed and managed at scale, with certifications picked up along the way.</p>
+          <ul class="chips reveal d4"><li><strong>SAFe®</strong> POPM 6.0</li><li>Gen AI</li><li>CCNA</li><li>COPC</li></ul>
+        </li>
+      </ol>
+    </div>
+
+    <section class="next">
+      <div class="spacer" aria-hidden="true"></div>
+      <div class="body">
+        <p class="eyebrow">Next chapter</p>
+        <h2>Products, with AI where it genuinely helps.</h2>
+        <p>In my own time I build small products end to end, like Job Analyser. At work and outside it, I'm looking for the places where AI removes real friction for the people using the system.</p>
+        <div class="actions">
+          <a class="btn primary" href="Oben_Celik_CV.pdf" target="_blank" rel="noopener">View CV</a>
+          <a class="btn" href="apps.html">See my apps</a>
+          <a class="btn" href="mailto:isaobencelik@gmail.com">Get in touch</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>&copy; 2026 Oben Celik</footer>
+  </div>
+
+  <script src="assets/network-bg.js"></script>
+  <script src="assets/menu.js"></script>
+  <script src="assets/dial.js"></script>
+  <script>
+  // Career timeline: reveal chapters, fill the thread, and keep the sticky year in step with the scroll.
+  (function () {
+    'use strict';
+    var STILL = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var chapters = [].slice.call(document.querySelectorAll('.chapter'));
+    var list = document.getElementById('chapters');
+    var fill = document.getElementById('thread-fill');
+    var yearEl = document.getElementById('rail-year');
+    var phaseEl = document.getElementById('rail-phase');
+    var placeEl = document.getElementById('rail-place');
+    var map = document.getElementById('minimap');
+
+    // Mini-map: one line per chapter
+    var links = chapters.map(function (ch) {
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = '#' + ch.id;
+      a.innerHTML = '<span class="y">' + ch.dataset.year + '</span><span class="bar"></span>';
+      a.setAttribute('aria-label', ch.dataset.year + ' ' + ch.dataset.label);
+      a.title = ch.dataset.label;
+      li.appendChild(a); map.appendChild(li);
+      return a;
+    });
+
+    // Reveal each chapter as it enters the screen
+    var revealer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); revealer.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -12% 0px' });
+    chapters.forEach(function (ch) { revealer.observe(ch); });
+
+    // The big year counts up or down to the active chapter's year
+    var shownYear = 2011, yearAnim = 0;
+    function countTo(target) {
+      cancelAnimationFrame(yearAnim);
+      if (STILL || target === shownYear) { shownYear = target; yearEl.textContent = target; return; }
+      var from = shownYear, start = performance.now(), dur = 420 + Math.min(6, Math.abs(target - from)) * 60;
+      (function step(now) {
+        var t = Math.min(1, (now - start) / dur), e = 1 - Math.pow(1 - t, 3);
+        yearEl.textContent = Math.round(from + (target - from) * e);
+        if (t < 1) yearAnim = requestAnimationFrame(step); else shownYear = target;
+      })(start);
+    }
+
+    var activeIdx = -1;
+    function setActive(i) {
+      if (i === activeIdx) return;
+      activeIdx = i;
+      var ch = chapters[i];
+      countTo(parseInt(ch.dataset.year, 10));
+      phaseEl.textContent = ch.dataset.phase;
+      placeEl.textContent = ch.dataset.place;
+      chapters.forEach(function (c, k) { c.classList.toggle('active', k === i); c.classList.toggle('passed', k < i); });
+      links.forEach(function (a, k) { a.classList.toggle('active', k === i); a.classList.toggle('seen', k < i); });
+    }
+
+    // On scroll: the chapter crossing the middle of the screen is active; the thread fills down to it
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        var mid = window.innerHeight * 0.5, idx = 0;
+        chapters.forEach(function (ch, k) { if (ch.getBoundingClientRect().top < mid) idx = k; });
+        setActive(idx);
+        var box = list.getBoundingClientRect();
+        var h = Math.max(0, Math.min(box.height, mid - box.top));
+        fill.style.height = h + 'px';
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  })();
+  </script>
+</body>
+</html>

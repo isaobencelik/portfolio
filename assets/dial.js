@@ -37,7 +37,7 @@
     }
   };
   var ABOUT = {
-    ca: { name: 'Career', st: 'info', a: [60, 100], href: 'about.html#career', text: 'From data centres to product management.', meta: 'Work · education · certification' },
+    ca: { name: 'Career', st: 'info', a: [60, 100], href: 'career.html', text: 'My career, year by year: from data centres to product.', meta: 'Work · education · certification' },
     pe: { name: 'Personal', st: 'info', a: [100, 140], href: 'about.html#personal', text: 'A bit about me outside work.', meta: 'Lisbon · languages · interests' }
   };
   var CVSUB = {
