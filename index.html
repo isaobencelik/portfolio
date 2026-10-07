@@ -67,6 +67,7 @@
       mask: radial-gradient(closest-side, transparent 90%, #000 91%, #000 97%, transparent 98%);
       animation: spin 120s linear infinite;
     }
+    .rotor { position: absolute; inset: 0; transition: transform .8s var(--ease); }
     .dial-nav { position: absolute; inset: 0; }
     .wedge {
       position: absolute; inset: 0; width: 100%; height: 100%;
@@ -118,7 +119,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) {
       .ticks { animation: none; }
-      .wedge, .wedge .edge, .labels, .morph { transition: none; }
+      .wedge, .wedge .edge, .labels, .morph, .rotor { transition: none; }
     }
   </style>
 </head>

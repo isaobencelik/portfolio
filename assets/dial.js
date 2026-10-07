@@ -52,6 +52,9 @@
 
   // ---------- State ----------
   var TOUCH = window.matchMedia && window.matchMedia('(hover: none)').matches;
+  var STILL = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var TURN_MS = 650;  // how long to wait for the turn before following a link
+  var turn = 0;       // current rotation of the dial, in degrees
   var level = 'closed'; // closed | projects | cases | apps | contact
   var active = null;
 
@@ -78,7 +81,12 @@
   labelLayer.setAttribute('aria-hidden', 'true');
   var defs = document.createElementNS(SVGNS, 'defs');
   labelLayer.appendChild(defs);
-  nav.parentNode.insertBefore(labelLayer, nav.nextSibling);
+  // Wedges and their labels sit in a rotor that turns as one piece; the centre circle stays still.
+  var rotor = document.createElement('div');
+  rotor.className = 'rotor';
+  nav.parentNode.insertBefore(rotor, nav);
+  rotor.appendChild(nav);
+  rotor.appendChild(labelLayer);
   var pendingLabels = null;
   var unit = 6;
 
@@ -109,6 +117,7 @@
     el.addEventListener('mouseenter', function () { setActive(id); });
     el.addEventListener('focus', function () { setActive(id); });
     if (!d.href) el.addEventListener('click', function () { onToggle(id, d); });
+    else el.addEventListener('click', function (ev) { followAfterTurn(ev, d); });
     nav.appendChild(el);
     els[id] = { el: el, edge: edge, path: path, text: text };
   });
@@ -124,13 +133,35 @@
     pendingLabels = setTimeout(function () { pendingLabels = null; render(); labelLayer.style.opacity = 1; }, 420);
     render();
   }
-  function back() { go(level === 'cases' || level === 'apps' ? 'projects' : 'closed'); }
+  function back() { turnTo(0); go(level === 'cases' || level === 'apps' ? 'projects' : 'closed'); }
+
+  // Turn the dial the short way round so the given angle ends up at 12 o'clock.
+  function turnTo(deg) {
+    var delta = ((((-deg - turn) % 360) + 540) % 360) - 180;
+    turn += delta;
+    rotor.style.transform = 'rotate(' + turn + 'deg)';
+  }
+  function midOf(d) { return (d.a[0] + d.a[1]) / 2; }
+
+  // Links: turn the wedge to the top first, then follow it.
+  function followAfterTurn(ev, d) {
+    if (STILL || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    ev.preventDefault();
+    turnTo(midOf(d));
+    setTimeout(function () {
+      var a = document.createElement('a');
+      a.href = d.href;
+      if (d.download) a.setAttribute('download', '');
+      if (d.external) { a.target = '_blank'; a.rel = 'noopener'; }
+      document.body.appendChild(a); a.click(); a.remove();
+    }, TURN_MS);
+  }
   function setActive(id) { if (active !== id) { active = id; render(); } }
   function onToggle(id, d) {
     var cat = level === 'cases' || level === 'apps' ? level : null;
-    if (d.toggle === 'projects') go(level === 'closed' || level === 'contact' ? 'projects' : 'closed');
-    else if (d.toggle === 'contact') go(level === 'contact' ? 'closed' : 'contact');
-    else if (d.cat) go(cat === d.cat ? 'projects' : d.cat);
+    if (d.toggle === 'projects') { var openP = level === 'closed' || level === 'contact'; turnTo(openP ? midOf(d) : 0); go(openP ? 'projects' : 'closed'); }
+    else if (d.toggle === 'contact') { var openC = level !== 'contact'; turnTo(openC ? midOf(d) : 0); go(openC ? 'contact' : 'closed'); }
+    else if (d.cat) { var into = cat !== d.cat; turnTo(into ? midOf(d) : 0); go(into ? d.cat : 'projects'); }
   }
 
   // ---------- Render ----------
