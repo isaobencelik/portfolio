@@ -93,45 +93,84 @@
   <main class="max-w-5xl mx-auto px-6 pb-16 space-y-8">
 
     <!-- App: Job Analyser -->
-    <article id="job-analyser" class="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 hover:shadow-xl transition">
-      <a href="https://jobanalyser.obencelik.com" target="_blank" rel="noopener" class="block border-b border-slate-800 bg-slate-950/60" aria-label="Open Job Analyser">
-        <img src="assets/jobanalyser.png" alt="Job Analyser showing live LinkedIn search results for Product Owner roles in Lisbon"
-             class="w-full h-auto" loading="lazy" />
-      </a>
-
-      <div class="p-7 sm:p-9">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+    <article id="job-analyser" class="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden">
+      <div class="p-7 sm:p-10">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
           <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">AI · Job Search</span>
           <span class="inline-flex items-center gap-2 text-xs font-semibold text-gold-300 bg-gold-950/60 border border-gold-500/20 rounded-full px-3 py-1">
             <span class="live-dot"></span> Live
           </span>
         </div>
 
-        <h2 class="text-2xl sm:text-3xl font-medium text-white mb-3">Job Analyser</h2>
-        <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-6 max-w-3xl">
-          Searching LinkedIn means reading dozens of long postings to find the few worth applying to.
-          Job Analyser pulls live listings and uses AI to decode each one in seconds.
+        <h2 class="text-3xl sm:text-4xl font-light text-white mb-4">Job Analyser</h2>
+        <p class="text-slate-300 text-lg sm:text-xl leading-relaxed max-w-3xl">
+          A tool that turns a long list of job postings into a short list worth applying to.
         </p>
 
-        <div class="grid md:grid-cols-2 gap-6 mb-7">
-          <div>
-            <h3 class="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-3">What it does</h3>
-            <ul class="space-y-2 text-sm text-slate-400 leading-relaxed">
-              <li><span class="text-gold-400 mr-2">→</span>Live LinkedIn search, widened to related titles and nearby cities</li>
-              <li><span class="text-gold-400 mr-2">→</span>AI breakdown: what the role is for, must-haves vs nice-to-haves, skills</li>
-              <li><span class="text-gold-400 mr-2">→</span>Red and green flags, perks and an estimated salary range</li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-3">Key product decision</h3>
-            <p class="text-sm text-slate-400 leading-relaxed">
-              It started as a personal desktop tool. To open it to the public I rescoped it: owner-only features switched off,
-              per-visitor rate limits and a daily AI budget cap, so a public demo stays safe, fair and cheap to run.
+        <!-- The product story, PM view -->
+        <div class="mt-10 grid md:grid-cols-2 gap-x-10 gap-y-9">
+          <section>
+            <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-3">The problem</h3>
+            <p class="text-slate-400 leading-relaxed">
+              Job hunting on LinkedIn is mostly reading. Every search returns dozens of long postings, written in similar language,
+              and the useful parts are buried: what the role is really for, what is truly required, and what it pays.
+              Most of that time goes on postings you would never apply to.
             </p>
-          </div>
+          </section>
+          <section>
+            <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-3">Who it's for</h3>
+            <p class="text-slate-400 leading-relaxed">
+              Anyone actively looking for a job, starting with me. I built it for my own search in Lisbon,
+              which made me both the product owner and the first user: every annoyance was a backlog item.
+            </p>
+          </section>
+          <section>
+            <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-3">The solution</h3>
+            <ul class="space-y-2 text-slate-400 leading-relaxed">
+              <li><span class="text-gold-400 mr-2">&rarr;</span>Live search of public LinkedIn listings, automatically widened to related job titles and nearby towns</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span>An AI breakdown of each posting: why the role exists, must-haves vs nice-to-haves, skills, seniority and culture</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span>Red and green flags, perks, and a salary estimate calibrated to the local market</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span>A job library that keeps everything you've looked at, with export</li>
+            </ul>
+          </section>
+          <section>
+            <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-3">The value</h3>
+            <ul class="space-y-2 text-slate-400 leading-relaxed">
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Time:</b> seconds to understand a posting instead of minutes</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Focus:</b> effort goes into the few roles that fit, not the long tail</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Clarity:</b> salary and red flags visible before you invest in an application</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Reach:</b> roles you'd miss because they use a different title or sit in the next town</li>
+            </ul>
+          </section>
         </div>
 
-        <div class="flex flex-wrap gap-2 mb-8">
+        <section class="mt-10 pt-9 border-t border-slate-800">
+          <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-5">Key product decisions</h3>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div>
+              <h4 class="text-slate-100 font-medium mb-2">From personal tool to public demo</h4>
+              <p class="text-sm text-slate-400 leading-relaxed">It started on my own laptop. Opening it to the public meant rescoping: owner-only features like settings and auto-collect are switched off in the public version.</p>
+            </div>
+            <div>
+              <h4 class="text-slate-100 font-medium mb-2">Guardrails on cost and fairness</h4>
+              <p class="text-sm text-slate-400 leading-relaxed">AI calls are the real cost, so every visitor has rate limits and there is a daily AI budget cap. One heavy user can't run up a bill or slow it down for everyone else.</p>
+            </div>
+            <div>
+              <h4 class="text-slate-100 font-medium mb-2">Small, cheap, always shippable</h4>
+              <p class="text-sm text-slate-400 leading-relaxed">It runs on a serverless setup that scales to zero when idle and deploys automatically from GitHub, so improvements go live in minutes and hosting costs stay close to zero.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-10 pt-9 border-t border-slate-800">
+          <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-4">What's next</h3>
+          <p class="text-slate-400 leading-relaxed max-w-3xl">
+            Salary estimates for more markets than Portugal, a "paste a job description" mode that doesn't depend on LinkedIn,
+            and storage that keeps your job library between visits.
+          </p>
+        </section>
+
+        <div class="flex flex-wrap gap-2 mt-10 mb-8">
           <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Python · Flask</span>
           <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Google Gemini AI</span>
           <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Google Cloud Run</span>
