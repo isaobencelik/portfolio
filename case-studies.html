@@ -7,13 +7,27 @@
   <meta name="description" content="Applied case studies by Oben Celik: CX platform strategy, Salesforce omnichannel, platform redesign and roadmap alignment." />
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Shared theme: matches the dial homepage (near-black, warm greys, champagne gold)
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Geist', 'Helvetica Neue', 'sans-serif'], mono: ['Geist Mono', 'monospace'] },
+          colors: {
+            gold: { 200: '#EFE2CB', 300: '#E6D2B0', 400: '#D4B483', 500: '#C49A5C', 900: '#2A2116', 950: '#17120B' },
+            slate: { 100: '#F3EFE7', 200: '#E6E1D8', 300: '#C9CCD1', 400: '#A9AEB6', 500: '#6E747D', 600: '#4C525A', 700: '#2A2F37', 800: '#1C2027', 900: '#0E1116', 950: '#06080B' }
+          }
+        }
+      }
+    };
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #0b1320;
+      font-family: 'Geist', 'Helvetica Neue', sans-serif;
+      background: #06080B;
       position: relative;
       overflow-x: hidden;
     }
@@ -25,7 +39,7 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.9;
+      opacity: 0.55;
     }
 
     body > *:not(canvas) {
@@ -33,29 +47,28 @@
       z-index: 1;
     }
 
-    article:target { border-color: rgba(45, 212, 191, 0.6); }
+    article:target { border-color: rgba(110, 231, 168, 0.6); }
   </style>
 </head>
-<body class="bg-[#0b1320] text-slate-100 antialiased selection:bg-teal-500 selection:text-white">
-  <canvas id="network-bg"></canvas>
+<body class="bg-[#06080B] text-slate-200 antialiased selection:bg-gold-500 selection:text-white">
+  <canvas id="network-bg" data-rgb="212, 180, 131" aria-hidden="true"></canvas>
 
-  <!-- Navigation -->
-  <nav class="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
-    <div class="text-sm font-bold tracking-widest uppercase text-slate-400 whitespace-nowrap">
-       <a href="index.html" class="text-teal-400 sm:text-2xl font-bold">OBEN CELIK</a>
-    </div>
-    <div class="flex flex-wrap items-center gap-x-5 gap-y-3 sm:gap-6 text-sm font-semibold whitespace-nowrap">
-      <a href="case-studies.html" class="text-teal-400" aria-current="page">Case Studies</a>
-      <a href="apps.html" class="hover:text-teal-400 transition-colors">My Apps</a>
-      <a href="https://www.linkedin.com/in/isa-oben-celik/" target="_blank" rel="noreferrer" class="hover:text-teal-400 transition-colors">Linkedin</a>
-      <a href="Oben_Celik_CV.pdf" download class="px-4 py-2 rounded-full border border-teal-500/30 text-teal-300 hover:bg-teal-500/10 transition">Download CV</a>
+  <!-- Navigation (same as the homepage) -->
+  <nav class="max-w-5xl mx-auto px-6 py-6 flex flex-wrap gap-4 justify-between items-center">
+    <a href="index.html" class="text-[15px] font-medium tracking-wide text-slate-100 py-2">Oben Celik</a>
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-1 text-[13px] tracking-wide text-slate-400">
+      <a href="case-studies.html" class="py-2 text-gold-400" aria-current="page">Case studies</a>
+      <a href="apps.html" class="py-2 hover:text-slate-100 transition-colors">My apps</a>
+      <a href="about.html" class="py-2 hover:text-slate-100 transition-colors">About</a>
+      <a href="Oben_Celik_CV.pdf" download class="py-2 hover:text-slate-100 transition-colors">CV</a>
+      <a href="mailto:isaobencelik@gmail.com" class="py-2 hover:text-slate-100 transition-colors">Contact</a>
     </div>
   </nav>
 
   <!-- Case Studies Section -->
   <main id="work" class="max-w-5xl mx-auto px-6 pt-8 pb-16">
     <div class="flex items-center justify-between mb-10 border-b border-slate-800 pb-4">
-      <h2 class="text-2xl font-bold tracking-tight text-white">Applied Case Studies</h2>
+      <h2 class="text-2xl font-medium tracking-tight text-white">Applied Case Studies</h2>
       <span class="text-sm text-slate-500">Measurable Impact & Systems</span>
     </div>
 
@@ -65,10 +78,10 @@
       <article id="cx-consolidation" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
         <div>
           <div class="flex items-center justify-between mb-4">
-            <span class="text-xs uppercase tracking-wider font-semibold text-teal-400">CX Platform Strategy</span>
+            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">CX Platform Strategy</span>
             <span class="text-xs text-slate-500">Europe</span>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-teal-300 transition">
+          <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
             European CX System Consolidation &amp; AI 
           </h3>
           <p class="text-slate-400 text-sm leading-relaxed mb-6">
@@ -78,11 +91,11 @@
         <div>
           <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-2xl font-extrabold text-teal-400">Architecture</div>
+              <div class="text-2xl font-light text-gold-400">Architecture</div>
               <div class="text-xs text-slate-400 mt-1">Simplified Customer Journeys</div>
             </div>
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-2xl font-extrabold text-teal-400">AI</div>
+              <div class="text-2xl font-light text-gold-400">AI</div>
               <div class="text-xs text-slate-400 mt-1">Roadmap Discovery</div>
             </div>
           </div>
@@ -93,10 +106,10 @@
       <article id="omnichannel" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
         <div>
           <div class="flex items-center justify-between mb-4">
-            <span class="text-xs uppercase tracking-wider font-semibold text-teal-400">Salesforce Operations</span>
+            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Salesforce Operations</span>
             <span class="text-xs text-slate-500">EMEA</span>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-teal-300 transition">
+          <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
             EMEA Salesforce Omni-Channel Standardization
           </h3>
           <p class="text-slate-400 text-sm leading-relaxed mb-6">
@@ -106,11 +119,11 @@
         <div>
           <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-2xl font-extrabold text-teal-400">70%</div>
+              <div class="text-2xl font-light text-gold-400">70%</div>
               <div class="text-xs text-slate-400 mt-1">Increased Automation Rate</div>
             </div>
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-2xl font-extrabold text-teal-400">50%</div>
+              <div class="text-2xl font-light text-gold-400">50%</div>
               <div class="text-xs text-slate-400 mt-1">Reduction in Wait Time </div>
             </div>
           </div>
@@ -121,10 +134,10 @@
       <article id="platform-redesign" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
         <div>
           <div class="flex items-center justify-between mb-4">
-            <span class="text-xs uppercase tracking-wider font-semibold text-teal-400">Global Helpdesk</span>
+            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Global Helpdesk</span>
             <span class="text-xs text-slate-500">70+ Countries</span>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-teal-300 transition">
+          <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
             Global Platform Improvement &amp; Redesign
           </h3>
           <p class="text-slate-400 text-sm leading-relaxed mb-6">
@@ -134,11 +147,11 @@
         <div>
           <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-2xl font-extrabold text-teal-400">95%</div>
+              <div class="text-2xl font-light text-gold-400">95%</div>
               <div class="text-xs text-slate-400 mt-1">Session Success</div>
             </div>
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-2xl font-extrabold text-teal-400">30%</div>
+              <div class="text-2xl font-light text-gold-400">30%</div>
               <div class="text-xs text-slate-400 mt-1">Reduced Resolution Time</div>
             </div>
           </div>
@@ -149,10 +162,10 @@
       <article id="prioritisation" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
         <div>
           <div class="flex items-center justify-between mb-4">
-            <span class="text-xs uppercase tracking-wider font-semibold text-teal-400">Roadmap Alignment</span>
+            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Roadmap Alignment</span>
             <span class="text-xs text-slate-500">Global Strategy</span>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3 group-hover:text-teal-300 transition">
+          <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
             Enterprise Root-Cause &amp; Feature Prioritization
           </h3>
           <p class="text-slate-400 text-sm leading-relaxed mb-6">
@@ -162,11 +175,11 @@
         <div>
           <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-2xl font-extrabold text-teal-400">Strategic</div>
+              <div class="text-2xl font-light text-gold-400">Strategic</div>
               <div class="text-xs text-slate-400 mt-1">Align with Enterprise Goals</div>
             </div>
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-2xl font-extrabold text-teal-400">Clear</div>
+              <div class="text-2xl font-light text-gold-400">Clear</div>
               <div class="text-xs text-slate-400 mt-1">Delivery Scope</div>
             </div>
           </div>
