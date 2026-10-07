@@ -236,7 +236,7 @@
 
     if (pendingLabels) return; // labels are redrawn once the rings have finished moving
     var r = o.shown ? o.rl : o.hideR;
-    var bottom = m > 90 && m < 270; // run text the other way so it never reads upside down
+    var bottom = false; // every label runs clockwise around the dial
     var la0 = a0 + 1.5, la1 = a1 - 1.5;
     var p0 = pt(bottom ? la1 : la0, r), p1 = pt(bottom ? la0 : la1, r);
     var large = (la1 - la0) > 180 ? 1 : 0;
