@@ -4,6 +4,14 @@
 (function () {
   'use strict';
 
+  // Always open a page at the top. Browsers otherwise restore the old scroll position
+  // (after a reload, or going back), which drops you mid-page. Links to a #section still work.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  function toTop() { if (!location.hash) window.scrollTo(0, 0); }
+  toTop();
+  window.addEventListener('load', toTop);
+  window.addEventListener('pageshow', function (e) { if (e.persisted) toTop(); });
+
   var overlay = document.createElement('div');
   overlay.className = 'menu-overlay';
   overlay.id = 'menu-overlay';
