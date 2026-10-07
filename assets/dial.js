@@ -131,7 +131,8 @@
     }
     el.setAttribute('aria-label', d.name);
     var edge = document.createElement('span'); edge.className = 'edge';
-    el.appendChild(edge);
+    var edgeIn = document.createElement('span'); edgeIn.className = 'edge';
+    el.appendChild(edge); el.appendChild(edgeIn);
     // curved label: an arc path + text on that path, in the shared SVG layer
     var path = document.createElementNS(SVGNS, 'path');
     path.id = 'lp-' + id; path.setAttribute('fill', 'none');
@@ -147,7 +148,7 @@
     if (!d.href) el.addEventListener('click', function () { onToggle(id, d); });
     else el.addEventListener('click', function (ev) { followAfterTurn(ev, d); });
     nav.appendChild(el);
-    els[id] = { el: el, edge: edge, path: path, text: text };
+    els[id] = { el: el, edge: edge, edgeIn: edgeIn, path: path, text: text };
   });
 
   dial.addEventListener('mouseleave', function () { setActive(null); });
@@ -331,6 +332,11 @@
     e.edge.style.clipPath = arc(a0, a1, Math.max(r0, r1 - rim), r1);
     e.edge.style.webkitClipPath = e.edge.style.clipPath;
     e.edge.style.opacity = (hov || sel) ? 1 : (o.shown ? 0.7 : 0);
+    // and the same rim along the inner edge of the wedge
+    var rimIn = (hov || sel) ? 0.55 : 0.35;
+    e.edgeIn.style.clipPath = arc(a0, a1, r0, Math.min(r1, r0 + rimIn));
+    e.edgeIn.style.webkitClipPath = e.edgeIn.style.clipPath;
+    e.edgeIn.style.opacity = e.edge.style.opacity;
 
     if (pendingLabels) return; // labels are redrawn once the rings have finished moving
     var r = o.shown ? o.rl : o.hideR;
