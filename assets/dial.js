@@ -328,12 +328,12 @@
     e.el.style.color = (hov || sel) ? ACCENT : (d.st === 'soon' ? '#5A6069' : '#E6E1D8');
 
     // Gold rim on every wedge; hover/selected gets a thicker, brighter rim so it still stands out
-    var rim = (hov || sel) ? 0.75 : 0.45;
+    var rim = (hov || sel) ? 0.6 : 0.28;
     e.edge.style.clipPath = arc(a0, a1, Math.max(r0, r1 - rim), r1);
     e.edge.style.webkitClipPath = e.edge.style.clipPath;
-    e.edge.style.opacity = (hov || sel) ? 1 : (o.shown ? 0.7 : 0);
+    e.edge.style.opacity = (hov || sel) ? 1 : (o.shown ? 0.38 : 0);
     // and the same rim along the inner edge of the wedge
-    var rimIn = (hov || sel) ? 0.55 : 0.35;
+    var rimIn = (hov || sel) ? 0.45 : 0.22;
     e.edgeIn.style.clipPath = arc(a0, a1, r0, Math.min(r1, r0 + rimIn));
     e.edgeIn.style.webkitClipPath = e.edgeIn.style.clipPath;
     e.edgeIn.style.opacity = e.edge.style.opacity;
