@@ -16,8 +16,8 @@
   // a: [startDeg, endDeg], clockwise from 12 o'clock.
   var MAIN = {
     pr: { name: 'Projects', st: 'info', a: [-60, 60], toggle: 'projects', text: 'Case studies of my product work, and the apps I build.', meta: 'Select to open' },
-    ab: { name: 'About me', st: 'info', a: [60, 140], href: 'about.html', text: 'Product Enthusiast Based in Lisbon.', meta: 'MSc Information Systems Management · SAFe · POPM 6.0' },
-    cv: { name: 'CV', st: 'info', a: [140, 220], href: 'Oben_Celik_CV.pdf', download: true, text: 'The legacy version of my CV.', meta: 'PDF download' },
+    ab: { name: 'About me', st: 'info', a: [60, 140], toggle: 'about', text: 'Product Manager based in Lisbon.', meta: 'MSc in progress · SAFe POPM 6.0' },
+    cv: { name: 'CV', st: 'info', a: [140, 220], toggle: 'cv', text: 'My CV, on one page.', meta: 'Select to open' },
     ct: { name: 'Contact', st: 'info', a: [220, 300], toggle: 'contact', text: 'LinkedIn or email, whichever you prefer.', meta: 'Select to open' }
   };
   var HALVES = {
@@ -36,18 +36,35 @@
       a2: { name: 'Coming soon', st: 'soon', a: [60, 120], href: 'apps.html', text: 'The next tool in the pipeline, including AI agents.', meta: 'In the works' }
     }
   };
+  var ABOUT = {
+    ca: { name: 'Career', st: 'info', a: [60, 100], href: 'about.html#career', text: 'From data centres to product management.', meta: 'Work · education · certification' },
+    pe: { name: 'Personal', st: 'info', a: [100, 140], href: 'about.html#personal', text: 'A bit about me outside work.', meta: 'Lisbon · languages · interests' }
+  };
+  var CVSUB = {
+    vw: { name: 'View', st: 'info', a: [140, 180], href: 'Oben_Celik_CV.pdf', external: true, text: 'Open the PDF in a new tab.', meta: 'PDF · one page' },
+    dl: { name: 'Download', st: 'info', a: [180, 220], href: 'Oben_Celik_CV.pdf', download: true, text: 'Save the PDF to your device.', meta: 'Oben_Celik_CV.pdf' }
+  };
   var CONTACT = {
     li: { name: 'LinkedIn', st: 'info', a: [220, 260], href: 'https://www.linkedin.com/in/isa-oben-celik/', external: true, text: 'See my career so far and message me there.', meta: 'linkedin.com/in/isa-oben-celik' },
     em: { name: 'Email', st: 'info', a: [260, 300], href: 'mailto:isaobencelik@gmail.com', text: 'Write to me directly.', meta: 'isaobencelik@gmail.com' }
   };
+
+  // Outer-ring items fan out around their category's centre, each `w` degrees wide.
+  function fan(list, centre, w) {
+    var keys = Object.keys(list), start = centre - keys.length * w / 2;
+    keys.forEach(function (k, i) { list[k].a = [start + i * w, start + (i + 1) * w]; });
+  }
+  fan(ITEMS.cases, -30, 44);
+  fan(ITEMS.apps, 30, 56);
 
   // DOM order = tab order
   var ORDER = [
     ['pr', MAIN.pr, 'main'], ['hc', HALVES.hc, 'half'],
     ['c1', ITEMS.cases.c1, 'item:cases'], ['c2', ITEMS.cases.c2, 'item:cases'], ['c3', ITEMS.cases.c3, 'item:cases'], ['c4', ITEMS.cases.c4, 'item:cases'],
     ['ha', HALVES.ha, 'half'], ['a1', ITEMS.apps.a1, 'item:apps'], ['a2', ITEMS.apps.a2, 'item:apps'],
-    ['ab', MAIN.ab, 'main'], ['cv', MAIN.cv, 'main'], ['ct', MAIN.ct, 'main'],
-    ['li', CONTACT.li, 'contact'], ['em', CONTACT.em, 'contact']
+    ['ab', MAIN.ab, 'main'], ['ca', ABOUT.ca, 'sub:about'], ['pe', ABOUT.pe, 'sub:about'],
+    ['cv', MAIN.cv, 'main'], ['vw', CVSUB.vw, 'sub:cv'], ['dl', CVSUB.dl, 'sub:cv'],
+    ['ct', MAIN.ct, 'main'], ['li', CONTACT.li, 'sub:contact'], ['em', CONTACT.em, 'sub:contact']
   ];
 
   // ---------- State ----------
@@ -56,6 +73,7 @@
   var TURN_MS = 650;  // how long to wait for the turn before following a link
   var turn = 0;       // current rotation of the dial, in degrees
   var level = 'closed'; // closed | projects | cases | apps | contact
+  var CURRENT = null;   // id of the wedge for the page you're on (null on the homepage)
   var active = null;
 
   // ---------- Geometry ----------
@@ -80,6 +98,16 @@
   labelLayer.setAttribute('class', 'labels');
   labelLayer.setAttribute('aria-hidden', 'true');
   var defs = document.createElementNS(SVGNS, 'defs');
+  defs.innerHTML = '<linearGradient id="lbl-gold" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#F7E8C8"/><stop offset="0.55" stop-color="#D9B98A"/><stop offset="1" stop-color="#A9834E"/></linearGradient>';
+
+  // Label look, set with data-label on #dial: "bezel" (default), "gold" or "serif"
+  var LABEL_STYLES = {
+    bezel: { size: 1.25, track: 0.22, base: '#F3EFE7', on: ACCENT },
+    gold:  { size: 1.25, track: 0.22, base: 'url(#lbl-gold)', on: '#FFF6E4' },
+    serif: { size: 1.5,  track: 0.14, base: '#F3EFE7', on: ACCENT }
+  };
+  function labelStyle() { return LABEL_STYLES[dial.getAttribute('data-label')] || LABEL_STYLES.bezel; }
   labelLayer.appendChild(defs);
   // Wedges and their labels sit in a rotor that turns as one piece; the centre circle stays still.
   var rotor = document.createElement('div');
@@ -159,8 +187,8 @@
   function setActive(id) { if (active !== id) { active = id; render(); } }
   function onToggle(id, d) {
     var cat = level === 'cases' || level === 'apps' ? level : null;
-    if (d.toggle === 'projects') { var openP = level === 'closed' || level === 'contact'; turnTo(openP ? midOf(d) : 0); go(openP ? 'projects' : 'closed'); }
-    else if (d.toggle === 'contact') { var openC = level !== 'contact'; turnTo(openC ? midOf(d) : 0); go(openC ? 'contact' : 'closed'); }
+    if (d.toggle === 'projects') { var openP = !(level === 'projects' || cat); turnTo(openP ? midOf(d) : 0); go(openP ? 'projects' : 'closed'); }
+    else if (d.toggle) { var openX = level !== d.toggle; turnTo(openX ? midOf(d) : 0); go(openX ? d.toggle : 'closed'); } // Contact, CV
     else if (d.cat) { var into = cat !== d.cat; turnTo(into ? midOf(d) : 0); go(into ? d.cat : 'projects'); }
   }
 
@@ -169,20 +197,30 @@
     var cat = level === 'cases' || level === 'apps' ? level : null;
     var projOpen = level === 'projects' || !!cat;
     var contactOpen = level === 'contact';
+    var cvOpen = level === 'cv';
+    var aboutOpen = level === 'about';
+    var subOpen = contactOpen || cvOpen || aboutOpen;
     var open = level !== 'closed';
 
-    var g = cat
-      ? { in0: 24.5, in1: 34.5, inL: 29.6, disk: 20, ticks: 23.8 }
-      : { in0: 31.5, in1: 49.5, inL: 40.5, disk: 26, ticks: 30.8 };
-    var OUT0 = 35.5, OUT1 = 49.5, OUTL = 42.5;
+    // Rings, from the inside out. Every level keeps the rings below it visible:
+    //   ring 1: Projects · About me · CV · Contact   (always)
+    //   ring 2: Case studies | My apps, or LinkedIn | Email
+    //   ring 3: the items of the chosen category
+    var depth = cat ? 2 : (projOpen || subOpen ? 1 : 0);
+    var G = [
+      { disk: 26, r1: [31.5, 49.5] },
+      { disk: 22, r1: [23.5, 35], r2: [36, 49.5] },
+      { disk: 17.5, r1: [19, 28], r2: [29, 38.5], r3: [39.5, 49.5] }
+    ][depth];
+    var g = { disk: G.disk, ticks: G.r1[0] - 0.6 };
+    var band = function (r) { return { r0: r[0], r1: r[1], rl: (r[0] + r[1]) / 2 }; };
+    var r2Hide = G.r2 ? G.r2[0] : G.r1[1];
+    var r3Hide = G.r3 ? G.r3[0] : (G.r2 ? G.r2[1] : G.r1[1]);
 
     // label sizes in px (shrunk further per label if the text is longer than its arc)
     var W = dial.clientWidth || 600;
     var px = function (lo, hi, k) { return Math.max(lo, Math.min(hi, W * k)); };
-    var big = { fs: px(10, 13, 0.021) };
-    var split = { fs: px(9.5, 12, 0.019) };
-    var small = { fs: px(9, 11, 0.017) };
-    var outer = { fs: px(9.5, 12, 0.019) };
+    var size = [{ fs: px(10, 13, 0.021) }, { fs: px(9.5, 12, 0.019) }, { fs: px(9, 11, 0.017) }][depth];
     unit = W / 100; // px per viewBox unit
 
     var visible = {};
@@ -190,16 +228,16 @@
     ORDER.forEach(function (row) {
       var id = row[0], d = row[1], kind = row[2], o;
       if (kind === 'main') {
-        var hide = (id === 'pr' && projOpen) || (id === 'ct' && contactOpen);
-        o = Object.assign({ shown: !hide, r0: g.in0, r1: g.in1, rl: g.inL, hideR: g.in1, gap: 1.1 }, cat ? small : big);
-        if (d.toggle) els[id].el.setAttribute('aria-expanded', String(d.toggle === 'projects' ? projOpen : contactOpen));
+        var openHere = (id === 'pr' && projOpen) || (!!d.toggle && d.toggle !== 'projects' && level === d.toggle);
+        o = Object.assign({ shown: true, hideR: G.r1[1], gap: 1.1, sel: openHere }, band(G.r1), size);
+        if (d.toggle) els[id].el.setAttribute('aria-expanded', String(openHere));
       } else if (kind === 'half') {
-        o = Object.assign({ shown: projOpen, r0: g.in0, r1: g.in1, rl: g.inL, hideR: g.in0, gap: 1.1, sel: cat === d.cat }, cat ? small : split);
+        o = Object.assign({ shown: projOpen, hideR: r2Hide, gap: 1.1, sel: cat === d.cat }, G.r2 ? band(G.r2) : {}, size);
         els[id].el.setAttribute('aria-expanded', String(cat === d.cat));
-      } else if (kind === 'contact') {
-        o = Object.assign({ shown: contactOpen, r0: g.in0, r1: g.in1, rl: g.inL, hideR: g.in0, gap: 1.1 }, split);
+      } else if (kind.indexOf('sub:') === 0) {
+        o = Object.assign({ shown: level === kind.slice(4), hideR: r2Hide, gap: 1.1 }, G.r2 ? band(G.r2) : {}, size);
       } else {
-        o = Object.assign({ shown: cat === kind.split(':')[1], r0: OUT0, r1: OUT1, rl: OUTL, hideR: OUT0, gap: 0.8 }, outer);
+        o = Object.assign({ shown: cat === kind.split(':')[1], hideR: r3Hide, gap: 0.8 }, G.r3 ? band(G.r3) : {}, size);
       }
       visible[id] = o.shown;
       paint(id, d, o);
@@ -215,8 +253,16 @@
 
     var cur = active && visible[active] ? findDef(active) : null;
     var c;
-    if (cur && active !== 'pr' && active !== 'ct') c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
+    var here = CURRENT && level === levelFor(CURRENT) ? findDef(CURRENT) : null;
+    if (here && !(cur && !cur.toggle)) {
+      c = { dot: ACCENT, status: 'You are here', title: here.name,
+            text: crumbsFor(CURRENT).length > 1 ? crumbsFor(CURRENT).map(function (x) { return x.name; }).join('  /  ') : here.text,
+            meta: here.meta };
+    }
+    else if (cur && !cur.toggle) c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
     else if (contactOpen) c = { dot: '#6EE7A8', status: 'Contact', title: 'Get in touch', text: 'LinkedIn or email, whichever you prefer.', meta: 'Choose one' };
+    else if (aboutOpen) c = { dot: ACCENT, status: 'About me', title: 'About me', text: 'My career so far, and a bit about me outside work.', meta: 'Choose one' };
+    else if (cvOpen) c = { dot: ACCENT, status: 'CV', title: 'My CV', text: 'View it in your browser, or download the PDF.', meta: 'Choose one' };
     else if (cur) c = { dot: ACCENT, status: 'Section', title: cur.name, text: cur.text, meta: cur.meta };
     else if (cat) { var h = cat === 'cases' ? HALVES.hc : HALVES.ha; c = { dot: DOT[h.st], status: 'Projects', title: h.name, text: h.text, meta: h.meta }; }
     else if (open) c = { dot: ACCENT, status: 'Projects', title: 'Two ways in', text: 'Case studies on the left. My apps on the right.', meta: 'Choose a side' };
@@ -235,8 +281,11 @@
 
     fitCore(g.disk * 2 / 100 * W);
 
-    document.getElementById('hint').textContent = cat ? 'Choose one, or switch sides'
+    var hintEl = document.getElementById('hint');
+    if (hintEl) hintEl.textContent = cat ? 'Choose one, or switch sides'
       : contactOpen ? 'LinkedIn or email'
+      : cvOpen ? 'View or download'
+      : aboutOpen ? 'Career or personal'
       : open ? 'Case studies on the left · My apps on the right'
       : (TOUCH ? 'Tap a section to explore' : 'Hover to explore');
   }
@@ -265,7 +314,7 @@
     var r0 = o.shown ? o.r0 : o.hideR, r1 = o.shown ? o.r1 : o.hideR;
     var mid = (a0 + a1) / 2;
     var l = pt(mid, o.shown ? o.rl : o.hideR);
-    var hov = active === id, sel = !!o.sel;
+    var hov = active === id, sel = !!o.sel || (id === CURRENT && o.shown);
 
     var m = ((mid % 360) + 360) % 360;
 
@@ -288,22 +337,69 @@
     var p0 = pt(bottom ? la1 : la0, r), p1 = pt(bottom ? la0 : la1, r);
     var large = (la1 - la0) > 180 ? 1 : 0;
     e.path.setAttribute('d', 'M ' + p0.x.toFixed(3) + ' ' + p0.y.toFixed(3) + ' A ' + r + ' ' + r + ' 0 ' + large + ' ' + (bottom ? 0 : 1) + ' ' + p1.x.toFixed(3) + ' ' + p1.y.toFixed(3));
-    var fsU = o.fs / unit;
+    var LS = labelStyle();
+    var fsU = o.fs * LS.size / unit;
     e.text.style.fontSize = fsU + 'px';
-    e.text.style.letterSpacing = (fsU * 0.18) + 'px';
+    e.text.style.letterSpacing = (fsU * LS.track) + 'px';
     e.text.style.opacity = o.shown ? 1 : 0;
-    e.text.style.fill = (hov || sel) ? ACCENT : (d.st === 'soon' ? '#5A6069' : '#E6E1D8');
+    e.text.style.fill = (hov || sel) ? LS.on : (d.st === 'soon' ? '#6E747D' : LS.base);
     if (o.shown) {
       var avail = (r * Math.PI * (la1 - la0) / 180) * 0.9;
       var len = e.text.getComputedTextLength();
       if (len > avail && len > 0) {
         var k = avail / len;
         e.text.style.fontSize = (fsU * k) + 'px';
-        e.text.style.letterSpacing = (fsU * k * 0.18) + 'px';
+        e.text.style.letterSpacing = (fsU * k * LS.track) + 'px';
       }
     }
   }
 
+  // ---------- Where am I? (breadcrumbs) ----------
+  // A page says which wedge it is with data-current on <body> (e.g. "ha" for My apps);
+  // a #hash that matches a wedge's link (e.g. apps.html#job-analyser) narrows it to that item.
+  function kindOf(id) { for (var i = 0; i < ORDER.length; i++) if (ORDER[i][0] === id) return ORDER[i][2]; return null; }
+  function levelFor(id) {
+    var k = kindOf(id);
+    if (k === 'item:cases' || id === 'hc') return 'cases';
+    if (k === 'item:apps' || id === 'ha') return 'apps';
+    if (k && k.indexOf('sub:') === 0) return k.slice(4);
+    var d = findDef(id);
+    if (d && d.toggle && d.toggle !== 'projects') return d.toggle; // e.g. the About page opens the About ring
+    return 'closed';
+  }
+  function crumbsFor(id) {
+    var k = kindOf(id), chain = [];
+    if (k === 'item:cases') chain = ['pr', 'hc', id];
+    else if (k === 'item:apps') chain = ['pr', 'ha', id];
+    else if (k === 'half') chain = ['pr', id];
+    else if (k && k.indexOf('sub:') === 0) chain = [{ contact: 'ct', cv: 'cv', about: 'ab' }[k.slice(4)], id];
+    else if (k) chain = [id];
+    var pages = { hc: 'case-studies.html', ha: 'apps.html', ab: 'about.html' };
+    return chain.map(function (c) { var d = findDef(c); return { id: c, name: d.name, href: pages[c] || d.href || null }; });
+  }
+  function currentFromPage() {
+    var file = (location.pathname.split('/').pop() || 'index.html') + location.hash;
+    for (var i = 0; i < ORDER.length; i++) {
+      var h = ORDER[i][1].href;
+      if (h && h.indexOf('#') > 0 && h === file) return ORDER[i][0];
+    }
+    return document.body.getAttribute('data-current') || null;
+  }
+  // Put the dial back at "you are here": that level open, that wedge turned to the top, no animation.
+  function resetToCurrent() {
+    CURRENT = currentFromPage();
+    level = CURRENT ? levelFor(CURRENT) : 'closed';
+    active = null;
+    rotor.style.transition = 'none';
+    turnTo(CURRENT ? midOf(findDef(CURRENT)) : 0);
+    void rotor.offsetWidth; // apply the jump before turning transitions back on
+    rotor.style.transition = '';
+    render();
+  }
+  window.dialReset = resetToCurrent;
+  window.dialCrumbs = function () { var id = currentFromPage(); return id ? crumbsFor(id) : []; };
+  window.addEventListener('hashchange', resetToCurrent);
+
   window.addEventListener('resize', render);
-  render();
+  resetToCurrent();
 })();
