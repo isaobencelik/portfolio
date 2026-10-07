@@ -23,7 +23,7 @@ function createNodes() {
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.35,
       vy: (Math.random() - 0.5) * 0.35,
-      radius: Math.random() * 2.4 + 1.2
+      radius: Math.random() * 2 + 2
     });
   }
 }
@@ -43,18 +43,18 @@ function drawNetwork() {
     if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
 
     if (mouse.active) {
-      const dx = node.x - mouse.x;
-      const dy = node.y - mouse.y;
+      const dx = mouse.x - node.x;
+      const dy = mouse.y - node.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 140) {
-        const force = (140 - dist) / 140;
-        node.x += (dx / dist) * force * 2.3;
-        node.y += (dy / dist) * force * 2.3;
+      if (dist > 0 && dist < 180) {
+        const force = (180 - dist) / 180;
+        node.x += dx * force * 0.04;
+        node.y += dy * force * 0.04;
       }
     }
 
     ctx.beginPath();
-    ctx.fillStyle = `rgba(${RGB}, 0.9)`;
+    ctx.fillStyle = `rgba(${RGB}, 0.98)`;
     ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
     ctx.fill();
   }
@@ -67,9 +67,9 @@ function drawNetwork() {
       const dy = a.y - b.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist < 120) {
+      if (dist < 140) {
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(${RGB}, ${0.18 - dist / 1000})`;
+        ctx.strokeStyle = `rgba(${RGB}, ${0.38 - dist / 600})`;
         ctx.lineWidth = 1;
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);

@@ -39,13 +39,15 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.55;
+      opacity: 1;
     }
 
     body > *:not(canvas) {
       position: relative;
       z-index: 1;
     }
+
+    .nav-links a:hover { color: #D4B483; }
 
     .live-dot {
       width: 8px; height: 8px; border-radius: 9999px; background: #6EE7A8;
@@ -66,7 +68,7 @@
   <!-- Navigation (same as the homepage) -->
   <nav class="max-w-5xl mx-auto px-6 py-6 flex flex-wrap gap-4 justify-between items-center">
     <a href="index.html" class="text-[15px] font-medium tracking-wide text-slate-100 py-2">Oben Celik</a>
-    <div class="flex flex-wrap items-center gap-x-8 gap-y-1 text-[13px] tracking-wide text-slate-400">
+    <div class="nav-links flex flex-wrap items-center gap-x-8 gap-y-1 text-[13px] tracking-wide text-slate-400">
       <a href="case-studies.html" class="py-2 hover:text-slate-100 transition-colors">Case studies</a>
       <a href="apps.html" class="py-2 hover:text-slate-100 transition-colors">My apps</a>
       <a href="about.html" class="py-2 text-gold-400" aria-current="page">About</a>
