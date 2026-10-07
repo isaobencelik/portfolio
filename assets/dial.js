@@ -220,7 +220,7 @@
     else if (cur) c = { dot: ACCENT, status: 'Section', title: cur.name, text: cur.text, meta: cur.meta };
     else if (cat) { var h = cat === 'cases' ? HALVES.hc : HALVES.ha; c = { dot: DOT[h.st], status: 'Projects', title: h.name, text: h.text, meta: h.meta }; }
     else if (open) c = { dot: ACCENT, status: 'Projects', title: 'Two ways in', text: 'Case studies on the left. My apps on the right.', meta: 'Choose a side' };
-    else c = { dot: '#6EE7A8', status: 'Available', title: 'Oben Celik', text: 'Product Enthusiast who builds. Start with Projects.', meta: 'obencelik.com' };
+    else c = { dot: '#6EE7A8', status: 'Live', title: 'Portfolio', text: 'You are here to experience my work.', meta: 'obencelik.com' };
 
     var dot = document.getElementById('core-dot');
     dot.style.background = c.dot; dot.style.boxShadow = '0 0 8px ' + c.dot;
