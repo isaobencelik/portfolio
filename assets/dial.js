@@ -49,7 +49,7 @@
     var keys = Object.keys(list), start = centre - keys.length * w / 2;
     keys.forEach(function (k, i) { list[k].a = [start + i * w, start + (i + 1) * w]; });
   }
-  fan(ITEMS.apps, 30, 56);
+  fan(ITEMS.apps, 30, 30); // both items sit exactly above My apps (0-60deg)
 
   // DOM order = tab order
   var ORDER = [
