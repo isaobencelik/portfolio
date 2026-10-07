@@ -70,7 +70,7 @@
   // ---------- State ----------
   var TOUCH = window.matchMedia && window.matchMedia('(hover: none)').matches;
   var STILL = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var TURN_MS = 650;  // how long to wait for the turn before following a link
+  var TURN_MS = 420;  // how long to wait for the turn before following a link
   var turn = 0;       // current rotation of the dial, in degrees
   var level = 'closed'; // closed | projects | cases | apps | contact
   var CURRENT = null;   // id of the wedge for the page you're on (null on the homepage)
@@ -158,7 +158,7 @@
     level = l; active = null;
     labelLayer.style.opacity = 0;
     clearTimeout(pendingLabels);
-    pendingLabels = setTimeout(function () { pendingLabels = null; render(); labelLayer.style.opacity = 1; }, 420);
+    pendingLabels = setTimeout(function () { pendingLabels = null; render(); labelLayer.style.opacity = 1; }, 280);
     render();
   }
   function back() { turnTo(0); go(level === 'cases' || level === 'apps' ? 'projects' : 'closed'); }
