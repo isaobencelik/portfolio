@@ -38,7 +38,7 @@
   };
   var ABOUT = {
     ca: { name: 'Career', st: 'info', a: [60, 100], href: 'career.html', text: 'My career, year by year: from data centres to product.', meta: 'Work · education · certification' },
-    pe: { name: 'Personal', st: 'info', a: [100, 140], href: 'about.html#personal', text: 'A bit about me outside work.', meta: 'Lisbon · languages · interests' }
+    pe: { name: 'Personal', st: 'info', a: [100, 140], href: 'personal.html', text: 'Off the clock: where I come from and what I do for fun.', meta: 'Istanbul → Lisbon · hobbies' }
   };
   var CVSUB = {
     vw: { name: 'View', st: 'info', a: [140, 180], href: 'Oben_Celik_CV.pdf', external: true, text: 'Open the PDF in a new tab.', meta: 'PDF · one page' },

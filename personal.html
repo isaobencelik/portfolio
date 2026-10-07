@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal · OBEN CELIK</title>
+  <meta name="description" content="Oben Celik off the clock: from Istanbul to Lisbon, and the things he does for fun." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/dial.css">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06080B; --ink: #F3EFE7; --text: #A9AEB6; --muted: #6E747D; --line: #1C2027;
+      --accent: #D4B483; --accent-soft: rgba(212,180,131,0.14);
+      --ease: cubic-bezier(.22, 1, .36, 1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Geist', 'Helvetica Neue', sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { color: inherit; }
+    ::selection { background: var(--accent); color: var(--bg); }
+    #network-bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: .5; }
+    .page { position: relative; z-index: 1; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .site-header { max-width: 1120px; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: center; justify-content: space-between; }
+
+    .eyebrow { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); margin: 0 0 22px; }
+
+    /* ---------- Hero ---------- */
+    .hero { padding-top: 72px; padding-bottom: 40px; }
+    .hero h1 { margin: 0; font-size: clamp(44px, 8vw, 104px); font-weight: 200; line-height: .98; letter-spacing: -.035em; color: var(--ink); }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p { margin: 28px 0 0; max-width: 52ch; font-size: clamp(17px, 1.7vw, 20px); line-height: 1.6; }
+
+    /* ---------- Istanbul -> Lisbon ---------- */
+    .route { margin-top: 64px; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+    .route svg { width: 100%; height: auto; overflow: visible; }
+    .route .arc { fill: none; stroke: rgba(212,180,131,.55); stroke-width: 1.5; stroke-dasharray: 4 6; }
+    .route .city { fill: var(--accent); }
+    .route .halo { fill: none; stroke: rgba(212,180,131,.35); }
+    .route text { font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: .2em; fill: var(--ink); }
+    .route text.sub { fill: var(--muted); font-size: 10px; letter-spacing: .16em; }
+    .route .traveller { fill: #F7E8C8; filter: drop-shadow(0 0 6px rgba(212,180,131,.9)); }
+    .route h2 { margin: 0; font-size: clamp(28px, 3.4vw, 40px); font-weight: 300; letter-spacing: -.02em; line-height: 1.1; color: var(--ink); }
+    .route p { margin: 16px 0 0; font-size: 17px; line-height: 1.7; }
+    .langs { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+    .langs li { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 14px; font-size: 14px; color: var(--ink); }
+    .langs .meter { height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; }
+    .langs .meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, rgba(212,180,131,.4), var(--accent)); border-radius: 3px; transition: width 1.4s var(--ease); }
+    .in .langs .meter i { width: var(--w); }
+    .langs small { grid-column: 2; margin-top: -6px; font-size: 12px; color: var(--muted); }
+
+    /* ---------- Hobbies ---------- */
+    .hobbies { padding-top: 120px; }
+    .hobbies-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; }
+    .hobbies-head h2 { margin: 0; font-size: clamp(32px, 4.6vw, 56px); font-weight: 300; letter-spacing: -.03em; line-height: 1.05; color: var(--ink); }
+    .hobbies-head p { margin: 0; color: var(--muted); font-size: 14px; }
+    .grid { margin-top: 40px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .tile {
+      position: relative; min-height: 270px; padding: 28px; border-radius: 22px; overflow: hidden;
+      background: rgba(13,16,21,.88); border: 1px solid rgba(243,239,231,.08);
+      display: flex; flex-direction: column; justify-content: space-between;
+      transition: transform .5s var(--ease), border-color .3s ease, background .3s ease;
+    }
+    .tile::before { /* soft gold light that follows the pointer */
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s ease;
+      background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(212,180,131,.13), transparent 60%);
+    }
+    .tile:hover { transform: translateY(-4px); border-color: rgba(212,180,131,.4); background: rgba(18,21,27,.92); }
+    .tile:hover::before { opacity: 1; }
+    .tile svg { width: 64px; height: 64px; overflow: visible; }
+    .tile svg * { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.6s var(--ease); }
+    .tile.in svg * { stroke-dashoffset: 0; }
+    .tile:hover svg * { animation: redraw 1.2s var(--ease); }
+    @keyframes redraw { 0% { stroke-dashoffset: 1; } 100% { stroke-dashoffset: 0; } }
+    .tile h3 { margin: 0; font-size: 26px; font-weight: 300; letter-spacing: -.01em; color: var(--ink); }
+    .tile p { margin: 10px 0 0; font-size: 15px; line-height: 1.55; }
+    .tile .tag { position: absolute; top: 26px; right: 26px; font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+
+    /* ---------- Also ---------- */
+    .also { padding-top: 120px; padding-bottom: 120px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; }
+    .also h2 { margin: 0; font-size: clamp(28px, 3.4vw, 40px); font-weight: 300; letter-spacing: -.02em; line-height: 1.1; color: var(--ink); }
+    .also ul { list-style: none; margin: 0; padding: 0; }
+    .also li { padding: 18px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 140px 1fr; gap: 16px; font-size: 16px; line-height: 1.55; }
+    .also li:last-child { border-bottom: 1px solid var(--line); }
+    .also li b { font-weight: 400; color: var(--ink); }
+    .actions { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; min-height: 46px; padding: 0 22px; border-radius: 999px; text-decoration: none; font-size: 14px; letter-spacing: .02em; border: 1px solid rgba(243,239,231,.14); color: var(--ink); transition: border-color .2s ease, color .2s ease, background .2s ease; }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #0B0D10; }
+    .btn.primary:hover { background: #E6D2B0; color: #0B0D10; }
+
+    footer { position: relative; z-index: 1; padding: 0 24px 32px; text-align: center; font-size: 11px; color: #4C525A; letter-spacing: .04em; }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+    .in.reveal, .in .reveal { opacity: 1; transform: none; }
+    .tile.reveal { transition: opacity .9s var(--ease), transform .5s var(--ease), border-color .3s ease, background .3s ease; }
+    .tile.reveal.in:hover { transform: translateY(-4px); }
+
+    @media (hover: none) { .hover-hint { display: none; } }
+    @media (max-width: 900px) {
+      .route, .also { grid-template-columns: minmax(0, 1fr); }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: minmax(0, 1fr); }
+      .tile { min-height: 220px; }
+      .also li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .tile svg * { stroke-dashoffset: 0; transition: none; }
+      .tile:hover svg * { animation: none; }
+      .langs .meter i { transition: none; }
+    }
+  </style>
+</head>
+<body data-current="pe">
+  <canvas id="network-bg" data-rgb="212, 180, 131" aria-hidden="true"></canvas>
+
+  <div class="page">
+    <!-- Header: the name opens the dial menu (assets/menu.js) -->
+    <header class="site-header">
+      <button type="button" id="menu-open" class="menu-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-overlay">
+        <svg class="menu-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" stroke-dasharray="12.1 2.04" transform="rotate(-45 12 12)"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor"/>
+        </svg>
+        <span>Oben Celik</span>
+        <span class="menu-label">Menu</span>
+      </button>
+      <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+    </header>
+
+    <section class="wrap hero">
+      <p class="eyebrow">Personal</p>
+      <h1>Off the <em>clock.</em></h1>
+      <p>The person behind the product work: where I come from, the languages I live in, and what I do when the laptop is closed.</p>
+
+      <div class="route reveal" id="route">
+        <svg viewBox="0 0 600 230" role="img" aria-label="A route from Istanbul to Lisbon">
+          <path id="route-path" class="arc" d="M520 150 Q300 -20 80 170" />
+          <circle class="halo" cx="520" cy="150" r="14" />
+          <circle class="city" cx="520" cy="150" r="4" />
+          <circle class="halo" cx="80" cy="170" r="14" />
+          <circle class="city" cx="80" cy="170" r="4" />
+          <text x="520" y="190" text-anchor="middle">ISTANBUL</text>
+          <text x="520" y="208" text-anchor="middle" class="sub">WHERE I GREW UP</text>
+          <text x="80" y="210" text-anchor="middle">LISBON</text>
+          <text x="80" y="228" text-anchor="middle" class="sub">HOME NOW</text>
+          <circle class="traveller" r="4.5" id="traveller">
+            <animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .25 1">
+              <mpath href="#route-path" />
+            </animateMotion>
+          </circle>
+        </svg>
+        <div>
+          <h2>From Istanbul to Lisbon.</h2>
+          <p>I grew up in Turkey and now call Lisbon home. I work in Turkish and English, and I'm learning Portuguese.</p>
+          <ul class="langs">
+            <li>Turkish <span class="meter"><i style="--w: 100%"></i></span><small>Native</small></li>
+            <li>English <span class="meter"><i style="--w: 80%"></i></span><small>Full professional</small></li>
+            <li>Portuguese <span class="meter"><i style="--w: 20%"></i></span><small>Elementary, in progress</small></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap hobbies">
+      <div class="hobbies-head reveal">
+        <h2>What I do for fun.</h2>
+        <p class="hover-hint">Hover over a card to redraw its icon.</p>
+      </div>
+      <div class="grid" id="grid">
+        <article class="tile">
+          <span class="tag">Eye</span>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="15" width="38" height="25" rx="5" pathLength="1"/><path d="M16 15l3-6h10l3 6" pathLength="1"/><circle cx="24" cy="27.5" r="7.5" pathLength="1"/><circle cx="24" cy="27.5" r="3" pathLength="1"/><path d="M36 20h2" pathLength="1"/></svg>
+          <div><h3>Photography</h3><p>Learning to notice light, and to wait for it.</p></div>
+        </article>
+        <article class="tile">
+          <span class="tag">Sea</span>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 30c4-11 15-17 24-12-7 1-10 7-6 12 5 6 14 2 17-5" pathLength="1"/><path d="M4 38c4-3 8-3 12 0s8 3 12 0 8-3 12 0" pathLength="1"/></svg>
+          <div><h3>Surfing</h3><p>Reading the sea, and getting humbled by it.</p></div>
+        </article>
+        <article class="tile">
+          <span class="tag">Road</span>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="10" cy="33" r="7" pathLength="1"/><circle cx="38" cy="33" r="7" pathLength="1"/><path d="M10 33l7-9h12l9 9" pathLength="1"/><path d="M15 24c2-5 9-7 15-4l3 4" pathLength="1"/><path d="M31 20l4-7h4" pathLength="1"/><rect x="19" y="26" width="9" height="6" rx="1.5" pathLength="1"/><path d="M21 34h12" pathLength="1"/></svg>
+          <div><h3>Motorcycle</h3><p>Two wheels, an open road and a clear head.</p></div>
+        </article>
+        <article class="tile">
+          <span class="tag">Court</span>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="4" width="20" height="25" rx="10" pathLength="1"/><path d="M19 29v13" pathLength="1"/><path d="M15 12h0M19 12h0M23 12h0M15 17h0M19 17h0M23 17h0M15 22h0M19 22h0M23 22h0" pathLength="1"/><circle cx="37" cy="38" r="4.5" pathLength="1"/></svg>
+          <div><h3>Padel</h3><p>Fast rallies and good company.</p></div>
+        </article>
+        <article class="tile">
+          <span class="tag">Kitchen</span>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="30" r="12" pathLength="1"/><path d="M32 30h12" pathLength="1"/><path d="M15 6c3 3 0 6 0 9M21 4c3 3 0 6 0 9M27 6c3 3 0 6 0 9" pathLength="1"/></svg>
+          <div><h3>Cooking</h3><p>From the dishes I grew up with to whatever is in season.</p></div>
+        </article>
+        <article class="tile">
+          <span class="tag">Ritual</span>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 18h23v12a8 8 0 0 1-8 8h-7a8 8 0 0 1-8-8z" pathLength="1"/><path d="M32 21h3a4 4 0 0 1 0 8h-3" pathLength="1"/><path d="M5 43h30" pathLength="1"/><path d="M16 5c3 3 0 6 0 9M23 5c3 3 0 6 0 9" pathLength="1"/></svg>
+          <div><h3>Coffee</h3><p>Brewing it properly is a small daily ritual.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap also">
+      <div class="reveal">
+        <p class="eyebrow">Also</p>
+        <h2>The nerdier side.</h2>
+      </div>
+      <div class="reveal">
+        <ul>
+          <li><b>Tinkering</b><span>Home automation, self-hosting, and a long-standing interest in cybersecurity and networking.</span></li>
+          <li><b>Investing</b><span>Following markets and learning how they move.</span></li>
+          <li><b>Football</b><span>On match days, a Fenerbah&ccedil;e fan.</span></li>
+        </ul>
+        <div class="actions">
+          <a class="btn primary" href="career.html">Read my career story</a>
+          <a class="btn" href="mailto:isaobencelik@gmail.com">Say hello</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>&copy; 2026 Oben Celik</footer>
+  </div>
+
+  <script src="assets/network-bg.js"></script>
+  <script src="assets/menu.js"></script>
+  <script src="assets/dial.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var STILL = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (STILL) { var t = document.getElementById('traveller'); if (t) t.remove(); }
+
+    // Reveal blocks and draw icons as they come into view; cards stagger in
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in'); io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+    document.querySelectorAll('.tile').forEach(function (tile, i) {
+      tile.classList.add('reveal');
+      tile.style.transitionDelay = (i % 3) * 90 + 'ms';
+      io.observe(tile);
+      // gold light follows the pointer across the card
+      tile.addEventListener('pointermove', function (ev) {
+        var r = tile.getBoundingClientRect();
+        tile.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+        tile.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+      });
+      tile.addEventListener('transitionend', function once(ev) {
+        if (ev.propertyName === 'transform') { tile.style.transitionDelay = ''; tile.removeEventListener('transitionend', once); }
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
