@@ -38,6 +38,7 @@
   function isOpen() { return overlay.classList.contains('open'); }
   function open() {
     lastFocus = document.activeElement;
+    if (window.dialReset) window.dialReset(); // open at "you are here"
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     if (opener) opener.setAttribute('aria-expanded', 'true');
@@ -62,4 +63,31 @@
     var back = document.getElementById('core-back');
     if (back && back.hidden) close();
   });
+
+  // Breadcrumb trail in the page header: Home / Projects / My apps / Job Analyser
+  function renderCrumbs() {
+    var box = document.getElementById('crumbs');
+    if (!box || !window.dialCrumbs) return;
+    var trail = [{ name: 'Home', href: 'index.html' }].concat(window.dialCrumbs());
+    var here = location.pathname.split('/').pop() + location.hash;
+    box.innerHTML = '';
+    var ol = document.createElement('ol');
+    trail.forEach(function (c, i) {
+      var li = document.createElement('li');
+      var last = i === trail.length - 1;
+      if (c.href && !last && c.href !== here) {
+        var a = document.createElement('a'); a.href = c.href; a.textContent = c.name; li.appendChild(a);
+      } else {
+        var span = document.createElement('span'); span.textContent = c.name;
+        if (last) span.setAttribute('aria-current', 'page');
+        li.appendChild(span);
+      }
+      ol.appendChild(li);
+    });
+    box.appendChild(ol);
+  }
+  window.addEventListener('load', renderCrumbs);
+  window.addEventListener('hashchange', renderCrumbs);
+  // a menu link to a section of this same page: close the menu so the section is visible
+  window.addEventListener('hashchange', function () { if (isOpen()) close(); });
 })();

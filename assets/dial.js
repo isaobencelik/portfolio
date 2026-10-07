@@ -64,6 +64,7 @@
   var TURN_MS = 650;  // how long to wait for the turn before following a link
   var turn = 0;       // current rotation of the dial, in degrees
   var level = 'closed'; // closed | projects | cases | apps | contact
+  var CURRENT = null;   // id of the wedge for the page you're on (null on the homepage)
   var active = null;
 
   // ---------- Geometry ----------
@@ -240,7 +241,13 @@
 
     var cur = active && visible[active] ? findDef(active) : null;
     var c;
-    if (cur && active !== 'pr' && active !== 'ct') c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
+    var here = CURRENT && level === levelFor(CURRENT) ? findDef(CURRENT) : null;
+    if (here && !(cur && active !== 'pr' && active !== 'ct')) {
+      c = { dot: ACCENT, status: 'You are here', title: here.name,
+            text: crumbsFor(CURRENT).length > 1 ? crumbsFor(CURRENT).map(function (x) { return x.name; }).join('  /  ') : here.text,
+            meta: here.meta };
+    }
+    else if (cur && active !== 'pr' && active !== 'ct') c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
     else if (contactOpen) c = { dot: '#6EE7A8', status: 'Contact', title: 'Get in touch', text: 'LinkedIn or email, whichever you prefer.', meta: 'Choose one' };
     else if (cur) c = { dot: ACCENT, status: 'Section', title: cur.name, text: cur.text, meta: cur.meta };
     else if (cat) { var h = cat === 'cases' ? HALVES.hc : HALVES.ha; c = { dot: DOT[h.st], status: 'Projects', title: h.name, text: h.text, meta: h.meta }; }
@@ -291,7 +298,7 @@
     var r0 = o.shown ? o.r0 : o.hideR, r1 = o.shown ? o.r1 : o.hideR;
     var mid = (a0 + a1) / 2;
     var l = pt(mid, o.shown ? o.rl : o.hideR);
-    var hov = active === id, sel = !!o.sel;
+    var hov = active === id, sel = !!o.sel || (id === CURRENT && o.shown);
 
     var m = ((mid % 360) + 360) % 360;
 
@@ -331,6 +338,50 @@
     }
   }
 
+  // ---------- Where am I? (breadcrumbs) ----------
+  // A page says which wedge it is with data-current on <body> (e.g. "ha" for My apps);
+  // a #hash that matches a wedge's link (e.g. apps.html#job-analyser) narrows it to that item.
+  function kindOf(id) { for (var i = 0; i < ORDER.length; i++) if (ORDER[i][0] === id) return ORDER[i][2]; return null; }
+  function levelFor(id) {
+    var k = kindOf(id);
+    if (k === 'item:cases' || id === 'hc') return 'cases';
+    if (k === 'item:apps' || id === 'ha') return 'apps';
+    if (k === 'contact') return 'contact';
+    return 'closed';
+  }
+  function crumbsFor(id) {
+    var k = kindOf(id), chain = [];
+    if (k === 'item:cases') chain = ['pr', 'hc', id];
+    else if (k === 'item:apps') chain = ['pr', 'ha', id];
+    else if (k === 'half') chain = ['pr', id];
+    else if (k === 'contact') chain = ['ct', id];
+    else if (k) chain = [id];
+    var pages = { hc: 'case-studies.html', ha: 'apps.html' };
+    return chain.map(function (c) { var d = findDef(c); return { id: c, name: d.name, href: pages[c] || d.href || null }; });
+  }
+  function currentFromPage() {
+    var file = (location.pathname.split('/').pop() || 'index.html') + location.hash;
+    for (var i = 0; i < ORDER.length; i++) {
+      var h = ORDER[i][1].href;
+      if (h && h.indexOf('#') > 0 && h === file) return ORDER[i][0];
+    }
+    return document.body.getAttribute('data-current') || null;
+  }
+  // Put the dial back at "you are here": that level open, that wedge turned to the top, no animation.
+  function resetToCurrent() {
+    CURRENT = currentFromPage();
+    level = CURRENT ? levelFor(CURRENT) : 'closed';
+    active = null;
+    rotor.style.transition = 'none';
+    turnTo(CURRENT ? midOf(findDef(CURRENT)) : 0);
+    void rotor.offsetWidth; // apply the jump before turning transitions back on
+    rotor.style.transition = '';
+    render();
+  }
+  window.dialReset = resetToCurrent;
+  window.dialCrumbs = function () { var id = currentFromPage(); return id ? crumbsFor(id) : []; };
+  window.addEventListener('hashchange', resetToCurrent);
+
   window.addEventListener('resize', render);
-  render();
+  resetToCurrent();
 })();

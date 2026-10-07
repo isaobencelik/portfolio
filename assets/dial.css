@@ -106,3 +106,11 @@
 @media (prefers-reduced-motion: reduce) {
   .menu-overlay, .menu-overlay .dial, .menu-trigger .menu-icon { transition: none; }
 }
+
+/* Breadcrumbs in the header of every other page */
+.crumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; margin: 0; padding: 0; list-style: none;
+  font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6E747D; }
+.crumbs li + li::before { content: '/'; margin: 0 10px; color: #3A4048; }
+.crumbs a { color: #8A8F98; text-decoration: none; padding: 6px 0; }
+.crumbs a:hover { color: #D4B483; }
+.crumbs [aria-current] { color: #E6E1D8; }

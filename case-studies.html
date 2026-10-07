@@ -48,14 +48,14 @@
       z-index: 1;
     }
 
-    article:target { border-color: rgba(110, 231, 168, 0.6); }
+    article:target { border-color: rgba(212, 180, 131, 0.6); }
   </style>
 </head>
-<body class="bg-[#06080B] text-slate-200 antialiased selection:bg-gold-500 selection:text-white">
+<body data-current="hc" class="bg-[#06080B] text-slate-200 antialiased selection:bg-gold-500 selection:text-white">
   <canvas id="network-bg" data-rgb="212, 180, 131" aria-hidden="true"></canvas>
 
   <!-- Header: the name opens the dial menu (assets/menu.js) -->
-  <header class="max-w-5xl mx-auto px-6 py-6 flex items-center">
+  <header class="max-w-5xl mx-auto px-6 py-6 flex flex-wrap gap-x-8 gap-y-2 items-center justify-between">
     <button type="button" id="menu-open" class="menu-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-overlay">
       <svg class="menu-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
         <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" stroke-dasharray="12.1 2.04" transform="rotate(-45 12 12)"/>
@@ -64,6 +64,7 @@
       <span>Oben Celik</span>
       <span class="menu-label">Menu</span>
     </button>
+    <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
   </header>
 
   <!-- Case Studies Section -->
