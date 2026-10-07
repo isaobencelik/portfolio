@@ -153,8 +153,7 @@
     els[id] = { el: el, edge: edge, edgeIn: edgeIn, sweep: sweep, path: path, text: text, geo: null };
   });
 
-  dial.addEventListener('mouseenter', function () { inDial = true; updatePaper(); });
-  dial.addEventListener('mouseleave', function () { inDial = false; setActive(null); updatePaper(); });
+  dial.addEventListener('mouseleave', function () { setActive(null); });
   document.getElementById('core-back').addEventListener('click', back);
   // "Show me everything": opens the overview (every section's sub-options at once)
   var allBtn = document.createElement('button');
@@ -500,14 +499,15 @@
   var DEMO_AT = 1500, DEMO_STEP = 180, DEMO_HOLD = 250, SPIN_MS = 900; // ms
 
   // ---------- CV paper (homepage only) ----------
-  // Opening CV makes the background network fly into a sheet of paper (network-bg.js), then the
-  // real first page of the CV fades in on it, readable; clicking it opens the PDF. It stays while the
-  // cursor is on the dial or the paper, and the nodes scatter back when it goes.
+  // Opening CV (clicked, or rested on for the full second) makes the background network fly into a
+  // sheet of paper (network-bg.js), then the real first page of the CV fades in on it; clicking it
+  // opens the PDF. It stays for as long as CV is open, whatever the cursor hovers: only a click
+  // takes it away (Close, CV again, another section, or anywhere outside the dial and the paper),
+  // and then the nodes blow apart across the screen.
   // CV_IMAGE is page 1 of Oben_Celik_CV.pdf exported as an image: re-export it whenever the CV changes.
   var CV_IMAGE = 'assets/cv-page.jpg';
   var REVEAL_MS = 1500; // the nodes gather first (network-bg.js, ~1.45s), then the page fades in
-  var paper = null, paperImg = null, paperShown = false, paperHide = null, paperReveal = null;
-  var inDial = false, onPaper = false;
+  var paper = null, paperImg = null, paperShown = false, paperReveal = null;
   if (!dial.closest('.menu-overlay')) {
     paper = document.createElement('a');
     paper.className = 'cv-paper';
@@ -517,29 +517,20 @@
     paperImg.alt = ''; paperImg.decoding = 'async';
     paper.appendChild(paperImg);
     document.body.appendChild(paper);
-    paper.addEventListener('mouseenter', function () { onPaper = true; updatePaper(); });
-    paper.addEventListener('mouseleave', function () { onPaper = false; updatePaper(); });
+    // a click anywhere outside the dial and the paper closes CV, which takes the paper away
+    document.addEventListener('click', function (ev) {
+      if (!paperShown || dial.contains(ev.target) || paper.contains(ev.target)) return;
+      turnTo(0); go('closed');
+    });
     // fetch the page once everything else has loaded, so it's ready on the first hover
     window.addEventListener('load', function () { setTimeout(function () { if (!paperImg.src) paperImg.src = CV_IMAGE; }, 2500); });
     window.addEventListener('resize', function () { if (paperShown) { hidePaper(); updatePaper(); } });
   }
-  // Only once CV is actually open (clicked, or rested on for the full second): a mouse that just
-  // pauses on CV on its way to something else must not set the nodes moving.
-  // And only while the cursor is on CV, View, Download, the centre of the dial, or the paper:
-  // moving onto any other section blows it away straight off.
-  var PAPER_KEEP = { cv: 1, vw: 1, dl: 1 };
-  function paperWanted() {
-    if (demoRunning || level !== 'cv') return false;
-    return onPaper || TOUCH || (inDial && (active === null || !!PAPER_KEEP[active]));
-  }
   function updatePaper() {
     if (!paper) return;
-    if (paperWanted()) {
-      clearTimeout(paperHide); paperHide = null;
-      if (!paperShown) showPaper();
-    } else if (paperShown && !paperHide) {
-      paperHide = setTimeout(hidePaper, 180); // just long enough to cross from the dial onto the paper
-    }
+    var want = !demoRunning && level === 'cv';
+    if (want && !paperShown) showPaper();
+    else if (!want && paperShown) hidePaper();
     updateIcon();
   }
   // Hovering View or Download while the paper is up: its text-line nodes rise out of the page and
@@ -576,7 +567,7 @@
     paperReveal = setTimeout(function () { paper.classList.add('show'); }, STILL ? 0 : REVEAL_MS);
   }
   function hidePaper() {
-    paperHide = null; paperShown = false; onPaper = false;
+    paperShown = false;
     clearTimeout(paperReveal);
     paper.classList.remove('show', 'armed');
     iconKind = null;
