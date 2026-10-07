@@ -201,10 +201,25 @@
     backBtn.hidden = !open;
     backBtn.textContent = cat ? 'Back' : 'Close';
 
+    fitCore(g.disk * 2 / 100 * W);
+
     document.getElementById('hint').textContent = cat ? 'Choose one, or switch sides'
       : contactOpen ? 'LinkedIn or email'
       : open ? 'Case studies on the left · My apps on the right'
       : (TOUCH ? 'Tap a section to explore' : 'Hover to explore');
+  }
+
+  // Size the centre content to the circle's final diameter (not mid-animation), then shrink until it fits.
+  function fitCore(D) {
+    var inner = document.getElementById('core-inner');
+    var s = Math.max(0.55, Math.min(1, D / 300));
+    inner.style.width = Math.round(D * 0.7) + 'px';
+    inner.style.setProperty('--s', s.toFixed(3));
+    var limit = D * 0.72, guard = 0;
+    while (inner.offsetHeight > limit && s > 0.5 && guard++ < 12) {
+      s *= 0.93;
+      inner.style.setProperty('--s', s.toFixed(3));
+    }
   }
 
   function findDef(id) {
