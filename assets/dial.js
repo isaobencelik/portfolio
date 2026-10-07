@@ -16,7 +16,7 @@
   // a: [startDeg, endDeg], clockwise from 12 o'clock.
   var MAIN = {
     pr: { name: 'Projects', st: 'info', a: [-60, 60], toggle: 'projects', text: 'Case studies of my product work, and the apps I build.', meta: 'Select to open' },
-    ab: { name: 'About me', st: 'info', a: [60, 140], href: 'about.html', text: 'Product Manager based in Lisbon.', meta: 'MSc in progress · SAFe POPM 6.0' },
+    ab: { name: 'About me', st: 'info', a: [60, 140], toggle: 'about', text: 'Product Manager based in Lisbon.', meta: 'MSc in progress · SAFe POPM 6.0' },
     cv: { name: 'CV', st: 'info', a: [140, 220], toggle: 'cv', text: 'My CV, on one page.', meta: 'Select to open' },
     ct: { name: 'Contact', st: 'info', a: [220, 300], toggle: 'contact', text: 'LinkedIn or email, whichever you prefer.', meta: 'Select to open' }
   };
@@ -35,6 +35,10 @@
       a1: { name: 'Job Analyser', st: 'live', a: [0, 60], href: 'apps.html#job-analyser', text: 'Searches LinkedIn jobs and uses AI to break down each role, its requirements and salary.', meta: 'Python · Flask · Gemini · Cloud Run' },
       a2: { name: 'Coming soon', st: 'soon', a: [60, 120], href: 'apps.html', text: 'The next tool in the pipeline, including AI agents.', meta: 'In the works' }
     }
+  };
+  var ABOUT = {
+    ca: { name: 'Career', st: 'info', a: [60, 100], href: 'about.html#career', text: 'From data centres to product management.', meta: 'Work · education · certification' },
+    pe: { name: 'Personal', st: 'info', a: [100, 140], href: 'about.html#personal', text: 'A bit about me outside work.', meta: 'Lisbon · languages · interests' }
   };
   var CVSUB = {
     vw: { name: 'View', st: 'info', a: [140, 180], href: 'Oben_Celik_CV.pdf', external: true, text: 'Open the PDF in a new tab.', meta: 'PDF · one page' },
@@ -58,7 +62,7 @@
     ['pr', MAIN.pr, 'main'], ['hc', HALVES.hc, 'half'],
     ['c1', ITEMS.cases.c1, 'item:cases'], ['c2', ITEMS.cases.c2, 'item:cases'], ['c3', ITEMS.cases.c3, 'item:cases'], ['c4', ITEMS.cases.c4, 'item:cases'],
     ['ha', HALVES.ha, 'half'], ['a1', ITEMS.apps.a1, 'item:apps'], ['a2', ITEMS.apps.a2, 'item:apps'],
-    ['ab', MAIN.ab, 'main'],
+    ['ab', MAIN.ab, 'main'], ['ca', ABOUT.ca, 'sub:about'], ['pe', ABOUT.pe, 'sub:about'],
     ['cv', MAIN.cv, 'main'], ['vw', CVSUB.vw, 'sub:cv'], ['dl', CVSUB.dl, 'sub:cv'],
     ['ct', MAIN.ct, 'main'], ['li', CONTACT.li, 'sub:contact'], ['em', CONTACT.em, 'sub:contact']
   ];
@@ -194,7 +198,8 @@
     var projOpen = level === 'projects' || !!cat;
     var contactOpen = level === 'contact';
     var cvOpen = level === 'cv';
-    var subOpen = contactOpen || cvOpen;
+    var aboutOpen = level === 'about';
+    var subOpen = contactOpen || cvOpen || aboutOpen;
     var open = level !== 'closed';
 
     // Rings, from the inside out. Every level keeps the rings below it visible:
@@ -223,7 +228,7 @@
     ORDER.forEach(function (row) {
       var id = row[0], d = row[1], kind = row[2], o;
       if (kind === 'main') {
-        var openHere = (id === 'pr' && projOpen) || (id === 'ct' && contactOpen) || (id === 'cv' && cvOpen);
+        var openHere = (id === 'pr' && projOpen) || (!!d.toggle && d.toggle !== 'projects' && level === d.toggle);
         o = Object.assign({ shown: true, hideR: G.r1[1], gap: 1.1, sel: openHere }, band(G.r1), size);
         if (d.toggle) els[id].el.setAttribute('aria-expanded', String(openHere));
       } else if (kind === 'half') {
@@ -249,13 +254,14 @@
     var cur = active && visible[active] ? findDef(active) : null;
     var c;
     var here = CURRENT && level === levelFor(CURRENT) ? findDef(CURRENT) : null;
-    if (here && !(cur && active !== 'pr' && active !== 'ct' && active !== 'cv')) {
+    if (here && !(cur && !cur.toggle)) {
       c = { dot: ACCENT, status: 'You are here', title: here.name,
             text: crumbsFor(CURRENT).length > 1 ? crumbsFor(CURRENT).map(function (x) { return x.name; }).join('  /  ') : here.text,
             meta: here.meta };
     }
-    else if (cur && active !== 'pr' && active !== 'ct' && active !== 'cv') c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
+    else if (cur && !cur.toggle) c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
     else if (contactOpen) c = { dot: '#6EE7A8', status: 'Contact', title: 'Get in touch', text: 'LinkedIn or email, whichever you prefer.', meta: 'Choose one' };
+    else if (aboutOpen) c = { dot: ACCENT, status: 'About me', title: 'About me', text: 'My career so far, and a bit about me outside work.', meta: 'Choose one' };
     else if (cvOpen) c = { dot: ACCENT, status: 'CV', title: 'My CV', text: 'View it in your browser, or download the PDF.', meta: 'Choose one' };
     else if (cur) c = { dot: ACCENT, status: 'Section', title: cur.name, text: cur.text, meta: cur.meta };
     else if (cat) { var h = cat === 'cases' ? HALVES.hc : HALVES.ha; c = { dot: DOT[h.st], status: 'Projects', title: h.name, text: h.text, meta: h.meta }; }
@@ -279,6 +285,7 @@
     if (hintEl) hintEl.textContent = cat ? 'Choose one, or switch sides'
       : contactOpen ? 'LinkedIn or email'
       : cvOpen ? 'View or download'
+      : aboutOpen ? 'Career or personal'
       : open ? 'Case studies on the left · My apps on the right'
       : (TOUCH ? 'Tap a section to explore' : 'Hover to explore');
   }
@@ -356,6 +363,8 @@
     if (k === 'item:cases' || id === 'hc') return 'cases';
     if (k === 'item:apps' || id === 'ha') return 'apps';
     if (k && k.indexOf('sub:') === 0) return k.slice(4);
+    var d = findDef(id);
+    if (d && d.toggle && d.toggle !== 'projects') return d.toggle; // e.g. the About page opens the About ring
     return 'closed';
   }
   function crumbsFor(id) {
@@ -363,9 +372,9 @@
     if (k === 'item:cases') chain = ['pr', 'hc', id];
     else if (k === 'item:apps') chain = ['pr', 'ha', id];
     else if (k === 'half') chain = ['pr', id];
-    else if (k && k.indexOf('sub:') === 0) chain = [{ contact: 'ct', cv: 'cv' }[k.slice(4)], id];
+    else if (k && k.indexOf('sub:') === 0) chain = [{ contact: 'ct', cv: 'cv', about: 'ab' }[k.slice(4)], id];
     else if (k) chain = [id];
-    var pages = { hc: 'case-studies.html', ha: 'apps.html' };
+    var pages = { hc: 'case-studies.html', ha: 'apps.html', ab: 'about.html' };
     return chain.map(function (c) { var d = findDef(c); return { id: c, name: d.name, href: pages[c] || d.href || null }; });
   }
   function currentFromPage() {
