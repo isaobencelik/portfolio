@@ -41,6 +41,14 @@
     em: { name: 'Email', st: 'info', a: [260, 300], href: 'mailto:isaobencelik@gmail.com', text: 'Write to me directly.', meta: 'isaobencelik@gmail.com' }
   };
 
+  // Outer-ring items fan out around their category's centre, each `w` degrees wide.
+  function fan(list, centre, w) {
+    var keys = Object.keys(list), start = centre - keys.length * w / 2;
+    keys.forEach(function (k, i) { list[k].a = [start + i * w, start + (i + 1) * w]; });
+  }
+  fan(ITEMS.cases, -30, 44);
+  fan(ITEMS.apps, 30, 56);
+
   // DOM order = tab order
   var ORDER = [
     ['pr', MAIN.pr, 'main'], ['hc', HALVES.hc, 'half'],
@@ -171,18 +179,25 @@
     var contactOpen = level === 'contact';
     var open = level !== 'closed';
 
-    var g = cat
-      ? { in0: 24.5, in1: 34.5, inL: 29.6, disk: 20, ticks: 23.8 }
-      : { in0: 31.5, in1: 49.5, inL: 40.5, disk: 26, ticks: 30.8 };
-    var OUT0 = 35.5, OUT1 = 49.5, OUTL = 42.5;
+    // Rings, from the inside out. Every level keeps the rings below it visible:
+    //   ring 1: Projects · About me · CV · Contact   (always)
+    //   ring 2: Case studies | My apps, or LinkedIn | Email
+    //   ring 3: the items of the chosen category
+    var depth = cat ? 2 : (projOpen || contactOpen ? 1 : 0);
+    var G = [
+      { disk: 26, r1: [31.5, 49.5] },
+      { disk: 22, r1: [23.5, 35], r2: [36, 49.5] },
+      { disk: 17.5, r1: [19, 28], r2: [29, 38.5], r3: [39.5, 49.5] }
+    ][depth];
+    var g = { disk: G.disk, ticks: G.r1[0] - 0.6 };
+    var band = function (r) { return { r0: r[0], r1: r[1], rl: (r[0] + r[1]) / 2 }; };
+    var r2Hide = G.r2 ? G.r2[0] : G.r1[1];
+    var r3Hide = G.r3 ? G.r3[0] : (G.r2 ? G.r2[1] : G.r1[1]);
 
     // label sizes in px (shrunk further per label if the text is longer than its arc)
     var W = dial.clientWidth || 600;
     var px = function (lo, hi, k) { return Math.max(lo, Math.min(hi, W * k)); };
-    var big = { fs: px(10, 13, 0.021) };
-    var split = { fs: px(9.5, 12, 0.019) };
-    var small = { fs: px(9, 11, 0.017) };
-    var outer = { fs: px(9.5, 12, 0.019) };
+    var size = [{ fs: px(10, 13, 0.021) }, { fs: px(9.5, 12, 0.019) }, { fs: px(9, 11, 0.017) }][depth];
     unit = W / 100; // px per viewBox unit
 
     var visible = {};
@@ -190,16 +205,16 @@
     ORDER.forEach(function (row) {
       var id = row[0], d = row[1], kind = row[2], o;
       if (kind === 'main') {
-        var hide = (id === 'pr' && projOpen) || (id === 'ct' && contactOpen);
-        o = Object.assign({ shown: !hide, r0: g.in0, r1: g.in1, rl: g.inL, hideR: g.in1, gap: 1.1 }, cat ? small : big);
-        if (d.toggle) els[id].el.setAttribute('aria-expanded', String(d.toggle === 'projects' ? projOpen : contactOpen));
+        var openHere = (id === 'pr' && projOpen) || (id === 'ct' && contactOpen);
+        o = Object.assign({ shown: true, hideR: G.r1[1], gap: 1.1, sel: openHere }, band(G.r1), size);
+        if (d.toggle) els[id].el.setAttribute('aria-expanded', String(openHere));
       } else if (kind === 'half') {
-        o = Object.assign({ shown: projOpen, r0: g.in0, r1: g.in1, rl: g.inL, hideR: g.in0, gap: 1.1, sel: cat === d.cat }, cat ? small : split);
+        o = Object.assign({ shown: projOpen, hideR: r2Hide, gap: 1.1, sel: cat === d.cat }, G.r2 ? band(G.r2) : {}, size);
         els[id].el.setAttribute('aria-expanded', String(cat === d.cat));
       } else if (kind === 'contact') {
-        o = Object.assign({ shown: contactOpen, r0: g.in0, r1: g.in1, rl: g.inL, hideR: g.in0, gap: 1.1 }, split);
+        o = Object.assign({ shown: contactOpen, hideR: r2Hide, gap: 1.1 }, G.r2 ? band(G.r2) : {}, size);
       } else {
-        o = Object.assign({ shown: cat === kind.split(':')[1], r0: OUT0, r1: OUT1, rl: OUTL, hideR: OUT0, gap: 0.8 }, outer);
+        o = Object.assign({ shown: cat === kind.split(':')[1], hideR: r3Hide, gap: 0.8 }, G.r3 ? band(G.r3) : {}, size);
       }
       visible[id] = o.shown;
       paint(id, d, o);
