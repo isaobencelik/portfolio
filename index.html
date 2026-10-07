@@ -53,6 +53,10 @@
     .brand { animation: drop-in .8s var(--ease) both; }
     .hint { animation: fade-in .6s ease 1.1s both; }
     @media (prefers-reduced-motion: reduce) { .brand, .hint { animation: none; } }
+    /* the name is drawn on a canvas that breaks into gold dots near the cursor
+       (assets/name-particles.js): the real text stays for clicks and screen readers, just invisible */
+    .brand.as-dots { color: transparent; animation: none; }
+    .name-dots { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; }
 
     main {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -102,5 +106,6 @@
 
   <script src="assets/network-bg.js"></script>
   <script src="assets/dial.js"></script>
+  <script src="assets/name-particles.js"></script>
 </body>
 </html>
