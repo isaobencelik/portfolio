@@ -7,7 +7,7 @@
   <meta name="description" content="Oben Celik, Product Manager in Lisbon. Case studies of my work, and the apps I shipped." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #06080B;
@@ -84,7 +84,11 @@
     .wedge:focus-visible { background-color: rgba(255,255,255,0.1); }
     .wedge .edge { position: absolute; inset: 0; background: var(--accent); opacity: 0; transition: clip-path .6s var(--ease), opacity .25s ease; }
     .labels { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; transition: opacity .25s ease; }
-    .labels text { font-family: 'Geist', 'Helvetica Neue', sans-serif; font-weight: 400; text-anchor: middle; dominant-baseline: central; transition: fill .25s ease; }
+    .labels text { font-family: 'Geist', 'Helvetica Neue', sans-serif; font-weight: 500; text-anchor: middle; dominant-baseline: central; transition: fill .25s ease; }
+    /* label looks: data-label on #dial */
+    .labels text { paint-order: stroke; stroke: rgba(6,8,11,0.55); stroke-width: 0.12px; }
+    #dial[data-label="gold"] .labels text { font-weight: 600; }
+    #dial[data-label="serif"] .labels text { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .morph { transition: left .6s var(--ease), top .6s var(--ease), width .6s var(--ease), height .6s var(--ease), border-color .25s ease; }
 

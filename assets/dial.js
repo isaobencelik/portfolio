@@ -88,6 +88,16 @@
   labelLayer.setAttribute('class', 'labels');
   labelLayer.setAttribute('aria-hidden', 'true');
   var defs = document.createElementNS(SVGNS, 'defs');
+  defs.innerHTML = '<linearGradient id="lbl-gold" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#F7E8C8"/><stop offset="0.55" stop-color="#D9B98A"/><stop offset="1" stop-color="#A9834E"/></linearGradient>';
+
+  // Label look, set with data-label on #dial: "bezel" (default), "gold" or "serif"
+  var LABEL_STYLES = {
+    bezel: { size: 1.25, track: 0.22, base: '#F3EFE7', on: ACCENT },
+    gold:  { size: 1.25, track: 0.22, base: 'url(#lbl-gold)', on: '#FFF6E4' },
+    serif: { size: 1.5,  track: 0.14, base: '#F3EFE7', on: ACCENT }
+  };
+  function labelStyle() { return LABEL_STYLES[dial.getAttribute('data-label')] || LABEL_STYLES.bezel; }
   labelLayer.appendChild(defs);
   // Wedges and their labels sit in a rotor that turns as one piece; the centre circle stays still.
   var rotor = document.createElement('div');
@@ -303,18 +313,19 @@
     var p0 = pt(bottom ? la1 : la0, r), p1 = pt(bottom ? la0 : la1, r);
     var large = (la1 - la0) > 180 ? 1 : 0;
     e.path.setAttribute('d', 'M ' + p0.x.toFixed(3) + ' ' + p0.y.toFixed(3) + ' A ' + r + ' ' + r + ' 0 ' + large + ' ' + (bottom ? 0 : 1) + ' ' + p1.x.toFixed(3) + ' ' + p1.y.toFixed(3));
-    var fsU = o.fs / unit;
+    var LS = labelStyle();
+    var fsU = o.fs * LS.size / unit;
     e.text.style.fontSize = fsU + 'px';
-    e.text.style.letterSpacing = (fsU * 0.18) + 'px';
+    e.text.style.letterSpacing = (fsU * LS.track) + 'px';
     e.text.style.opacity = o.shown ? 1 : 0;
-    e.text.style.fill = (hov || sel) ? ACCENT : (d.st === 'soon' ? '#5A6069' : '#E6E1D8');
+    e.text.style.fill = (hov || sel) ? LS.on : (d.st === 'soon' ? '#6E747D' : LS.base);
     if (o.shown) {
       var avail = (r * Math.PI * (la1 - la0) / 180) * 0.9;
       var len = e.text.getComputedTextLength();
       if (len > avail && len > 0) {
         var k = avail / len;
         e.text.style.fontSize = (fsU * k) + 'px';
-        e.text.style.letterSpacing = (fsU * k * 0.18) + 'px';
+        e.text.style.letterSpacing = (fsU * k * LS.track) + 'px';
       }
     }
   }
