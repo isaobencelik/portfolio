@@ -260,7 +260,8 @@
 
     fitCore(g.disk * 2 / 100 * W);
 
-    document.getElementById('hint').textContent = cat ? 'Choose one, or switch sides'
+    var hintEl = document.getElementById('hint');
+    if (hintEl) hintEl.textContent = cat ? 'Choose one, or switch sides'
       : contactOpen ? 'LinkedIn or email'
       : open ? 'Case studies on the left · My apps on the right'
       : (TOUCH ? 'Tap a section to explore' : 'Hover to explore');

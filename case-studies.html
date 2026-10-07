@@ -23,6 +23,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/dial.css">
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
     body {
@@ -47,25 +48,23 @@
       z-index: 1;
     }
 
-    .nav-links a:hover { color: #D4B483; }
-
     article:target { border-color: rgba(110, 231, 168, 0.6); }
   </style>
 </head>
 <body class="bg-[#06080B] text-slate-200 antialiased selection:bg-gold-500 selection:text-white">
   <canvas id="network-bg" data-rgb="212, 180, 131" aria-hidden="true"></canvas>
 
-  <!-- Navigation (same as the homepage) -->
-  <nav class="max-w-5xl mx-auto px-6 py-6 flex flex-wrap gap-4 justify-between items-center">
-    <a href="index.html" class="text-[15px] font-medium tracking-wide text-slate-100 py-2">Oben Celik</a>
-    <div class="nav-links flex flex-wrap items-center gap-x-8 gap-y-1 text-[13px] tracking-wide text-slate-400">
-      <a href="case-studies.html" class="py-2 text-gold-400" aria-current="page">Case studies</a>
-      <a href="apps.html" class="py-2 hover:text-slate-100 transition-colors">My apps</a>
-      <a href="about.html" class="py-2 hover:text-slate-100 transition-colors">About</a>
-      <a href="Oben_Celik_CV.pdf" download class="py-2 hover:text-slate-100 transition-colors">CV</a>
-      <a href="mailto:isaobencelik@gmail.com" class="py-2 hover:text-slate-100 transition-colors">Contact</a>
-    </div>
-  </nav>
+  <!-- Header: the name opens the dial menu (assets/menu.js) -->
+  <header class="max-w-5xl mx-auto px-6 py-6 flex items-center">
+    <button type="button" id="menu-open" class="menu-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-overlay">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" stroke-dasharray="12.1 2.04" transform="rotate(-45 12 12)"/>
+        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+      </svg>
+      <span>Oben Celik</span>
+      <span class="menu-label">Menu</span>
+    </button>
+  </header>
 
   <!-- Case Studies Section -->
   <main id="work" class="max-w-5xl mx-auto px-6 pt-8 pb-16">
@@ -198,6 +197,8 @@
   </footer>
 
   <script src="assets/network-bg.js"></script>
+  <script src="assets/menu.js"></script>
+  <script src="assets/dial.js"></script>
 
 </body>
 </html>
