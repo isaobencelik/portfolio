@@ -5,9 +5,10 @@
   'use strict';
 
   var ACCENT = '#D4B483';
-  var SEL_BG = 'rgba(212,180,131,0.12)';
-  var GLASS = 'rgba(255,255,255,0.035)';
-  var HOVER = 'rgba(255,255,255,0.075)';
+  var SEL_BG = 'rgba(212,180,131,0.16)';
+  var GLASS = 'rgba(255,255,255,0.075)';
+  var GLASS_DIM = 'rgba(255,255,255,0.045)';
+  var HOVER = 'rgba(255,255,255,0.13)';
   var DOT = { live: '#6EE7A8', soon: '#5A6069', info: ACCENT, case: ACCENT };
   var LABEL = { live: 'Live', soon: 'Coming soon', info: 'Section', case: 'Case study' };
 
@@ -242,12 +243,12 @@
     e.el.style.pointerEvents = o.shown ? 'auto' : 'none';
     e.el.tabIndex = o.shown ? 0 : -1;
     e.el.setAttribute('aria-hidden', String(!o.shown));
-    e.el.style.backgroundColor = sel ? SEL_BG : (hov ? HOVER : GLASS);
+    e.el.style.backgroundColor = sel ? SEL_BG : (hov ? HOVER : (d.st === 'soon' ? GLASS_DIM : GLASS));
     e.el.style.color = (hov || sel) ? ACCENT : (d.st === 'soon' ? '#5A6069' : '#E6E1D8');
 
     e.edge.style.clipPath = arc(a0, a1, Math.max(r0, r1 - 0.45), r1);
     e.edge.style.webkitClipPath = e.edge.style.clipPath;
-    e.edge.style.opacity = (hov || sel) ? 1 : 0;
+    e.edge.style.opacity = (hov || sel) ? 1 : (o.shown ? 0.22 : 0); // faint rim always, full on hover/selected
 
     if (pendingLabels) return; // labels are redrawn once the rings have finished moving
     var r = o.shown ? o.rl : o.hideR;
