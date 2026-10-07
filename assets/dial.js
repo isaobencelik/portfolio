@@ -70,6 +70,16 @@
   var nav = document.getElementById('dial-nav');
   var dial = document.getElementById('dial');
   var els = {};
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var labelLayer = document.createElementNS(SVGNS, 'svg');
+  labelLayer.setAttribute('viewBox', '0 0 100 100');
+  labelLayer.setAttribute('class', 'labels');
+  labelLayer.setAttribute('aria-hidden', 'true');
+  var defs = document.createElementNS(SVGNS, 'defs');
+  labelLayer.appendChild(defs);
+  nav.parentNode.insertBefore(labelLayer, nav.nextSibling);
+  var pendingLabels = null;
+  var unit = 6;
 
   ORDER.forEach(function (row) {
     var id = row[0], d = row[1];
@@ -82,21 +92,37 @@
     } else {
       el.type = 'button';
     }
+    el.setAttribute('aria-label', d.name);
     var edge = document.createElement('span'); edge.className = 'edge';
-    var lbl = document.createElement('span'); lbl.className = 'lbl'; lbl.textContent = d.name;
-    el.appendChild(edge); el.appendChild(lbl);
+    el.appendChild(edge);
+    // curved label: an arc path + text on that path, in the shared SVG layer
+    var path = document.createElementNS(SVGNS, 'path');
+    path.id = 'lp-' + id; path.setAttribute('fill', 'none');
+    defs.appendChild(path);
+    var text = document.createElementNS(SVGNS, 'text');
+    text.setAttribute('class', 'curved');
+    var tp = document.createElementNS(SVGNS, 'textPath');
+    tp.setAttribute('href', '#lp-' + id); tp.setAttribute('startOffset', '50%');
+    tp.textContent = d.name.toUpperCase();
+    text.appendChild(tp); labelLayer.appendChild(text);
     el.addEventListener('mouseenter', function () { setActive(id); });
     el.addEventListener('focus', function () { setActive(id); });
     if (!d.href) el.addEventListener('click', function () { onToggle(id, d); });
     nav.appendChild(el);
-    els[id] = { el: el, edge: edge, lbl: lbl };
+    els[id] = { el: el, edge: edge, path: path, text: text };
   });
 
   dial.addEventListener('mouseleave', function () { setActive(null); });
   document.getElementById('core-back').addEventListener('click', back);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && level !== 'closed') back(); });
 
-  function go(l) { level = l; active = null; render(); }
+  function go(l) {
+    level = l; active = null;
+    labelLayer.style.opacity = 0;
+    clearTimeout(pendingLabels);
+    pendingLabels = setTimeout(function () { pendingLabels = null; render(); labelLayer.style.opacity = 1; }, 420);
+    render();
+  }
   function back() { go(level === 'cases' || level === 'apps' ? 'projects' : 'closed'); }
   function setActive(id) { if (active !== id) { active = id; render(); } }
   function onToggle(id, d) {
@@ -118,12 +144,14 @@
       : { in0: 31.5, in1: 49.5, inL: 40.5, disk: 26, ticks: 30.8 };
     var OUT0 = 35.5, OUT1 = 49.5, OUTL = 42.5;
 
-    // On narrow screens the straight labels don't fit the side wedges, so they follow the arc instead.
-    var narrow = dial.clientWidth < 480;
-    var big = narrow ? { lw: 'auto', fs: '11px', tangent: true } : { lw: '22%', fs: 'clamp(10px, 1.5vw, 13px)' };
-    var split = { lw: '18%', fs: 'clamp(9px, 1.35vw, 12px)' };
-    var small = { lw: 'auto', fs: 'clamp(9px, 1.25vw, 11px)', tangent: true };
-    var outer = { lw: 'auto', fs: 'clamp(9px, 1.3vw, 12px)', tangent: true };
+    // label sizes in px (shrunk further per label if the text is longer than its arc)
+    var W = dial.clientWidth || 600;
+    var px = function (lo, hi, k) { return Math.max(lo, Math.min(hi, W * k)); };
+    var big = { fs: px(10, 13, 0.021) };
+    var split = { fs: px(9.5, 12, 0.019) };
+    var small = { fs: px(9, 11, 0.017) };
+    var outer = { fs: px(9.5, 12, 0.019) };
+    unit = W / 100; // px per viewBox unit
 
     var visible = {};
 
@@ -193,7 +221,6 @@
     var hov = active === id, sel = !!o.sel;
 
     var m = ((mid % 360) + 360) % 360;
-    var rot = o.tangent ? ((m > 90 && m < 270) ? m - 180 : m) : 0;
 
     e.el.style.clipPath = arc(a0, a1, r0, r1);
     e.el.style.webkitClipPath = e.el.style.clipPath;
@@ -207,14 +234,27 @@
     e.edge.style.webkitClipPath = e.edge.style.clipPath;
     e.edge.style.opacity = (hov || sel) ? 1 : 0;
 
-    e.lbl.style.left = l.x.toFixed(2) + '%';
-    e.lbl.style.top = l.y.toFixed(2) + '%';
-    e.lbl.style.width = o.lw;
-    e.lbl.style.whiteSpace = o.tangent ? 'nowrap' : 'normal';
-    e.lbl.style.letterSpacing = o.tangent ? '0.16em' : '0.2em';
-    e.lbl.style.fontSize = o.fs;
-    e.lbl.style.opacity = o.shown ? 1 : 0;
-    e.lbl.style.transform = 'translate(-50%, -50%) rotate(' + rot.toFixed(1) + 'deg)';
+    if (pendingLabels) return; // labels are redrawn once the rings have finished moving
+    var r = o.shown ? o.rl : o.hideR;
+    var bottom = m > 90 && m < 270; // run text the other way so it never reads upside down
+    var la0 = a0 + 1.5, la1 = a1 - 1.5;
+    var p0 = pt(bottom ? la1 : la0, r), p1 = pt(bottom ? la0 : la1, r);
+    var large = (la1 - la0) > 180 ? 1 : 0;
+    e.path.setAttribute('d', 'M ' + p0.x.toFixed(3) + ' ' + p0.y.toFixed(3) + ' A ' + r + ' ' + r + ' 0 ' + large + ' ' + (bottom ? 0 : 1) + ' ' + p1.x.toFixed(3) + ' ' + p1.y.toFixed(3));
+    var fsU = o.fs / unit;
+    e.text.style.fontSize = fsU + 'px';
+    e.text.style.letterSpacing = (fsU * 0.18) + 'px';
+    e.text.style.opacity = o.shown ? 1 : 0;
+    e.text.style.fill = (hov || sel) ? ACCENT : (d.st === 'soon' ? '#5A6069' : '#E6E1D8');
+    if (o.shown) {
+      var avail = (r * Math.PI * (la1 - la0) / 180) * 0.9;
+      var len = e.text.getComputedTextLength();
+      if (len > avail && len > 0) {
+        var k = avail / len;
+        e.text.style.fontSize = (fsU * k) + 'px';
+        e.text.style.letterSpacing = (fsU * k * 0.18) + 'px';
+      }
+    }
   }
 
   window.addEventListener('resize', render);
