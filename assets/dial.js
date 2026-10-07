@@ -1,5 +1,6 @@
 // Radial homepage menu.
-// Levels: closed -> projects (Case studies | My apps) -> cases / apps (items on the outer ring)
+// Levels: closed -> projects (Case studies | My apps) -> apps (items on the outer ring)
+// Case studies is a direct link: all of them live on one page.
 //         closed -> contact (LinkedIn | Email)
 (function () {
   'use strict';
@@ -21,16 +22,10 @@
     ct: { name: 'Contact', st: 'info', a: [220, 300], toggle: 'contact', text: 'LinkedIn or email, whichever you prefer.', meta: 'Select to open' }
   };
   var HALVES = {
-    hc: { name: 'Case studies', st: 'case', a: [300, 360], cat: 'cases', text: 'How I worked through real product problems.', meta: 'Problem · decisions · outcome' },
+    hc: { name: 'Case studies', st: 'case', a: [300, 360], href: 'case-studies.html', text: 'How I worked through real product problems.', meta: 'Problem · decisions · outcome' },
     ha: { name: 'My apps', st: 'live', a: [0, 60], cat: 'apps', text: 'Small tools I designed, built and shipped.', meta: 'Running on obencelik.com' }
   };
   var ITEMS = {
-    cases: {
-      c1: { name: 'CX consolidation', st: 'case', a: [315, 360], href: 'case-studies.html#cx-consolidation', text: 'Unified fragmented CX systems and legacy robotics workflows into one scalable strategy.', meta: 'CX platform strategy · Europe' },
-      c2: { name: 'Omnichannel', st: 'case', a: [270, 315], href: 'case-studies.html#omnichannel', text: 'Standardised Salesforce case distribution across EMEA.', meta: '70% more automation · 50% less wait' },
-      c3: { name: 'Platform redesign', st: 'case', a: [225, 270], href: 'case-studies.html#platform-redesign', text: 'Redesigned a global helpdesk platform used in 70+ countries.', meta: '95% session success · 30% faster' },
-      c4: { name: 'Prioritisation', st: 'case', a: [180, 225], href: 'case-studies.html#prioritisation', text: 'Turned enterprise pain points into clear product problems and priorities.', meta: 'Roadmap alignment' }
-    },
     apps: {
       a1: { name: 'Job Analyser', st: 'live', a: [0, 60], href: 'apps.html#job-analyser', text: 'Searches LinkedIn jobs and uses AI to break down each role, its requirements and salary.', meta: 'Python · Flask · Gemini · Cloud Run' },
       a2: { name: 'Coming soon', st: 'soon', a: [60, 120], href: 'apps.html', text: 'The next tool in the pipeline, including AI agents.', meta: 'In the works' }
@@ -54,13 +49,11 @@
     var keys = Object.keys(list), start = centre - keys.length * w / 2;
     keys.forEach(function (k, i) { list[k].a = [start + i * w, start + (i + 1) * w]; });
   }
-  fan(ITEMS.cases, -30, 44);
   fan(ITEMS.apps, 30, 56);
 
   // DOM order = tab order
   var ORDER = [
     ['pr', MAIN.pr, 'main'], ['hc', HALVES.hc, 'half'],
-    ['c1', ITEMS.cases.c1, 'item:cases'], ['c2', ITEMS.cases.c2, 'item:cases'], ['c3', ITEMS.cases.c3, 'item:cases'], ['c4', ITEMS.cases.c4, 'item:cases'],
     ['ha', HALVES.ha, 'half'], ['a1', ITEMS.apps.a1, 'item:apps'], ['a2', ITEMS.apps.a2, 'item:apps'],
     ['ab', MAIN.ab, 'main'], ['ca', ABOUT.ca, 'sub:about'], ['pe', ABOUT.pe, 'sub:about'],
     ['cv', MAIN.cv, 'main'], ['vw', CVSUB.vw, 'sub:cv'], ['dl', CVSUB.dl, 'sub:cv'],
@@ -234,7 +227,7 @@
         if (d.toggle) els[id].el.setAttribute('aria-expanded', String(openHere));
       } else if (kind === 'half') {
         o = Object.assign({ shown: projOpen, hideR: r2Hide, gap: 1.1, sel: cat === d.cat }, G.r2 ? band(G.r2) : {}, size);
-        els[id].el.setAttribute('aria-expanded', String(cat === d.cat));
+        if (d.cat) els[id].el.setAttribute('aria-expanded', String(cat === d.cat));
       } else if (kind.indexOf('sub:') === 0) {
         o = Object.assign({ shown: level === kind.slice(4), hideR: r2Hide, gap: 1.1 }, G.r2 ? band(G.r2) : {}, size);
       } else {
@@ -368,7 +361,7 @@
   function kindOf(id) { for (var i = 0; i < ORDER.length; i++) if (ORDER[i][0] === id) return ORDER[i][2]; return null; }
   function levelFor(id) {
     var k = kindOf(id);
-    if (k === 'item:cases' || id === 'hc') return 'cases';
+    if (id === 'hc') return 'projects'; // the Case studies page: Projects open, Case studies highlighted
     if (k === 'item:apps' || id === 'ha') return 'apps';
     if (k && k.indexOf('sub:') === 0) return k.slice(4);
     var d = findDef(id);
@@ -377,8 +370,7 @@
   }
   function crumbsFor(id) {
     var k = kindOf(id), chain = [];
-    if (k === 'item:cases') chain = ['pr', 'hc', id];
-    else if (k === 'item:apps') chain = ['pr', 'ha', id];
+    if (k === 'item:apps') chain = ['pr', 'ha', id];
     else if (k === 'half') chain = ['pr', id];
     else if (k && k.indexOf('sub:') === 0) chain = [{ contact: 'ct', cv: 'cv', about: 'ab' }[k.slice(4)], id];
     else if (k) chain = [id];
