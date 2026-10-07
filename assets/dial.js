@@ -64,6 +64,7 @@
   var TOUCH = window.matchMedia && window.matchMedia('(hover: none)').matches;
   var STILL = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var TURN_MS = 420;  // how long to wait for the turn before following a link
+  var DWELL_MS = 1000;  // how long to rest on a section before it opens by itself
   var turn = 0;       // current rotation of the dial, in degrees
   var level = 'closed'; // closed | projects | cases | apps | contact
   var CURRENT = null;   // id of the wedge for the page you're on (null on the homepage)
@@ -125,6 +126,8 @@
     el.setAttribute('aria-label', d.name);
     var edge = document.createElement('span'); edge.className = 'edge';
     var edgeIn = document.createElement('span'); edgeIn.className = 'edge';
+    var sweep = null;
+    if (!d.href) { sweep = document.createElement('span'); sweep.className = 'sweep'; el.appendChild(sweep); }
     el.appendChild(edge); el.appendChild(edgeIn);
     // curved label: an arc path + text on that path, in the shared SVG layer
     var path = document.createElementNS(SVGNS, 'path');
@@ -138,10 +141,14 @@
     text.appendChild(tp); labelLayer.appendChild(text);
     el.addEventListener('mouseenter', function () { setActive(id); });
     el.addEventListener('focus', function () { setActive(id); });
-    if (!d.href) el.addEventListener('click', function () { onToggle(id, d); });
+    if (!d.href) {
+      el.addEventListener('mousemove', function (ev) { onDwellMove(id, d, ev); });
+      el.addEventListener('mouseleave', function () { cancelDwell(); clearTimeout(settle); lastMove = null; });
+    }
+    if (!d.href) el.addEventListener('click', function () { cancelDwell(); onToggle(id, d); });
     else el.addEventListener('click', function (ev) { followAfterTurn(ev, d); });
     nav.appendChild(el);
-    els[id] = { el: el, edge: edge, edgeIn: edgeIn, path: path, text: text };
+    els[id] = { el: el, edge: edge, edgeIn: edgeIn, sweep: sweep, path: path, text: text, geo: null };
   });
 
   dial.addEventListener('mouseleave', function () { setActive(null); });
@@ -179,6 +186,62 @@
     }, TURN_MS);
   }
   function setActive(id) { if (active !== id) { active = id; render(); } }
+
+  // Hover-to-open: resting on a section for DWELL_MS opens its sub-options, as a click would.
+  // The countdown starts once the mouse settles (not while it sweeps across), and gold
+  // fills the section from its inner edge outward as it runs, so you can see it coming and move away to cancel.
+  // Only real mouse movement arms it: opening turns the dial, which slides a different wedge
+  // under a still cursor, and that must not open it too.
+  var SETTLE_SPEED = 0.35; // px per ms; slower than this counts as resting
+  var dwell = null, settle = null, lastMove = null, still = null;
+  function onDwellMove(id, d, ev) {
+    if (TOUCH) return;
+    if (still && Math.abs(ev.clientX - still.x) + Math.abs(ev.clientY - still.y) < 6) return;
+    still = null;
+    var pos = { x: ev.clientX, y: ev.clientY, t: ev.timeStamp };
+    var speed = lastMove && pos.t > lastMove.t
+      ? Math.hypot(pos.x - lastMove.x, pos.y - lastMove.y) / (pos.t - lastMove.t) : 0;
+    lastMove = pos;
+    clearTimeout(settle);
+    if (isOpen(d)) { cancelDwell(); return; } // already showing its sub-options
+    if (speed > SETTLE_SPEED) {
+      cancelDwell(); // still travelling: start over once it slows down or stops
+      settle = setTimeout(function () { startDwell(id, d, pos); }, 120);
+      return;
+    }
+    if (!dwell || dwell.id !== id) startDwell(id, d, pos);
+  }
+  function startDwell(id, d, pos) {
+    cancelDwell();
+    var e = els[id];
+    if (!e.geo || !e.geo.shown) return;
+    dwell = { id: id, start: performance.now(), raf: 0 };
+    var g = e.geo;
+    e.sweep.style.opacity = 1;
+    (function step(now) {
+      if (!dwell || dwell.id !== id) return;
+      var p = Math.min(1, (now - dwell.start) / DWELL_MS);
+      var ease = 1 - Math.pow(1 - p, 2);
+      // fills outward, from the inner edge of the wedge to its outer edge
+      e.sweep.style.clipPath = e.sweep.style.webkitClipPath = arc(g.a0, g.a1, g.r0, g.r0 + Math.max(0.2, (g.r1 - g.r0) * ease));
+      if (p < 1) { dwell.raf = requestAnimationFrame(step); return; }
+      cancelDwell();
+      still = { x: pos.x, y: pos.y };
+      onToggle(id, d);
+    })(dwell.start);
+  }
+  function cancelDwell() {
+    if (!dwell) return;
+    cancelAnimationFrame(dwell.raf);
+    var s = els[dwell.id].sweep;
+    s.style.opacity = 0;
+    dwell = null;
+  }
+  function isOpen(d) {
+    if (d.toggle === 'projects') return level === 'projects' || level === 'cases' || level === 'apps';
+    if (d.toggle) return level === d.toggle;
+    return level === d.cat;
+  }
   function onToggle(id, d) {
     var cat = level === 'cases' || level === 'apps' ? level : null;
     if (d.toggle === 'projects') { var openP = !(level === 'projects' || cat); turnTo(openP ? midOf(d) : 0); go(openP ? 'projects' : 'closed'); }
@@ -311,6 +374,7 @@
     var hov = active === id, sel = !!o.sel || (id === CURRENT && o.shown);
 
     var m = ((mid % 360) + 360) % 360;
+    e.geo = { a0: a0, a1: a1, r0: r0, r1: r1, shown: o.shown };
 
     e.el.style.clipPath = arc(a0, a1, r0, r1);
     e.el.style.webkitClipPath = e.el.style.clipPath;

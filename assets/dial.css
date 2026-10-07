@@ -29,6 +29,8 @@
 }
 .wedge:focus-visible { background-color: rgba(255,255,255,0.1); }
 .wedge .edge { position: absolute; inset: 0; background: var(--accent); opacity: 0; transition: clip-path .45s var(--ease), opacity .2s ease; }
+/* hover-to-open countdown: fills the wedge with the "selected" gold as it runs (dial.js) */
+.wedge .sweep { position: absolute; inset: 0; background: rgba(212,180,131,0.2); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
 .labels { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; transition: opacity .16s ease; }
 .labels text { font-family: 'Geist', 'Helvetica Neue', sans-serif; font-weight: 500; text-anchor: middle; dominant-baseline: central; transition: fill .25s ease; }
 /* label looks: data-label on #dial */
