@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>When the model works, and that&#x27;s the problem · OBEN CELIK</title>
+  <meta name="description" content="Most data scandals we remember are breaches: someone broke in and took something. One of the cases in my Data Privacy, Security and Ethics course at NOVA I" />
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Shared theme: matches the dial homepage (near-black, warm greys, champagne gold)
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Geist', 'Helvetica Neue', 'sans-serif'], mono: ['Geist Mono', 'monospace'] },
+          colors: {
+            gold: { 200: '#EFE2CB', 300: '#E6D2B0', 400: '#D4B483', 500: '#C49A5C', 900: '#2A2116', 950: '#17120B' },
+            slate: { 100: '#F3EFE7', 200: '#E6E1D8', 300: '#C9CCD1', 400: '#A9AEB6', 500: '#6E747D', 600: '#4C525A', 700: '#2A2F37', 800: '#1C2027', 900: '#0E1116', 950: '#06080B' }
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/dial.css">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Geist', 'Helvetica Neue', sans-serif;
+      background: #06080B;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #network-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 1;
+    }
+
+    body > *:not(canvas) {
+      position: relative;
+      z-index: 1;
+    }
+
+
+    .prose h2 { font-family: 'Geist Mono', monospace; font-size: .75rem; text-transform: uppercase; letter-spacing: .28em; color: #D4B483; margin: 3rem 0 1.25rem; }
+    .prose h3 { color: #F3EFE7; font-size: 1.25rem; font-weight: 500; margin: 2rem 0 .75rem; }
+    .prose p, .prose ul, .prose ol, .prose blockquote { margin-bottom: 1.4rem; }
+    .prose ul { list-style: disc; padding-left: 1.4rem; } .prose ol { list-style: decimal; padding-left: 1.4rem; }
+    .prose li { margin-bottom: .5rem; } .prose strong { color: #E6E1D8; font-weight: 500; }
+    .prose a { color: #D4B483; } .prose a:hover { color: #E6D2B0; }
+    .prose blockquote { border-left: 2px solid #C49A5C; padding-left: 1.25rem; color: #C9CCD1; font-style: italic; }
+    .prose code { font-family: 'Geist Mono', monospace; font-size: .9em; background: #1C2027; padding: .1em .35em; border-radius: 4px; }
+  </style>
+</head>
+<body data-current="ab" class="bg-[#06080B] text-slate-200 antialiased selection:bg-gold-500 selection:text-white">
+  <canvas id="network-bg" data-rgb="212, 180, 131" aria-hidden="true"></canvas>
+
+  <!-- Header: the name opens the dial menu (assets/menu.js) -->
+  <header class="max-w-5xl mx-auto px-6 py-6 flex flex-wrap gap-x-8 gap-y-2 items-center justify-between">
+    <button type="button" id="menu-open" class="menu-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-overlay">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" stroke-dasharray="12.1 2.04" transform="rotate(-45 12 12)"/>
+        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+      </svg>
+      <span>Oben Celik</span>
+      <span class="menu-label">Menu</span>
+    </button>
+    <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+  </header>
+
+  <header class="max-w-3xl mx-auto px-6 pt-12 pb-10">
+    <a href="blog.html" class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-400 bg-gold-950/60 border border-gold-500/20 rounded-full mb-6">Writing</a>
+    <h1 class="text-4xl sm:text-5xl font-light tracking-tight leading-tight text-white mb-5">When the model works, and that&#x27;s the problem</h1>
+    <p class="font-mono text-xs uppercase tracking-[0.2em] text-slate-500"><time datetime="2026-10-08">08 October 2026</time> · 2 min read</p>
+  </header>
+  <main class="max-w-3xl mx-auto px-6 pb-16 text-slate-400 text-base sm:text-lg leading-relaxed">
+    <article class="prose">
+<p>Most data scandals we remember are breaches: someone broke in and took something. One of the cases in my Data Privacy, Security and Ethics course at NOVA IMS is uncomfortable for a different reason. Nothing was stolen. The system worked exactly as designed.</p>
+<h2>What happened</h2>
+<p>In 2012, Target used predictive analytics to identify customers who might be pregnant, based on their purchasing patterns. The goal was marketing: reach people at a moment when their shopping habits are about to change.</p>
+<p>The model worked. In one case, it revealed a teenager's pregnancy to her father before she had told him.</p>
+<h2>Why it's a data ethics case</h2>
+<p>The course frames the problem as a lack of privacy considerations. The purpose was marketing, but it still affected a customer's life.</p>
+<p>That's the part I find most useful. There was no hacker, no leaked database and no broken law in the story as it's usually told. The harm came from an accurate prediction landing in the wrong place.</p>
+<p>It connects to principles the course lists for data ethics: <strong>privacy</strong>, respecting individuals' privacy; <strong>transparency</strong>, people's right to know how their data will be used; and <strong>avoidance of harm</strong>, making sure data practices don't hurt individuals or communities, including by thinking through the negative consequences in advance.</p>
+<h2>Accuracy is the wrong finish line</h2>
+<p>When teams review a model, the conversation is usually about performance: precision, recall, lift. Those matter. But this case shows they aren't the whole test.</p>
+<p>Two extra questions would have caught it:</p>
+<ul>
+<li><strong>What does this output reveal?</strong> A prediction can be more sensitive than any of the data that went into it. Shopping baskets aren't medical records. A pregnancy prediction effectively is.</li>
+<li><strong>Who will see it?</strong> A score sitting in a database is one thing. A coupon in a family's post box is another. The channel that delivers the output is part of the privacy decision.</li>
+</ul>
+<h2>Where I'd use this</h2>
+<p>In product work, I'd add these two questions to any review of a feature that predicts something about a person: recommendations, segments, risk scores, personalised messages.</p>
+<p>A few practical checks follow from them:</p>
+<ul>
+<li><strong>Classify the output, not just the input.</strong> If the prediction would be sensitive data if someone had typed it in, treat it that way.</li>
+<li><strong>Look at the delivery channel.</strong> Who else could see the result: family members, colleagues, anyone on a shared device?</li>
+<li><strong>Ask whether the person would expect it.</strong> If someone would be surprised that you know this about them, that's a signal to stop and think.</li>
+</ul>
+<h2>The bigger lesson</h2>
+<p>It's easy to think of privacy as a security problem: lock the data down and you're done. This case shows that privacy is also a design problem. The most careful security in the world doesn't help if the product itself is built to reveal something people never chose to share.</p>
+<p>A prediction looks harmless in a backlog. It looks very different on a family's kitchen table.</p>
+<p>Sources: Data Privacy, Security and Ethics, Chapter 2 (MSc Information Systems Management, NOVA IMS), "Why data ethics is important" and "Key principles of data ethics".</p>
+    </article>
+    <p class="mt-12 pt-8 border-t border-slate-800 text-sm text-slate-500">From my Master's in Information Systems Management at NOVA IMS · <em>Data Privacy, Security and Ethics</em></p>
+    <a href="blog.html" class="inline-block mt-6 px-6 py-3 rounded-lg border border-gold-500/40 text-gold-300 font-medium hover:bg-gold-500/10 transition">&larr; All writing</a>
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-5xl mx-auto px-6 py-12 border-t border-slate-800 text-center text-xs text-slate-500">
+    &copy; 2026 OBEN CELIK. Built for making scalable systems, and team outcomes better.
+  </footer>
+
+  <script src="assets/network-bg.js"></script>
+  <script src="assets/menu.js"></script>
+  <script src="assets/dial.js"></script>
+</body>
+</html>
