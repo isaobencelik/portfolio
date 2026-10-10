@@ -4,8 +4,8 @@
 // drawn where it is. So:
 //  - on load, the dots fly in from a loose cloud and each square turns solid as its dot lands;
 //  - clicking the name blows every dot far out across the page, then they drift back into it.
-// The lettering matches the watch below it: polished gold with a bright top edge and a soft shadow,
-// so it reads as a raised nameplate, and a glint of light sweeps across it once it has formed.
+// The lettering matches the dial below it: satin gold with a faint top edge and a soft shadow,
+// so it reads as a raised nameplate, and a faint glint of light crosses it once it has formed.
 // The canvas covers the first screen of the page (above the dial, never catching clicks), so the
 // dots have room to fly. The real link stays in the page (transparent) for screen readers.
 (function () {
@@ -15,8 +15,8 @@
   if (!brand) return;
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // polished gold, top to bottom: a bright top, a darker band, a lighter reflection low down
-  var GOLD = [[0, '#FFF4DC'], [0.34, '#E7CB93'], [0.56, '#A9834E'], [0.8, '#DDBE88'], [1, '#8F6E3E']];
+  // satin gold, top to bottom: a little lighter at the top, a little deeper at the bottom, no mirror bands
+  var GOLD = [[0, '#E8D2A6'], [0.5, '#D4B483'], [1, '#B08C58']];
   var SHINE_MS = 1500;           // the glint across the letters
   var STEP = 2;                  // each dot owns a STEP x STEP square of a letter
   var DOT = 1.8;                 // dot size in px
@@ -65,14 +65,14 @@
     var capTop = y - (m.actualBoundingBoxAscent || parseFloat(cs.fontSize) * 0.72), capBottom = y;
     // 1. a soft shadow underneath, so the letters stand off the page
     o.save();
-    o.shadowColor = 'rgba(0,0,0,0.7)'; o.shadowOffsetY = 2.2 * scale; o.shadowBlur = 5 * scale;
+    o.shadowColor = 'rgba(0,0,0,0.55)'; o.shadowOffsetY = 1.6 * scale; o.shadowBlur = 4 * scale;
     o.fillStyle = '#5E4A2B';
     put(0);
     o.restore();
-    // 2. a bright edge along the top of each letter
-    o.fillStyle = 'rgba(255,246,228,0.75)';
+    // 2. a faint edge along the top of each letter
+    o.fillStyle = 'rgba(255,246,228,0.22)';
     put(-0.9);
-    // 3. the polished gold face
+    // 3. the satin gold face
     var g = o.createLinearGradient(0, capTop, 0, capBottom);
     GOLD.forEach(function (s) { g.addColorStop(s[0], s[1]); });
     o.fillStyle = g;
@@ -177,7 +177,7 @@
       var span = text.x1 - text.x0, bx = text.x0 - span * 0.3 + span * 1.6 * (p * p * (3 - 2 * p));
       var sh = ctx.createLinearGradient(bx - 60, text.capTop, bx + 60, text.capBottom);
       sh.addColorStop(0, 'rgba(255,250,236,0)');
-      sh.addColorStop(0.5, 'rgba(255,250,236,0.75)');
+      sh.addColorStop(0.5, 'rgba(255,250,236,0.28)');
       sh.addColorStop(1, 'rgba(255,250,236,0)');
       ctx.save();
       ctx.globalCompositeOperation = 'source-atop';
