@@ -8,10 +8,10 @@
 .dial-glow { position: absolute; inset: 8%; border-radius: 50%; background: radial-gradient(circle, rgba(212,180,131,0.07) 0%, transparent 68%); pointer-events: none; }
 /* the watch case: a polished ring of brushed gold and steel, catching the light in bands */
 .dial-ring {
-  position: absolute; inset: -2.6%; border-radius: 50%; pointer-events: none;
+  position: absolute; inset: -1.6%; border-radius: 50%; pointer-events: none;
   background: conic-gradient(from 210deg, #3A3022, #F2DFB4 9%, #7A6440 19%, #241F18 31%, #B8996A 45%, #3E3426 57%, #EAD5A8 70%, #6B5634 82%, #2A241B 92%, #3A3022);
-  -webkit-mask: radial-gradient(closest-side, transparent 95.6%, #000 96.1%, #000 99.4%, transparent 100%);
-  mask: radial-gradient(closest-side, transparent 95.6%, #000 96.1%, #000 99.4%, transparent 100%);
+  -webkit-mask: radial-gradient(closest-side, transparent 97%, #000 97.4%, #000 99.4%, transparent 100%);
+  mask: radial-gradient(closest-side, transparent 97%, #000 97.4%, #000 99.4%, transparent 100%);
   opacity: .85;
 }
 .ticks {
