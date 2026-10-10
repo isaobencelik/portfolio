@@ -657,7 +657,12 @@
     });
     // fetch the page once everything else has loaded, so it's ready on the first hover
     window.addEventListener('load', function () { setTimeout(function () { if (!paperImg.src) paperImg.src = CV_IMAGE; }, 2500); });
-    window.addEventListener('resize', function () { if (paperShown) { hidePaper(); updatePaper(); } });
+    var paperVW = window.innerWidth;
+    window.addEventListener('resize', function () {
+      // on phones the address bar showing or hiding changes only the height: keep the paper as it is
+      var heightOnly = window.innerWidth === paperVW; paperVW = window.innerWidth;
+      if (paperShown && !(heightOnly && document.body.classList.contains('cv-stacked'))) { hidePaper(); updatePaper(); }
+    });
   }
   function updatePaper() {
     if (!paper) return;
@@ -675,8 +680,8 @@
     iconKind = k;
     if (window.networkBg && window.networkBg.formIcon) window.networkBg.formIcon(k);
   }
-  // Always to the right of the dial, never over it: as big as the space there allows.
-  // Too little room (phones, narrow windows) and there's no paper; View and Download still work.
+  // To the right of the dial, never over it: as big as the space there allows.
+  // Too little room there (phones, narrow windows) and the paper goes above the dial instead (stackedLayout).
   var PAPER_MIN_W = 150;
   function paperRect() {
     var d = dial.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight;
@@ -687,9 +692,44 @@
     if (w < PAPER_MIN_W) return null;
     return { x: d.right + GAP + (space - w) / 2, y: Math.max(16, d.top + (d.height - h) / 2), w: w, h: h };
   }
+  // Phones and narrow windows: the dial shrinks and slides to the bottom of the screen, and the
+  // paper forms in the space it leaves above, under the name. Null if even that leaves no room.
+  var STACK_MS = 600;
+  function stackedLayout() {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var head = document.querySelector('.site-header');
+    var top = Math.max(16, (head ? head.getBoundingClientRect().bottom : 0) + 8), bottom = vh - 20;
+    var GAP = 20, RATIO = 1.414, room = bottom - top;
+    var D = Math.min(vw * 0.62, room * 0.4); // the small dial
+    var w = Math.min((room - D - GAP) / RATIO, vw - 40), h = w * RATIO;
+    if (w < 120) return null;
+    var y = top + (room - (h + GAP + D)) / 2; // the paper and the dial, centred as one column
+    return { paper: { x: (vw - w) / 2, y: y, w: w, h: h }, dial: { x: (vw - D) / 2, y: y + h + GAP, d: D } };
+  }
+  function stackDial(t) {
+    // measure it in its usual place (it may still be on its way back there), then move on from where it is
+    var was = dial.style.transform;
+    dial.style.transition = 'none'; dial.style.transform = '';
+    var n = dial.getBoundingClientRect();
+    dial.style.transform = was; void dial.offsetWidth;
+    var dx = t.x + t.d / 2 - (n.left + n.width / 2), dy = t.y + t.d / 2 - (n.top + n.height / 2);
+    dial.style.transition = STILL ? 'none' : 'transform ' + STACK_MS + 'ms cubic-bezier(.22, 1, .36, 1)';
+    dial.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(' + (t.d / n.width) + ')';
+    document.body.classList.add('cv-stacked');
+  }
+  function unstackDial() {
+    dial.style.transform = '';
+    document.body.classList.remove('cv-stacked');
+  }
   function showPaper() {
     var r = paperRect();
-    if (!r) return;
+    if (!r) {
+      window.scrollTo(0, 0); // the layout is worked out for the top of the page
+      var st = stackedLayout();
+      if (!st) return;
+      stackDial(st.dial);
+      r = st.paper;
+    }
     paperShown = true;
     paper.style.left = r.x + 'px'; paper.style.top = r.y + 'px';
     paper.style.width = r.w + 'px'; paper.style.height = r.h + 'px';
@@ -703,6 +743,7 @@
     paperShown = false;
     clearTimeout(paperReveal);
     paper.classList.remove('show', 'armed');
+    unstackDial();
     iconKind = null;
     if (window.networkBg) window.networkBg.release();
   }

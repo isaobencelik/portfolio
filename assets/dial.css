@@ -158,6 +158,10 @@
 .cv-paper.armed { visibility: visible; transition: opacity .4s ease, filter .6s ease, transform .6s cubic-bezier(.22, 1, .36, 1); }
 .cv-paper.show { opacity: .97; filter: none; transform: none; }
 .cv-paper img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* phones: while the paper is up the dial sits small at the bottom (dial.js), so the page holds still
+   and the hint and footer under it step aside */
+body.cv-stacked { overflow: hidden; }
+body.cv-stacked .hint, body.cv-stacked footer { visibility: hidden; }
 @media (prefers-reduced-motion: reduce) { .cv-paper, .cv-paper.armed { filter: none; transform: none; transition: opacity .2s ease; } }
 
 /* ---------- Menu overlay (every page except the homepage) ---------- */
