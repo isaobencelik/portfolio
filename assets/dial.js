@@ -167,43 +167,12 @@
 
   dial.addEventListener('mouseleave', function () { setActive(null); });
   document.getElementById('core-back').addEventListener('click', back);
-  // "Show me everything": opens the overview (every section's sub-options at once)
-  // ---------- My status ----------
-  // Shown under my name (#presence, homepage), on Lisbon time whatever the visitor's own time zone:
-  // weekdays 08:00-17:00 working (green), other weekday hours studying (orange), weekends offline
-  // (red). Change the hours or wording here.
-  var WORK_HOURS = [8 * 60, 17 * 60]; // minutes after midnight, Lisbon time
-  var STATUS = {
-    working:  { dot: '#6EE7A8', label: 'Working',  tip: 'Weekdays 08:00–17:00, Lisbon time' },
-    studying: { dot: '#F0A35E', label: 'Studying', tip: 'Evenings: Master’s classes and my thesis' },
-    offline:  { dot: '#F07167', label: 'Offline',  tip: 'Weekends: offline' }
-  };
-  var presence = document.getElementById('presence'), presenceState = null;
-  function updatePresence(state) {
-    if (!presence || state === presenceState) return;
-    presenceState = state;
-    var st = STATUS[state];
-    presence.className = 'presence is-' + state;
-    presence.querySelector('.presence-label').textContent = st.label;
-    presence.title = st.tip;
-    presence.setAttribute('aria-label', 'Status: ' + st.label + '. ' + st.tip);
-  }
-  var lisbonFmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', weekday: 'short',
-    hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-  function lisbonState() {
-    var p = {};
-    lisbonFmt.formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
-    var mins = +p.hour * 60 + +p.minute;
-    if (p.weekday === 'Sat' || p.weekday === 'Sun') return 'offline';
-    return mins >= WORK_HOURS[0] && mins < WORK_HOURS[1] ? 'working' : 'studying';
-  }
-  updatePresence(lisbonState());
-  setInterval(function () { updatePresence(lisbonState()); }, 30000);
   // the centre when nothing is open
   function restingCore() {
     return { title: 'Welcome', text: 'My projects, my CV, a bit about me, and how to get in touch.', meta: '' };
   }
 
+  // "Show me everything": opens the overview (every section's sub-options at once)
   var allBtn = document.createElement('button');
   allBtn.type = 'button'; allBtn.className = 'dial-all'; allBtn.id = 'core-all';
   allBtn.textContent = 'Show me everything';
