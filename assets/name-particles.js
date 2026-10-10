@@ -4,6 +4,8 @@
 // drawn where it is. So:
 //  - on load, the dots fly in from a loose cloud and each square turns solid as its dot lands;
 //  - clicking the name blows every dot far out across the page, then they drift back into it.
+// The lettering matches the watch below it: polished gold with a bright top edge and a soft shadow,
+// so it reads as a raised nameplate, and a glint of light sweeps across it once it has formed.
 // The canvas covers the first screen of the page (above the dial, never catching clicks), so the
 // dots have room to fly. The real link stays in the page (transparent) for screen readers.
 (function () {
@@ -13,7 +15,9 @@
   if (!brand) return;
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  var COLOR = '212, 180, 131';
+  // polished gold, top to bottom: a bright top, a darker band, a lighter reflection low down
+  var GOLD = [[0, '#FFF4DC'], [0.34, '#E7CB93'], [0.56, '#A9834E'], [0.8, '#DDBE88'], [1, '#8F6E3E']];
+  var SHINE_MS = 1500;           // the glint across the letters
   var STEP = 2;                  // each dot owns a STEP x STEP square of a letter
   var DOT = 1.8;                 // dot size in px
   var CLOUD = 80;                // on load, dots start up to about this far from their letter
@@ -33,6 +37,7 @@
   var letters = document.createElement('canvas'); // the solid name, drawn once
   var dots = [], box = null, text = null, running = false, dpr = 1;
   var gather = ENTRANCE, gatherFrom = 0; // which soft spring is pulling them home, and since when
+  var shineDue = false, shineFrom = -1e9; // a glint plays once the dots are all home
 
   // Draw the name exactly where the page draws it (same font, spacing, kerning and baseline),
   // in page coordinates.
@@ -46,17 +51,33 @@
     o.setTransform(scale, 0, 0, scale, 0, 0);
     o.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
     o.textBaseline = 'alphabetic';
-    o.fillStyle = 'rgb(' + COLOR + ')';
     var track = parseFloat(cs.letterSpacing) || 0;
-    var x = tr.left + window.scrollX, top = tr.top + window.scrollY;
-    var y = top + o.measureText(str).fontBoundingBoxAscent;
-    if ('letterSpacing' in o) {
-      o.letterSpacing = track + 'px';
-      o.fillText(str, x, y);
-    } else { // older browsers: letter by letter
-      for (var i = 0; i < str.length; i++) { o.fillText(str[i], x, y); x += o.measureText(str[i]).width + track; }
+    var x0 = tr.left + window.scrollX, top = tr.top + window.scrollY;
+    var m = o.measureText(str);
+    var y = top + m.fontBoundingBoxAscent;
+    if ('letterSpacing' in o) o.letterSpacing = track + 'px';
+    function put(dy) {
+      if ('letterSpacing' in o) { o.fillText(str, x0, y + dy); return; }
+      var x = x0; // older browsers: letter by letter
+      for (var i = 0; i < str.length; i++) { o.fillText(str[i], x, y + dy); x += o.measureText(str[i]).width + track; }
     }
-    text = { x0: tr.left + window.scrollX, y0: top, x1: tr.right + window.scrollX, y1: top + tr.height };
+    // capital letters run from the cap height to the baseline: the gold gradient spans that
+    var capTop = y - (m.actualBoundingBoxAscent || parseFloat(cs.fontSize) * 0.72), capBottom = y;
+    // 1. a soft shadow underneath, so the letters stand off the page
+    o.save();
+    o.shadowColor = 'rgba(0,0,0,0.7)'; o.shadowOffsetY = 2.2 * scale; o.shadowBlur = 5 * scale;
+    o.fillStyle = '#5E4A2B';
+    put(0);
+    o.restore();
+    // 2. a bright edge along the top of each letter
+    o.fillStyle = 'rgba(255,246,228,0.75)';
+    put(-0.9);
+    // 3. the polished gold face
+    var g = o.createLinearGradient(0, capTop, 0, capBottom);
+    GOLD.forEach(function (s) { g.addColorStop(s[0], s[1]); });
+    o.fillStyle = g;
+    put(0);
+    text = { x0: x0, y0: top, x1: tr.right + window.scrollX, y1: top + tr.height, capTop: capTop, capBottom: capBottom };
   }
 
   function build(entrance) {
@@ -71,27 +92,33 @@
     var lc = letters.getContext('2d');
     drawName(lc, dpr);
     var LW = letters.width, LH = letters.height;
-    var sx0 = Math.max(0, Math.floor(text.x0 - 4)), sy0 = Math.max(0, Math.floor(text.y0 - 4));
-    var sx1 = Math.min(box.w, Math.ceil(text.x1 + 4)), sy1 = Math.min(box.h, Math.ceil(text.y1 + 4));
+    var sx0 = Math.max(0, Math.floor(text.x0 - 8)), sy0 = Math.max(0, Math.floor(text.y0 - 8));
+    var sx1 = Math.min(box.w, Math.ceil(text.x1 + 8)), sy1 = Math.min(box.h, Math.ceil(text.y1 + 12));
     var ox = Math.floor(sx0 * dpr), oy = Math.floor(sy0 * dpr);
     var data = lc.getImageData(ox, oy, Math.ceil(sx1 * dpr) - ox, Math.ceil(sy1 * dpr) - oy);
     var DW = data.width, DH = data.height, px8 = data.data;
 
     // a square becomes a dot if any screen pixel in it has any ink, so the soft edges of the
-    // letters move too (instead of staying behind as a faint outline)
+    // letters (and their shadow) move too, instead of staying behind as a faint outline. The dot
+    // takes the colour of the most solid pixel in its square, so the flying dots are the real gold.
     function inked(px, py) {
       var y1 = Math.min(Math.ceil((py + STEP) * dpr) + 1 - oy, DH), x1 = Math.min(Math.ceil((px + STEP) * dpr) + 1 - ox, DW);
+      var best = -1, bestA = 6;
       for (var y = Math.max(0, Math.floor(py * dpr) - 1 - oy); y < y1; y++) {
-        for (var x = Math.max(0, Math.floor(px * dpr) - 1 - ox); x < x1; x++) if (px8[(y * DW + x) * 4 + 3] > 6) return true;
+        for (var x = Math.max(0, Math.floor(px * dpr) - 1 - ox); x < x1; x++) {
+          var k = (y * DW + x) * 4;
+          if (px8[k + 3] > bestA) { bestA = px8[k + 3]; best = k; }
+        }
       }
-      return false;
+      return best < 0 ? null : 'rgba(' + px8[best] + ',' + px8[best + 1] + ',' + px8[best + 2] + ',';
     }
 
     var now = performance.now();
     dots = [];
     for (var py = sy0; py < sy1; py += STEP) {
       for (var px = sx0; px < sx1; px += STEP) {
-        if (!inked(px, py)) continue;
+        var colour = inked(px, py);
+        if (!colour) continue;
         // on the entrance, start in a loose cloud around its letter and fade in on the way
         var ang = Math.random() * Math.PI * 2, far = 25 + Math.pow(Math.random(), 0.6) * CLOUD * 2;
         var hx = px + STEP / 2, hy = py + STEP / 2;
@@ -102,6 +129,7 @@
           vx: 0, vy: 0,
           t0: entrance ? now + Math.random() * STAGGER_MS : 0, // held still (and faded) until then
           fly: 0,                                                // flying free (no spring) until then
+          c: colour,
           a: 0.85 + Math.random() * 0.15,
           out: entrance // away from home: its square is cut out of the letter
         });
@@ -109,6 +137,7 @@
     }
     gather = ENTRANCE;
     gatherFrom = entrance ? now : now - ENTRANCE.ms;
+    shineDue = entrance;
     draw(now);
     if (entrance) wake();
   }
@@ -129,6 +158,7 @@
     });
     gather = RETURN;
     gatherFrom = now + BLOW_MS;
+    shineDue = true; shineFrom = -1e9;
     wake();
   }
 
@@ -141,11 +171,25 @@
       d = dots[i];
       if (d.out) ctx.clearRect(d.hx - STEP / 2 - 1, d.hy - STEP / 2 - 1, STEP + 2, STEP + 2);
     }
+    // the glint: a soft band of light sliding across the letters (only where they are)
+    var p = (now - shineFrom) / SHINE_MS;
+    if (p > 0 && p < 1) {
+      var span = text.x1 - text.x0, bx = text.x0 - span * 0.3 + span * 1.6 * (p * p * (3 - 2 * p));
+      var sh = ctx.createLinearGradient(bx - 60, text.capTop, bx + 60, text.capBottom);
+      sh.addColorStop(0, 'rgba(255,250,236,0)');
+      sh.addColorStop(0.5, 'rgba(255,250,236,0.75)');
+      sh.addColorStop(1, 'rgba(255,250,236,0)');
+      ctx.save();
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.fillStyle = sh;
+      ctx.fillRect(text.x0 - 10, text.y0 - 10, span + 20, text.y1 - text.y0 + 20);
+      ctx.restore();
+    }
     for (i = 0; i < dots.length; i++) {
       d = dots[i];
       if (!d.out) continue;
       var fade = d.t0 ? Math.max(0, Math.min(1, (now - d.t0 + 150) / 700)) : 1;
-      ctx.fillStyle = 'rgba(' + COLOR + ',' + (d.a * fade) + ')';
+      ctx.fillStyle = d.c + (d.a * fade) + ')';
       ctx.fillRect(d.x - DOT / 2, d.y - DOT / 2, DOT, DOT);
     }
   }
@@ -171,6 +215,8 @@
       if (home) { d.x = d.hx; d.y = d.hy; d.vx = d.vy = 0; d.out = false; }
       else { d.out = true; any = true; }
     }
+    if (!any && shineDue) { shineDue = false; shineFrom = now; } // all home: let the light catch it
+    if (now - shineFrom < SHINE_MS) any = true;
     draw(now);
     if (any) requestAnimationFrame(frame);
     else running = false; // everything is home: nothing to animate until the next click

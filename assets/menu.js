@@ -22,7 +22,7 @@
     '<button type="button" class="menu-close" id="menu-close" aria-label="Close menu">' +
       '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
     '</button>' +
-    '<div class="dial" id="dial" data-label="bezel">' +
+    '<div class="dial" id="dial" data-label="gold">' +
       '<div class="dial-glow" aria-hidden="true"></div>' +
       '<div class="dial-ring" aria-hidden="true"></div>' +
       '<div class="dial-glass" aria-hidden="true"></div>' +
