@@ -12,8 +12,6 @@
   var GLASS = 'rgba(31,34,39,0.94)';
   var GLASS_DIM = 'rgba(24,27,31,0.94)';
   var HOVER = 'rgba(46,49,55,0.96)';
-  var DOT = { live: '#6EE7A8', soon: '#5A6069', info: ACCENT, case: ACCENT };
-  var LABEL = { live: 'Live', soon: 'Coming soon', info: 'Section', case: 'Case study' };
 
   // ---------- Content ----------
   // a: [startDeg, endDeg], clockwise from 12 o'clock.
@@ -201,7 +199,7 @@
     return { h: h, m: m, s: s, day: p.day, state: state, label: p.hour + ':' + p.minute };
   }
   function restingCore() {
-    return { clock: true, status: '', text: '', meta: '' };
+    return { clock: true, text: '', meta: '' };
   }
   // The centre circle is the clock face, styled like a fine dress watch: a sunburst dial (CSS),
   // applied gold hour batons with a pale inlay, a triangle at 12, a date window at 3, faceted
@@ -453,25 +451,21 @@
     var c;
     var here = CURRENT && level === levelFor(CURRENT) ? findDef(CURRENT) : null;
     if (here && !(cur && !cur.toggle)) {
-      c = { dot: ACCENT, status: 'You are here', title: here.name,
+      c = { title: here.name,
             text: crumbsFor(CURRENT).length > 1 ? crumbsFor(CURRENT).map(function (x) { return x.name; }).join('  /  ') : here.text,
             meta: here.meta };
     }
-    else if (cur && !cur.toggle) c = { dot: DOT[cur.st], status: LABEL[cur.st], title: cur.name, text: cur.text, meta: cur.meta };
+    else if (cur && !cur.toggle) c = { title: cur.name, text: cur.text, meta: cur.meta };
     else if (demoRunning) c = restingCore();
-    else if (all) c = { dot: ACCENT, status: 'Overview', title: 'Everything here', text: 'Every section and what is inside it, at a glance.', meta: 'Hover to explore' };
-    else if (contactOpen) c = { dot: '#6EE7A8', status: 'Contact', title: 'Get in touch', text: 'LinkedIn or email, whichever you prefer.', meta: 'Choose one' };
-    else if (aboutOpen) c = { dot: ACCENT, status: 'About me', title: 'About me', text: 'My career so far, and a bit about me outside work.', meta: 'Choose one' };
-    else if (cvOpen) c = { dot: ACCENT, status: 'CV', title: 'My CV', text: 'View it in your browser, or download the PDF.', meta: 'Choose one' };
-    else if (cur) c = { dot: ACCENT, status: 'Section', title: cur.name, text: cur.text, meta: cur.meta };
-    else if (cat) { var h = cat === 'cases' ? HALVES.hc : HALVES.ha; c = { dot: DOT[h.st], status: 'Projects', title: h.name, text: h.text, meta: h.meta }; }
-    else if (open) c = { dot: ACCENT, status: 'Projects', title: 'Two ways in', text: 'Case studies on the left. My apps on the right.', meta: 'Choose a side' };
+    else if (all) c = { title: 'Everything here', text: 'Every section and what is inside it, at a glance.', meta: 'Hover to explore' };
+    else if (contactOpen) c = { title: 'Get in touch', text: 'LinkedIn or email, whichever you prefer.', meta: 'Choose one' };
+    else if (aboutOpen) c = { title: 'About me', text: 'My career so far, and a bit about me outside work.', meta: 'Choose one' };
+    else if (cvOpen) c = { title: 'My CV', text: 'View it in your browser, or download the PDF.', meta: 'Choose one' };
+    else if (cur) c = { title: cur.name, text: cur.text, meta: cur.meta };
+    else if (cat) { var h = cat === 'cases' ? HALVES.hc : HALVES.ha; c = { title: h.name, text: h.text, meta: h.meta }; }
+    else if (open) c = { title: 'Two ways in', text: 'Case studies on the left. My apps on the right.', meta: 'Choose a side' };
     else c = restingCore();
 
-    var dot = document.getElementById('core-dot');
-    if (c.dot) { dot.style.background = c.dot; dot.style.boxShadow = '0 0 8px ' + c.dot; }
-    document.getElementById('core-status').textContent = c.status;
-    dot.parentNode.hidden = !c.status; // the clock face carries no status line
     document.getElementById('core-title').textContent = c.title || '';
     // the resting centre shows the Lisbon clock in place of a title
     document.getElementById('core-title').hidden = !!c.clock;
