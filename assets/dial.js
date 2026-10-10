@@ -168,10 +168,10 @@
   dial.addEventListener('mouseleave', function () { setActive(null); });
   document.getElementById('core-back').addEventListener('click', back);
   // "Show me everything": opens the overview (every section's sub-options at once)
-  // ---------- Lisbon clock and status (the resting centre) ----------
-  // An analogue clock on Lisbon time, whatever the visitor's own time zone, and my status, shown
-  // under my name (#presence, homepage): weekdays 08:00-17:00 working (green), other weekday hours
-  // studying (orange), weekends offline (red). Change the hours or wording here.
+  // ---------- My status ----------
+  // Shown under my name (#presence, homepage), on Lisbon time whatever the visitor's own time zone:
+  // weekdays 08:00-17:00 working (green), other weekday hours studying (orange), weekends offline
+  // (red). Change the hours or wording here.
   var WORK_HOURS = [8 * 60, 17 * 60]; // minutes after midnight, Lisbon time
   var STATUS = {
     working:  { dot: '#6EE7A8', label: 'Working',  tip: 'Weekdays 08:00–17:00, Lisbon time' },
@@ -188,102 +188,26 @@
     presence.title = st.tip;
     presence.setAttribute('aria-label', 'Status: ' + st.label + '. ' + st.tip);
   }
-  var lisbonFmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', weekday: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
-  function lisbonNow() {
+  var lisbonFmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', weekday: 'short',
+    hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  function lisbonState() {
     var p = {};
     lisbonFmt.formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
-    var h = +p.hour, m = +p.minute, s = +p.second, day = p.weekday;
-    var state = day === 'Sat' || day === 'Sun' ? 'offline'
-      : (h * 60 + m >= WORK_HOURS[0] && h * 60 + m < WORK_HOURS[1] ? 'working' : 'studying');
-    return { h: h, m: m, s: s, day: p.day, state: state, label: p.hour + ':' + p.minute };
+    var mins = +p.hour * 60 + +p.minute;
+    if (p.weekday === 'Sat' || p.weekday === 'Sun') return 'offline';
+    return mins >= WORK_HOURS[0] && mins < WORK_HOURS[1] ? 'working' : 'studying';
   }
+  updatePresence(lisbonState());
+  setInterval(function () { updatePresence(lisbonState()); }, 30000);
+  // the centre when nothing is open
   function restingCore() {
-    return { clock: true, text: '', meta: '' };
+    return { title: 'Welcome', text: 'My projects, my CV, a bit about me, and how to get in touch.', meta: '' };
   }
-  // The centre circle is the clock face, styled like a fine dress watch: a sunburst dial (CSS),
-  // applied gold hour batons with a pale inlay, a triangle at 12, a date window at 3, faceted
-  // two-tone dauphine hands with a soft shadow, and a lollipop seconds hand that sweeps in eight
-  // small steps a second like a mechanical movement. The ring of 60 ticks around it is the minute
-  // track. Away from the resting state the hands fade out so they don't fight the section text.
-  var SVGNS_CLOCK = 'http://www.w3.org/2000/svg';
-  var coreEl = document.getElementById('core');
-  var faceEl = document.createElementNS(SVGNS_CLOCK, 'svg');
-  faceEl.setAttribute('viewBox', '0 0 100 100');
-  faceEl.setAttribute('class', 'core-face');
-  faceEl.setAttribute('aria-hidden', 'true');
-  var at = function (deg, r) { var a = deg * Math.PI / 180; return [50 + r * Math.sin(a), 50 - r * Math.cos(a)]; };
-  var markers = '';
-  for (var hi = 0; hi < 12; hi++) {
-    if (hi === 0) {
-      var a1 = at(-4.2, 46.5), a2 = at(4.2, 46.5), a3 = at(0, 38.5);
-      markers += '<polygon points="' + [a1, a2, a3].map(function (p) { return p[0].toFixed(2) + ',' + p[1].toFixed(2); }).join(' ') +
-        '" fill="url(#cf-gold)" stroke="rgba(0,0,0,0.45)" stroke-width="0.3"/>';
-      continue;
-    }
-    var wide = hi % 3 === 0 ? 3.4 : 2.6;
-    markers += '<g transform="rotate(' + hi * 30 + ' 50 50)">' +
-      '<rect x="' + (50 - wide / 2) + '" y="3.8" width="' + wide + '" height="8.6" rx="0.5" fill="url(#cf-gold)" stroke="rgba(0,0,0,0.45)" stroke-width="0.3"/>' +
-      '<rect x="' + (50 - wide / 2 + 0.75) + '" y="4.9" width="' + (wide - 1.5) + '" height="6.4" rx="0.3" fill="rgba(243,239,231,0.82)"/></g>';
-  }
-  faceEl.innerHTML =
-    '<defs>' +
-      '<linearGradient id="cf-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7E8C8"/><stop offset=".5" stop-color="#D4B483"/><stop offset="1" stop-color="#8F6E3E"/></linearGradient>' +
-      '<filter id="cf-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0.5" dy="0.8" stdDeviation="0.7" flood-color="#000" flood-opacity="0.65"/></filter>' +
-    '</defs>' +
-    markers +
-    // the full date in a white window above 6 o'clock (the window is sized to the text in tickClock)
-    '<rect class="cf-date-bg" x="40" y="68.6" width="20" height="6.8" rx="0.6" fill="#F3EFE7" stroke="url(#cf-gold)" stroke-width="0.7"/>' +
-    '<text class="cf-date" x="50" y="72.1" text-anchor="middle" dominant-baseline="central"></text>' +
-    '<g filter="url(#cf-shadow)">' +
-      // hour hand: faceted dauphine, light and dark halves, with a pale inlay
-      '<g class="hand-h"><polygon points="50,24 50,55 47.3,46" fill="#F1DEB6"/><polygon points="50,24 52.7,46 50,55" fill="#A9834E"/>' +
-        '<polygon points="50,29 50.9,43 50,45 49.1,43" fill="rgba(243,239,231,0.75)"/></g>' +
-      // minute hand
-      '<g class="hand-m"><polygon points="50,9 50,56 48.1,46" fill="#F1DEB6"/><polygon points="50,9 51.9,46 50,56" fill="#A9834E"/>' +
-        '<polygon points="50,14 50.6,42 50,44 49.4,42" fill="rgba(243,239,231,0.75)"/></g>' +
-      // seconds hand: lollipop and counterweight
-      '<g class="hand-s"><line x1="50" y1="64" x2="50" y2="6" stroke="#D4B483" stroke-width="0.55" stroke-linecap="round"/>' +
-        '<circle cx="50" cy="19" r="1.7" fill="#0B0E12" stroke="#D4B483" stroke-width="0.55"/>' +
-        '<rect x="48.8" y="58.5" width="2.4" height="5.5" rx="1.2" fill="#D4B483"/></g>' +
-      '<circle cx="50" cy="50" r="2.4" fill="url(#cf-gold)"/><circle cx="50" cy="50" r="0.8" fill="#0B0E12"/>' +
-    '</g>';
-  coreEl.insertBefore(faceEl, coreEl.firstChild);
-  var hands = { h: faceEl.querySelector('.hand-h'), m: faceEl.querySelector('.hand-m'), s: faceEl.querySelector('.hand-s') };
-  var dateEl = faceEl.querySelector('.cf-date'), dateBg = faceEl.querySelector('.cf-date-bg');
-  var dateFmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', weekday: 'short', day: 'numeric', month: 'short' });
-  var base = null, baseSec = -1;
-  function tickClock() {
-    var nowMs = Date.now(), sec = Math.floor(nowMs / 1000);
-    if (sec !== baseSec) { // once a second: read the Lisbon time and keep the status up to date
-      baseSec = sec;
-      base = lisbonNow();
-      updatePresence(base.state);
-      var dateText = dateFmt.format(new Date()).replace(/,/g, '').toUpperCase(); // e.g. SAT 10 OCT, in Lisbon
-      if (dateEl.textContent !== dateText) {
-        dateEl.textContent = dateText;
-        var w = dateEl.getComputedTextLength() + 3.4;
-        if (w > 3.4) { dateBg.setAttribute('width', w.toFixed(2)); dateBg.setAttribute('x', (50 - w / 2).toFixed(2)); }
-      }
-    }
-    // a mechanical sweep: eight small steps a second (one step a second with reduced motion)
-    var s = base.s + (STILL ? 0 : Math.floor((nowMs % 1000) / 125) / 8);
-    hands.h.setAttribute('transform', 'rotate(' + ((base.h % 12) * 30 + base.m * 0.5 + s / 120) + ' 50 50)');
-    hands.m.setAttribute('transform', 'rotate(' + (base.m * 6 + s * 0.1) + ' 50 50)');
-    hands.s.setAttribute('transform', 'rotate(' + (s * 6) + ' 50 50)');
-    return base;
-  }
-  tickClock();
-  (function sweep() {
-    if (coreEl.classList.contains('as-clock')) tickClock();
-    requestAnimationFrame(sweep);
-  })();
-  setInterval(function () { if (!coreEl.classList.contains('as-clock')) tickClock(); }, 1000); // keeps the status current
 
   var allBtn = document.createElement('button');
   allBtn.type = 'button'; allBtn.className = 'dial-all'; allBtn.id = 'core-all';
   allBtn.textContent = 'Show me everything';
-  dial.after(allBtn); // below the dial, so the clock face stays clean
+  dial.after(allBtn); // below the dial, so the centre stays clean
   allBtn.addEventListener('click', function () { allMask = null; turnTo(0); go('all'); });
   // The overview can open its groups one at a time (the intro does): null = every group.
   var allMask = null;
@@ -467,14 +391,8 @@
     else c = restingCore();
 
     document.getElementById('core-title').textContent = c.title || '';
-    // the resting centre shows the Lisbon clock in place of a title
-    document.getElementById('core-title').hidden = !!c.clock;
-    coreEl.classList.toggle('as-clock', !!c.clock);
-    dial.classList.toggle('clock-on', !!c.clock);
-    if (c.clock) tickClock();
     document.getElementById('core-text').textContent = c.text;
     document.getElementById('core-meta').textContent = c.meta;
-    document.getElementById('core-text').hidden = !c.text; // the clock face has no lines under it
     document.getElementById('core-meta').hidden = !c.meta;
     core.style.borderColor = cur || open ? 'rgba(212,180,131,0.55)' : 'rgba(243,239,231,0.12)';
     var backBtn = document.getElementById('core-back');
