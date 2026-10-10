@@ -4,7 +4,7 @@
 // drawn where it is. So:
 //  - on load, the dots fly in from a loose cloud and each square turns solid as its dot lands;
 //  - clicking the name blows every dot far out across the page, then they drift back into it.
-// The lettering matches the dial below it: satin gold with a faint top edge and a soft shadow,
+// The lettering matches the dial below it: satin gold with a soft shadow,
 // so it reads as a raised nameplate, and a faint glint of light crosses it once it has formed.
 // The canvas covers the first screen of the page (above the dial, never catching clicks), so the
 // dots have room to fly. The real link stays in the page (transparent) for screen readers.
@@ -69,10 +69,7 @@
     o.fillStyle = '#5E4A2B';
     put(0);
     o.restore();
-    // 2. a faint edge along the top of each letter
-    o.fillStyle = 'rgba(255,246,228,0.22)';
-    put(-0.9);
-    // 3. the satin gold face
+    // 2. the satin gold face (no separate top highlight: on these thin letters it showed as a ghost copy)
     var g = o.createLinearGradient(0, capTop, 0, capBottom);
     GOLD.forEach(function (s) { g.addColorStop(s[0], s[1]); });
     o.fillStyle = g;
