@@ -128,6 +128,29 @@
       .next .spacer { display: none; }
       .chapter { padding-bottom: 14vh; }
     }
+    /* phones: tighter all round, so the story reads as one flow instead of a screen per chapter */
+    @media (max-width: 600px) {
+      .site-header { padding: 16px 20px; }
+      .hero { min-height: 0; padding: 16px 20px 28px; }
+      .eyebrow { margin-bottom: 12px; }
+      .hero p { margin-top: 14px; font-size: 16px; }
+      .scroll-cue { margin-top: 22px; }
+      .timeline { padding: 0 20px 16px; }
+      .rail { margin: 0 -20px 20px; padding: 10px 20px; }
+      .chapters { padding-left: 26px; }
+      .chapter { padding-bottom: 40px; }
+      .chapter:last-child { padding-bottom: 16px; }
+      .lead { margin-top: 8px; font-size: 26px; }
+      .role { margin-top: 10px; font-size: 14px; }
+      .story { margin-top: 10px; font-size: 15px; line-height: 1.6; }
+      .chips { margin-top: 14px; gap: 6px; }
+      .chips li { font-size: 12px; padding: 5px 10px; }
+      .stat { margin-top: 16px; }
+      .next { padding: 24px 20px 48px; }
+      .next h2 { font-size: 28px; }
+      .next p { margin-top: 12px; font-size: 15px; line-height: 1.6; }
+      .actions { margin-top: 20px; }
+    }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       .reveal { opacity: 1; transform: none; transition: none; }

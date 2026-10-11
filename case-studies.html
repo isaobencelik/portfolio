@@ -55,7 +55,7 @@
   <canvas id="network-bg" data-rgb="212, 180, 131" aria-hidden="true"></canvas>
 
   <!-- Header: the name opens the dial menu (assets/menu.js) -->
-  <header class="max-w-5xl mx-auto px-6 py-6 flex flex-wrap gap-x-8 gap-y-2 items-center justify-between">
+  <header class="max-w-5xl mx-auto px-6 py-4 sm:py-6 flex flex-wrap gap-x-8 gap-y-2 items-center justify-between">
     <button type="button" id="menu-open" class="menu-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-overlay">
       <svg class="menu-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
         <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" stroke-dasharray="12.1 2.04" transform="rotate(-45 12 12)"/>
@@ -68,16 +68,16 @@
   </header>
 
   <!-- Case Studies Section -->
-  <main id="work" class="max-w-5xl mx-auto px-6 pt-8 pb-16">
-    <div class="flex items-center justify-between mb-10 border-b border-slate-800 pb-4">
+  <main id="work" class="max-w-5xl mx-auto px-6 pt-2 pb-10 sm:pt-8 sm:pb-16">
+    <div class="flex items-center justify-between mb-6 sm:mb-10 border-b border-slate-800 pb-4">
       <h2 class="text-2xl font-medium tracking-tight text-white">Applied Case Studies</h2>
       <span class="text-sm text-slate-500">Measurable Impact &amp; Systems</span>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-8">
+    <div class="grid md:grid-cols-2 gap-4 sm:gap-8">
 
       <!-- Card 1 -->
-      <article id="cx-consolidation" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
+      <article id="cx-consolidation" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
         <div>
           <div class="flex items-center justify-between mb-4">
             <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">CX Platform Strategy</span>
@@ -86,12 +86,12 @@
           <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
             European CX System Consolidation &amp; AI 
           </h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          <p class="text-slate-400 text-sm leading-relaxed mb-4 sm:mb-6">
             Unified fragmented customer experience systems and legacy robotics workflows into a scalable strategy that improved service journeys and aligned engineering priorities with long-term CX goals.
           </p>
         </div>
         <div>
-          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
+          <div class="grid grid-cols-2 gap-3 pt-4 sm:pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
               <div class="text-2xl font-light text-gold-400">Architecture</div>
               <div class="text-xs text-slate-400 mt-1">Simplified Customer Journeys</div>
@@ -105,7 +105,7 @@
       </article>
 
       <!-- Card 2 -->
-      <article id="omnichannel" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
+      <article id="omnichannel" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
         <div>
           <div class="flex items-center justify-between mb-4">
             <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Salesforce Operations</span>
@@ -114,12 +114,12 @@
           <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
             EMEA Salesforce Omni-Channel Standardization
           </h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          <p class="text-slate-400 text-sm leading-relaxed mb-4 sm:mb-6">
             Standardized case distribution across the EMEA region, built self-service enablement materials, and increased operational visibility through Salesforce automation and Power BI reporting.
           </p>
         </div>
         <div>
-          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
+          <div class="grid grid-cols-2 gap-3 pt-4 sm:pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
               <div class="text-2xl font-light text-gold-400">70%</div>
               <div class="text-xs text-slate-400 mt-1">Increased Automation Rate</div>
@@ -133,7 +133,7 @@
       </article>
 
       <!-- Card 3 -->
-      <article id="platform-redesign" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
+      <article id="platform-redesign" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
         <div>
           <div class="flex items-center justify-between mb-4">
             <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Global Helpdesk</span>
@@ -142,12 +142,12 @@
           <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
             Global Platform Improvement &amp; Redesign
           </h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          <p class="text-slate-400 text-sm leading-relaxed mb-4 sm:mb-6">
             Defined organizational requirements, aligned leadership expectations, redesigned digital properties, and owned storefront optimization to improve platform reliability and customer experience end-to-end.
           </p>
         </div>
         <div>
-          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
+          <div class="grid grid-cols-2 gap-3 pt-4 sm:pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
               <div class="text-2xl font-light text-gold-400">95%</div>
               <div class="text-xs text-slate-400 mt-1">Session Success</div>
@@ -161,7 +161,7 @@
       </article>
 
       <!-- Card 4 -->
-      <article id="prioritisation" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
+      <article id="prioritisation" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
         <div>
           <div class="flex items-center justify-between mb-4">
             <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Roadmap Alignment</span>
@@ -170,12 +170,12 @@
           <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
             Enterprise Root-Cause &amp; Feature Prioritization
           </h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          <p class="text-slate-400 text-sm leading-relaxed mb-4 sm:mb-6">
             Converted complex enterprise customer pain points into structured product problems, aligned engineering priorities, and improved release readiness through root-cause analysis and stakeholder communication.
           </p>
         </div>
         <div>
-          <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-800/80">
+          <div class="grid grid-cols-2 gap-3 pt-4 sm:pt-6 border-t border-slate-800/80">
             <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800">
               <div class="text-2xl font-light text-gold-400">Strategic</div>
               <div class="text-xs text-slate-400 mt-1">Align with Enterprise Goals</div>
@@ -193,7 +193,7 @@
 
 
   <!-- Footer -->
-  <footer class="max-w-5xl mx-auto px-6 py-12 border-t border-slate-800 text-center text-xs text-slate-500">
+  <footer class="max-w-5xl mx-auto px-6 py-8 sm:py-12 border-t border-slate-800 text-center text-xs text-slate-500">
     &copy; 2026 OBEN CELIK. Built for making scalable systems, and team outcomes better.
   </footer>
 

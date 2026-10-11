@@ -104,10 +104,30 @@
       .route, .also { grid-template-columns: minmax(0, 1fr); }
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
+    /* phones: tighter all round, and the hobbies two to a row as small cards */
     @media (max-width: 600px) {
-      .grid { grid-template-columns: minmax(0, 1fr); }
-      .tile { min-height: 220px; }
-      .also li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+      .site-header { padding: 16px 20px; }
+      .wrap { padding: 0 20px; }
+      .eyebrow { margin-bottom: 12px; }
+      .hero { padding-top: 16px; padding-bottom: 8px; }
+      .hero p { margin-top: 14px; font-size: 16px; }
+      .route { margin-top: 20px; gap: 12px; }
+      .route p { margin-top: 10px; font-size: 16px; line-height: 1.6; }
+      .langs { margin-top: 16px; gap: 12px; }
+      /* each language on two short lines: name and level, then its bar */
+      .langs li { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; }
+      .langs .meter { grid-column: 1 / -1; grid-row: 2; }
+      .langs small { grid-column: 2; grid-row: 1; margin-top: 0; }
+      .hobbies { padding-top: 48px; }
+      .grid { margin-top: 16px; gap: 10px; }
+      .tile { min-height: 0; padding: 16px; border-radius: 16px; gap: 14px; }
+      .tile svg { width: 40px; height: 40px; }
+      .tile h3 { font-size: 19px; }
+      .tile p { margin-top: 6px; font-size: 13px; line-height: 1.45; }
+      .tile .tag { top: 16px; right: 14px; font-size: 9px; letter-spacing: .16em; }
+      .also { padding-top: 48px; padding-bottom: 40px; gap: 16px; }
+      .also li { grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 12px 0; font-size: 15px; }
+      .actions { margin-top: 20px; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -141,7 +161,7 @@
       <p>The person behind the product work: where I come from, the languages I live in, and what I do when the laptop is closed.</p>
 
       <div class="route reveal" id="route">
-        <svg viewBox="0 0 600 230" role="img" aria-label="A route from Istanbul to Lisbon">
+        <svg viewBox="0 48 600 184" role="img" aria-label="A route from Istanbul to Lisbon">
           <path id="route-path" class="arc" d="M520 150 Q300 -20 80 170" />
           <circle class="halo" cx="520" cy="150" r="14" />
           <circle class="city" cx="520" cy="150" r="4" />
