@@ -137,7 +137,7 @@ body.cv-stacked { overflow: hidden; }
 body.cv-stacked .hint, body.cv-stacked footer { visibility: hidden; }
 @media (prefers-reduced-motion: reduce) { .cv-paper, .cv-paper.armed { filter: none; transform: none; transition: opacity .2s ease; } }
 
-/* Contact and About me (homepage): the nodes draw two pictures (network-bg.js); these links sit
+/* Projects, About me and Contact (homepage): the nodes draw two pictures (network-bg.js); these links sit
    over them, with a caption fading in underneath each. The SVGs only show
    with reduced motion, when the nodes don't move. */
 .pair-card {

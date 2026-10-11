@@ -44,13 +44,19 @@
     em: { name: 'Email', st: 'info', a: [260, 300], href: 'mailto:isaobencelik@gmail.com', text: 'Write to me directly.', meta: 'isaobencelik@gmail.com' }
   };
 
-  // The two drawings the background network makes for Contact and About me (see buildPairs)
+  // The two drawings the background network makes for Projects, About me and Contact (see buildPairs)
   var PAIRS = {
     contact: { form: 'formContact', items: [
       { id: 'li', d: CONTACT.li, kind: 'LinkedIn', cap: 'in/isa-oben-celik',
         svg: '<rect x="2" y="2" width="96" height="96" rx="18"/><circle cx="29" cy="27" r="3"/><path d="M29 42v36M45 78V42m0 8c3-6 9-10 16-9 8 1 13 6 13 16v21"/>' },
       { id: 'em', d: CONTACT.em, kind: 'Email', cap: 'isaobencelik@gmail.com',
         svg: '<rect x="2" y="17" width="96" height="66"/><path d="M2 17l48 38 48-38"/>' }
+    ] },
+    projects: { form: 'formProjects', items: [
+      { id: 'hc', d: HALVES.hc, kind: 'Case studies', cap: 'Problem \u2192 decision \u2192 outcome',
+        svg: '<path d="M10 8v82h85M20 90V70h11v20M38 90V58h11v32M56 90V44h11v46M74 90V28h11v62M25 60l19-12 18-14 22-20M74 14h10v10"/>' },
+      { id: 'ha', d: HALVES.ha, href: 'apps.html', kind: 'My apps', cap: 'Built and shipped',
+        svg: '<rect x="4" y="14" width="92" height="72"/><circle cx="10" cy="21" r="1"/><circle cx="16" cy="21" r="1"/><circle cx="22" cy="21" r="1"/><path d="M4 28h92M38 44L26 57l12 13M55 42L45 72M62 44l12 13-12 13"/>' }
     ] },
     about: { form: 'formAbout', items: [
       { id: 'ca', d: ABOUT.ca, kind: 'Career', cap: 'Data centres to product',
@@ -577,7 +583,8 @@
   function updatePaper() {
     if (!paper) return;
     var wantPaper = !demoRunning && level === 'cv';
-    var wantPair = !demoRunning && PAIRS[level] ? level : null;
+    var key = level === 'apps' || level === 'cases' ? 'projects' : level; // still Projects inside My apps
+    var wantPair = !demoRunning && PAIRS[key] ? key : null;
     if (!wantPaper && paperShown) hidePaper();
     if (pairShown && pairShown !== wantPair) hidePair();
     if (wantPaper && !paperShown) showPaper();
@@ -663,8 +670,9 @@
   }
 
   // ---------- Drawings for Contact and About me (homepage only) ----------
-  // Opening Contact or About me sends the background nodes into two line drawings, one either side
-  // of the dial (network-bg.js), then a caption fades in under each:
+  // Opening Projects, About me or Contact sends the background nodes into two line drawings, one
+  // either side of the dial (network-bg.js), then a caption fades in under each:
+  //   Projects: a climbing bar chart (Case studies) | a browser window with </> (My apps)
   //   Contact:  the LinkedIn mark | an envelope with my email address
   //   About me: someone working at a laptop (Career) | a day at the beach (Personal)
   // Each drawing is a link, like the wedge it stands for. Hovering a wedge or a drawing lights that
@@ -677,7 +685,7 @@
       PAIRS[key].items.forEach(function (c) {
         var a = document.createElement('a');
         a.className = 'pair-card';
-        a.href = c.d.href;
+        a.href = c.href || c.d.href;
         if (c.d.external) { a.target = '_blank'; a.rel = 'noopener'; }
         a.setAttribute('aria-label', c.kind + ': ' + c.cap);
         // the SVG only shows with reduced motion, when the nodes stay where they are
@@ -697,7 +705,8 @@
   function updatePairFocus() {
     if (!pairShown) return;
     var ids = pairIds(pairShown);
-    var f = cardHover || (ids.indexOf(active) >= 0 ? active : null);
+    var hov = active && kindOf(active) === 'item:apps' ? 'ha' : active; // Job Analyser & co. light up My apps
+    var f = cardHover || (ids.indexOf(hov) >= 0 ? hov : null);
     ids.forEach(function (id) { pairCards[id].classList.toggle('lit', f === id); });
     if (window.networkBg && window.networkBg.focus) window.networkBg.focus(f);
   }

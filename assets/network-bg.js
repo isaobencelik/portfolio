@@ -166,18 +166,21 @@ function contactShape(li, em, n) {
   };
 }
 
-// Points spread evenly along an open path (both ends included), for the line drawings below.
+// Points along an open path: every corner, plus the rest of the k points shared out between the
+// segments by length (so a bar keeps its square top and an arrow its point).
 function samplePath(path, k) {
-  if (k < 2) return [path[0]];
-  const segs = path.slice(1).map((q, i) => { const p = path[i]; return [p, q, Math.hypot(q[0] - p[0], q[1] - p[1])]; });
-  const total = segs.reduce((sum, g) => sum + g[2], 0), pts = [];
-  let si = 0, before = 0;
-  for (let j = 0; j < k; j++) {
-    const d = total * j / (k - 1);
-    while (si < segs.length - 1 && before + segs[si][2] < d) { before += segs[si][2]; si++; }
-    const [p, q, len] = segs[si], t = len ? Math.min(1, (d - before) / len) : 0;
-    pts.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t]);
-  }
+  if (path.length < 2) return path.slice();
+  const lens = path.slice(1).map((q, i) => Math.hypot(q[0] - path[i][0], q[1] - path[i][1]));
+  const total = lens.reduce((a, b) => a + b, 0) || 1, extra = Math.max(0, k - path.length);
+  const share = lens.map(l => extra * l / total), inner = share.map(Math.floor);
+  let left = extra - inner.reduce((a, b) => a + b, 0);
+  share.map((v, i) => [v - inner[i], i]).sort((x, y) => y[0] - x[0]).forEach(([, i]) => { if (left > 0) { inner[i]++; left--; } });
+  const pts = [];
+  lens.forEach((_, i) => {
+    const p = path[i], q = path[i + 1], m = inner[i] + 1;
+    for (let j = 0; j < m; j++) pts.push([p[0] + (q[0] - p[0]) * j / m, p[1] + (q[1] - p[1]) * j / m]);
+  });
+  pts.push(path[path.length - 1]);
   return pts;
 }
 
@@ -198,6 +201,7 @@ function sceneKit(r) {
       const ids = add(ring.map(at)); ids.forEach((id, i) => edges.push([id, ids[(i + 1) % ids.length]]));
       return ids;
     },
+    box(path, k) { const ids = add(walkOutline(path.map(at), fewer(k, 4))); ids.forEach((id, i) => edges.push([id, ids[(i + 1) % ids.length]])); return ids; }, // keeps its corners
     point(u, v) { return add([at([u, v])])[0]; },
     link(a, b) { edges.push([a, b]); },
     done() { return { points: pts, edges }; }
@@ -239,6 +243,31 @@ function personalShape(r) {
   k.circle(0.43, 0.575, 0.042, 6);                                      // head, resting on the back
   k.line([[0.47, 0.65], [0.62, 0.7], [0.74, 0.64], [0.88, 0.69]], 6);   // body, one knee up
   k.line(Array.from({ length: 9 }, (_, i) => [0.02 + i * 0.12, 0.95 + (i % 2 ? -0.025 : 0.01)]), 9); // the sea
+  return k.done();
+}
+
+// Case studies: a bar chart that climbs, with a trend arrow over it (problem, decisions, outcome).
+function casesShape(r) {
+  const k = sceneKit(r);
+  k.line([[0.1, 0.08], [0.1, 0.9], [0.95, 0.9]], 9);                     // the axes
+  [0.2, 0.32, 0.46, 0.62].forEach((h, i) => {                            // four bars, each taller
+    const x = 0.2 + i * 0.18;
+    k.line([[x, 0.9], [x, 0.9 - h], [x + 0.11, 0.9 - h], [x + 0.11, 0.9]], 5);
+  });
+  k.line([[0.25, 0.6], [0.44, 0.48], [0.62, 0.34], [0.84, 0.14]], 6);    // the trend
+  k.line([[0.74, 0.14], [0.84, 0.14], [0.84, 0.24]], 3);                 // and its arrowhead
+  return k.done();
+}
+
+// My apps: a browser window with </> in it.
+function appsShape(r) {
+  const k = sceneKit(r);
+  k.box([[0.04, 0.14], [0.96, 0.14], [0.96, 0.86], [0.04, 0.86]], 18);    // the window
+  k.line([[0.04, 0.28], [0.96, 0.28]], 6);                               // its toolbar
+  [0.1, 0.16, 0.22].forEach(u => k.point(u, 0.21));                      // the three buttons
+  k.line([[0.38, 0.44], [0.26, 0.57], [0.38, 0.7]], 3);                  // <
+  k.line([[0.55, 0.42], [0.45, 0.72]], 3);                               // /
+  k.line([[0.62, 0.44], [0.74, 0.57], [0.62, 0.7]], 3);                  // >
   return k.done();
 }
 
@@ -296,11 +325,15 @@ function gather(s, rect) {
 }
 function formShape(rect) { gather(paperShape(rect, nodes.length), rect); }
 function formContact(li, em) { gather(contactShape(li, em, baseCount()), null); }
+function formProjects(hc, ha) {
+  gather(pairShape(casesShape(hc), appsShape(ha), 'hc', 'ha'), null);
+  shape.dot = Math.max(0.5, Math.min(0.7, hc.w / 320));
+}
 function formAbout(ca, pe) {
   gather(pairShape(careerShape(ca), personalShape(pe), 'ca', 'pe'), null);
   shape.dot = Math.max(0.4, Math.min(0.6, ca.w / 360)); // finer dots: these drawings have more detail
 }
-// Light up one of a pair of drawings (by its group: 'li', 'em', 'ca' or 'pe') and dim the other;
+// Light up one of a pair of drawings (by its group: 'li', 'em', 'ca', 'pe', 'hc' or 'ha') and dim the other;
 // null lights both evenly.
 function focusShape(group) { shape.focus = group || null; }
 
@@ -354,7 +387,7 @@ function releaseShape() {
                 t0: now + Math.random() * 120, dur: BLOW_MS * (0.8 + Math.random() * 0.4) };
   });
 }
-window.networkBg = { formPaper: formShape, formContact: formContact, formAbout: formAbout, focus: focusShape, formIcon: formIcon, release: releaseShape };
+window.networkBg = { formPaper: formShape, formContact: formContact, formAbout: formAbout, formProjects: formProjects, focus: focusShape, formIcon: formIcon, release: releaseShape };
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
