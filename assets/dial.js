@@ -44,6 +44,22 @@
     em: { name: 'Email', st: 'info', a: [260, 300], href: 'mailto:isaobencelik@gmail.com', text: 'Write to me directly.', meta: 'isaobencelik@gmail.com' }
   };
 
+  // The two drawings the background network makes for Contact and About me (see buildPairs)
+  var PAIRS = {
+    contact: { form: 'formContact', items: [
+      { id: 'li', d: CONTACT.li, kind: 'LinkedIn', cap: 'in/isa-oben-celik',
+        svg: '<rect x="2" y="2" width="96" height="96" rx="18"/><circle cx="29" cy="27" r="3"/><path d="M29 42v36M45 78V42m0 8c3-6 9-10 16-9 8 1 13 6 13 16v21"/>' },
+      { id: 'em', d: CONTACT.em, kind: 'Email', cap: 'isaobencelik@gmail.com',
+        svg: '<rect x="2" y="17" width="96" height="66"/><path d="M2 17l48 38 48-38"/>' }
+    ] },
+    about: { form: 'formAbout', items: [
+      { id: 'ca', d: ABOUT.ca, kind: 'Career', cap: 'Data centres to product',
+        svg: '<circle cx="30" cy="20" r="7.5"/><path d="M42 60h56M92 63v31M74 59l6-26 3.5.5-6 25.5M30 29l-4.5 15 1 16M28.5 35l11.5 14 26 7.5M26.5 60l23.5 2 2 31M13 36l3 30h20M24 68v25"/>' },
+      { id: 'pe', d: ABOUT.pe, kind: 'Personal', cap: 'Istanbul \u2192 Lisbon',
+        svg: '<circle cx="80" cy="19" r="8.5"/><circle cx="43" cy="57.5" r="4.2"/><path d="M88.5 19.0L95.0 19.0 M86.0 25.0L90.6 29.6 M80.0 27.5L80.0 34.0 M74.0 25.0L69.4 29.6 M71.5 19.0L65.0 19.0 M74.0 13.0L69.4 8.4 M80.0 10.5L80.0 4.0 M86.0 13.0L90.6 8.4 M8 42a22 15 0 0 1 44 0zM30 42l4 48M37 60l10 14h43M52 75l-2 10M85 75l2 10M47 65l15 5 12-6 14 5M2 96 L14 92.5 L26 96.0 L38 92.5 L50 96.0 L62 92.5 L74 96.0 L86 92.5 L98 96.0"/>' }
+    ] }
+  };
+
   // Outer-ring items fan out around their category's centre, each `w` degrees wide.
   function fan(list, centre, w) {
     var keys = Object.keys(list), start = centre - keys.length * w / 2;
@@ -537,11 +553,10 @@
     paperImg.alt = ''; paperImg.decoding = 'async';
     paper.appendChild(paperImg);
     document.body.appendChild(paper);
-    // a click anywhere outside the dial and the paper (or the contact cards) closes the section,
+    // a click anywhere outside the dial and the paper (or the drawings) closes the section,
     // which takes its shape away
     document.addEventListener('click', function (ev) {
-      if (!(paperShown || contactShown) || dial.contains(ev.target) || paper.contains(ev.target)) return;
-      if (contactCards && (contactCards.li.contains(ev.target) || contactCards.em.contains(ev.target))) return;
+      if (!(paperShown || pairShown) || dial.contains(ev.target) || paper.contains(ev.target) || onPairCard(ev.target)) return;
       turnTo(0); go('closed');
     });
     // fetch the page once everything else has loaded, so it's ready on the first hover
@@ -552,23 +567,23 @@
       var heightOnly = window.innerWidth === paperVW; paperVW = window.innerWidth;
       if (heightOnly && document.body.classList.contains('cv-stacked')) return;
       if (paperShown) hidePaper();
-      if (contactShown) hideContact();
+      if (pairShown) hidePair();
       updatePaper();
     });
-    buildContact();
+    buildPairs();
   }
   // Takes away the shape that's no longer wanted before forming the new one (CV straight to
   // Contact, or back), so the release doesn't blow the new shape apart.
   function updatePaper() {
     if (!paper) return;
     var wantPaper = !demoRunning && level === 'cv';
-    var wantContact = !demoRunning && level === 'contact';
+    var wantPair = !demoRunning && PAIRS[level] ? level : null;
     if (!wantPaper && paperShown) hidePaper();
-    if (!wantContact && contactShown) hideContact();
+    if (pairShown && pairShown !== wantPair) hidePair();
     if (wantPaper && !paperShown) showPaper();
-    if (wantContact && !contactShown) showContact();
+    if (wantPair && !pairShown) showPair(wantPair);
     updateIcon();
-    updateContactFocus();
+    updatePairFocus();
   }
   // Hovering View or Download while the paper is up: its text-line nodes rise out of the page and
   // form a magnifying glass or a download arrow in the empty space above it (network-bg.js).
@@ -647,53 +662,60 @@
     if (window.networkBg) window.networkBg.release();
   }
 
-  // ---------- Contact shapes (homepage only) ----------
-  // Opening Contact sends the background nodes into the LinkedIn mark on the left of the dial and
-  // an envelope on the right (network-bg.js), then my profile and email address fade in under them.
-  // Both are links. Hovering LinkedIn or Email (on the dial or on the shape) lights that one up.
-  // Like the paper, only a click takes them away. On phones they sit side by side above the dial.
-  var contactCards, contactShown = false, contactReveal = null, cardHover = null; // contactCards is set by buildContact(), above
-  function buildContact() {
-    // only shown with reduced motion, when the nodes stay where they are
-    var SVG_LI = '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="2" width="96" height="96" rx="18"/><circle cx="29" cy="27" r="3"/><path d="M29 42v36M45 78V42m0 8c3-6 9-10 16-9 8 1 13 6 13 16v21"/></svg>';
-    var SVG_EM = '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="17" width="96" height="66"/><path d="M2 17l48 38 48-38"/></svg>';
-    contactCards = {};
-    [['li', CONTACT.li, 'LinkedIn', 'in/isa-oben-celik', SVG_LI], ['em', CONTACT.em, 'Email', 'isaobencelik@gmail.com', SVG_EM]].forEach(function (c) {
-      var a = document.createElement('a');
-      a.className = 'contact-card';
-      a.href = c[1].href;
-      if (c[1].external) { a.target = '_blank'; a.rel = 'noopener'; }
-      a.setAttribute('aria-label', c[2] + ': ' + c[3]);
-      a.innerHTML = '<span class="contact-mark" aria-hidden="true">' + c[4] + '</span>' +
-        '<span class="contact-cap" aria-hidden="true"><span class="contact-kind">' + c[2] + '</span><span class="contact-addr">' + c[3] + '</span></span>';
-      a.addEventListener('mouseenter', function () { cardHover = c[0]; updateContactFocus(); });
-      a.addEventListener('mouseleave', function () { cardHover = null; updateContactFocus(); });
-      document.body.appendChild(a);
-      contactCards[c[0]] = a;
+  // ---------- Drawings for Contact and About me (homepage only) ----------
+  // Opening Contact or About me sends the background nodes into two line drawings, one either side
+  // of the dial (network-bg.js), then a caption fades in under each:
+  //   Contact:  the LinkedIn mark | an envelope with my email address
+  //   About me: someone working at a laptop (Career) | a day at the beach (Personal)
+  // Each drawing is a link, like the wedge it stands for. Hovering a wedge or a drawing lights that
+  // drawing up. Like the paper, only a click takes them away. On phones they sit side by side above the dial.
+  var pairShown = null, pairReveal = null, cardHover = null;
+  var pairCards; // id -> its <a>, set by buildPairs(), which runs above this line
+  function buildPairs() {
+    pairCards = {};
+    Object.keys(PAIRS).forEach(function (key) {
+      PAIRS[key].items.forEach(function (c) {
+        var a = document.createElement('a');
+        a.className = 'pair-card';
+        a.href = c.d.href;
+        if (c.d.external) { a.target = '_blank'; a.rel = 'noopener'; }
+        a.setAttribute('aria-label', c.kind + ': ' + c.cap);
+        // the SVG only shows with reduced motion, when the nodes stay where they are
+        a.innerHTML = '<span class="pair-mark" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">' + c.svg + '</svg></span>' +
+          '<span class="pair-cap" aria-hidden="true"><span class="pair-kind">' + c.kind + '</span><span class="pair-addr">' + c.cap + '</span></span>';
+        a.addEventListener('mouseenter', function () { cardHover = c.id; updatePairFocus(); });
+        a.addEventListener('mouseleave', function () { cardHover = null; updatePairFocus(); });
+        document.body.appendChild(a);
+        pairCards[c.id] = a;
+      });
     });
   }
-  function updateContactFocus() {
-    if (!contactCards) return;
-    var f = contactShown ? (cardHover || ({ li: 'li', em: 'em' })[active] || null) : null;
-    contactCards.li.classList.toggle('lit', f === 'li');
-    contactCards.em.classList.toggle('lit', f === 'em');
+  function pairIds(key) { return PAIRS[key].items.map(function (c) { return c.id; }); }
+  function onPairCard(target) {
+    return !!pairShown && pairIds(pairShown).some(function (id) { return pairCards[id].contains(target); });
+  }
+  function updatePairFocus() {
+    if (!pairShown) return;
+    var ids = pairIds(pairShown);
+    var f = cardHover || (ids.indexOf(active) >= 0 ? active : null);
+    ids.forEach(function (id) { pairCards[id].classList.toggle('lit', f === id); });
     if (window.networkBg && window.networkBg.focus) window.networkBg.focus(f);
   }
   // Wide screens: one square either side of the dial, as big as the narrower side allows.
-  var CAP_H = 46; // room for the caption under each shape
-  function contactRects() {
+  var CAP_H = 46; // room for the caption under each drawing
+  function pairRects() {
     var d = dial.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight;
     var GAP = 32, EDGE = 20;
     var space = Math.min(d.left - GAP - EDGE, vw - d.right - GAP - EDGE);
-    if (space < 170) return null; // the email address needs about this much
+    if (space < 170) return null; // the longest caption needs about this much
     var s = Math.min(space * 0.8, d.height * 0.4, vh - CAP_H - 60, 220);
     if (s < 80) return null;
     var y = Math.max(16, d.top + (d.height - s - CAP_H) / 2);
-    return { li: { x: d.left - GAP - space / 2 - s / 2, y: y, w: s }, em: { x: d.right + GAP + space / 2 - s / 2, y: y, w: s }, space: space };
+    return { left: { x: d.left - GAP - space / 2 - s / 2, y: y, w: s }, right: { x: d.right + GAP + space / 2 - s / 2, y: y, w: s }, space: space };
   }
-  // Phones and narrow windows: the dial shrinks to the bottom (as for the paper) and the two shapes
-  // sit side by side above it, LinkedIn on the left, email on the right.
-  function contactStacked() {
+  // Phones and narrow windows: the dial shrinks to the bottom (as for the paper) and the two
+  // drawings sit side by side above it.
+  function pairStacked() {
     var vw = window.innerWidth, vh = window.innerHeight;
     var head = document.querySelector('.site-header');
     var top = Math.max(16, (head ? head.getBoundingClientRect().bottom : 0) + 8), bottom = vh - 20;
@@ -704,40 +726,44 @@
     if (s < 60) return null;
     var y = top + (room - (s + CAP_H + GAP + D)) / 2;
     return {
-      li: { x: vw / 2 - GAP / 2 - half / 2 - s / 2, y: y, w: s },
-      em: { x: vw / 2 + GAP / 2 + half / 2 - s / 2, y: y, w: s },
+      left: { x: vw / 2 - GAP / 2 - half / 2 - s / 2, y: y, w: s },
+      right: { x: vw / 2 + GAP / 2 + half / 2 - s / 2, y: y, w: s },
       space: half,
       dial: { x: (vw - D) / 2, y: y + s + CAP_H + GAP, d: D }
     };
   }
-  function showContact() {
-    var r = contactRects();
+  function showPair(key) {
+    var r = pairRects();
     if (!r) {
       window.scrollTo(0, 0);
-      r = contactStacked();
+      r = pairStacked();
       if (!r) return;
       stackDial(r.dial);
     }
-    contactShown = true;
-    var fs = Math.max(10, Math.min(13, r.space / 14)); // the email address fits its side
-    ['li', 'em'].forEach(function (k) {
-      var a = contactCards[k], q = r[k];
+    pairShown = key;
+    var items = PAIRS[key].items;
+    var longest = Math.max.apply(null, items.map(function (c) { return c.cap.length; }));
+    var fs = Math.max(10, Math.min(13, r.space / (longest * 0.62))); // the longest caption fits its side
+    [r.left, r.right].forEach(function (q, i) {
+      var a = pairCards[items[i].id];
       a.style.left = q.x + 'px'; a.style.top = q.y + 'px'; a.style.width = q.w + 'px';
-      a.querySelector('.contact-mark').style.height = q.w + 'px';
+      a.querySelector('.pair-mark').style.height = q.w + 'px';
       a.style.setProperty('--cap', fs + 'px');
       a.classList.add('armed');
     });
-    if (!STILL && window.networkBg && window.networkBg.formContact) window.networkBg.formContact(r.li, r.em);
-    clearTimeout(contactReveal);
-    contactReveal = setTimeout(function () {
-      contactCards.li.classList.add('show'); contactCards.em.classList.add('show');
+    var form = window.networkBg && window.networkBg[PAIRS[key].form];
+    if (!STILL && form) form(r.left, r.right);
+    clearTimeout(pairReveal);
+    pairReveal = setTimeout(function () {
+      items.forEach(function (c) { pairCards[c.id].classList.add('show'); });
     }, STILL ? 0 : REVEAL_MS);
+    updatePairFocus();
   }
-  function hideContact() {
-    contactShown = false;
+  function hidePair() {
+    pairIds(pairShown).forEach(function (id) { pairCards[id].classList.remove('show', 'armed', 'lit'); });
+    pairShown = null;
     cardHover = null;
-    clearTimeout(contactReveal);
-    ['li', 'em'].forEach(function (k) { contactCards[k].classList.remove('show', 'armed', 'lit'); });
+    clearTimeout(pairReveal);
     unstackDial();
     if (window.networkBg) window.networkBg.release();
   }

@@ -166,8 +166,109 @@ function contactShape(li, em, n) {
   };
 }
 
+// Points spread evenly along an open path (both ends included), for the line drawings below.
+function samplePath(path, k) {
+  if (k < 2) return [path[0]];
+  const segs = path.slice(1).map((q, i) => { const p = path[i]; return [p, q, Math.hypot(q[0] - p[0], q[1] - p[1])]; });
+  const total = segs.reduce((sum, g) => sum + g[2], 0), pts = [];
+  let si = 0, before = 0;
+  for (let j = 0; j < k; j++) {
+    const d = total * j / (k - 1);
+    while (si < segs.length - 1 && before + segs[si][2] < d) { before += segs[si][2]; si++; }
+    const [p, q, len] = segs[si], t = len ? Math.min(1, (d - before) / len) : 0;
+    pts.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t]);
+  }
+  return pts;
+}
+
+// A small kit for line drawings in square r, in units of its side (0..1 across and down).
+// Small drawings (phones) get fewer points, so they don't turn into a clump of dots.
+function sceneKit(r) {
+  const pts = [], edges = [];
+  const f = Math.max(0.55, Math.min(1, r.w / 200)), fewer = (k, min) => Math.max(min, Math.round(k * f));
+  const at = ([u, v]) => [r.x + r.w * u, r.y + r.w * v];
+  const add = list => { const f = pts.length; list.forEach(p => pts.push(p)); return list.map((_, i) => f + i); };
+  return {
+    pts, edges,
+    line(path, k) { const ids = add(samplePath(path.map(at), fewer(k, 2))); for (let i = 1; i < ids.length; i++) edges.push([ids[i - 1], ids[i]]); return ids; },
+    loop(path, k) { const ids = add(sampleOutline(path.map(at), fewer(k, 4))); ids.forEach((id, i) => edges.push([id, ids[(i + 1) % ids.length]])); return ids; },
+    circle(u, v, rad, k) {
+      k = fewer(k, 5);
+      const ring = Array.from({ length: k }, (_, i) => [u + rad * Math.cos(i * 2 * Math.PI / k), v + rad * Math.sin(i * 2 * Math.PI / k)]);
+      const ids = add(ring.map(at)); ids.forEach((id, i) => edges.push([id, ids[(i + 1) % ids.length]]));
+      return ids;
+    },
+    point(u, v) { return add([at([u, v])])[0]; },
+    link(a, b) { edges.push([a, b]); },
+    done() { return { points: pts, edges }; }
+  };
+}
+
+// Career: someone at a desk, side on, working on an open laptop.
+function careerShape(r) {
+  const k = sceneKit(r);
+  k.line([[0.42, 0.6], [0.98, 0.6]], 7);                                // the desk
+  k.line([[0.92, 0.63], [0.92, 0.94]], 3);                              // its leg
+  k.loop([[0.74, 0.59], [0.8, 0.33], [0.835, 0.335], [0.775, 0.59]], 8); // the laptop's open screen
+  k.circle(0.3, 0.2, 0.075, 8);                                         // head
+  k.line([[0.3, 0.29], [0.255, 0.44], [0.265, 0.6]], 5);                // back, leaning in a little
+  k.line([[0.285, 0.35], [0.4, 0.49], [0.66, 0.565]], 5);               // arm, out to the keyboard
+  k.line([[0.265, 0.6], [0.5, 0.62], [0.52, 0.93]], 6);                 // thigh and shin
+  k.line([[0.13, 0.36], [0.16, 0.66], [0.36, 0.66]], 6);                // the chair's back and seat
+  k.line([[0.24, 0.68], [0.24, 0.93]], 2);                              // and its stem
+  return k.done();
+}
+
+// Personal: a day at the beach. The sun, an umbrella, someone stretched out on a lounger, the sea.
+function personalShape(r) {
+  const k = sceneKit(r);
+  const sun = k.circle(0.8, 0.19, 0.085, 8);
+  sun.forEach((id, i) => {                                              // a ray off every point of the sun
+    const a = i * 2 * Math.PI / sun.length;
+    k.link(id, k.point(0.8 + 0.15 * Math.cos(a), 0.19 + 0.15 * Math.sin(a)));
+  });
+  const canopy = Array.from({ length: 9 }, (_, i) => {                  // the umbrella's dome, closed by its rim
+    const a = Math.PI + i * Math.PI / 8;
+    return [0.3 + 0.22 * Math.cos(a), 0.42 + 0.15 * Math.sin(a)];
+  });
+  k.loop(canopy, 11);
+  k.line([[0.3, 0.42], [0.34, 0.9]], 4);                                // its pole, into the sand
+  k.line([[0.37, 0.6], [0.47, 0.74], [0.9, 0.74]], 7);                  // the lounger, back raised
+  k.line([[0.52, 0.75], [0.5, 0.85]], 2);
+  k.line([[0.85, 0.75], [0.87, 0.85]], 2);
+  k.circle(0.43, 0.575, 0.042, 6);                                      // head, resting on the back
+  k.line([[0.47, 0.65], [0.62, 0.7], [0.74, 0.64], [0.88, 0.69]], 6);   // body, one knee up
+  k.line(Array.from({ length: 9 }, (_, i) => [0.02 + i * 0.12, 0.95 + (i % 2 ? -0.025 : 0.01)]), 9); // the sea
+  return k.done();
+}
+
+// Two drawings side by side, each edge tagged with its group so one can be lit up on its own.
+function pairShape(a, b, ga, gb) {
+  const off = a.points.length;
+  return {
+    points: a.points.concat(b.points),
+    edges: a.edges.map(e => [e[0], e[1], ga]).concat(b.edges.map(e => [e[0] + off, e[1] + off, gb]))
+  };
+}
+
+// A drawing can need more points than the screen has nodes (phones have only 35): extra nodes
+// drift in from just off the nearest edge for it, and leave the same way once it's let go.
+function extraNode() {
+  const W = canvas.width, H = canvas.height, side = Math.floor(Math.random() * 4);
+  const x = side === 0 ? -20 : side === 1 ? W + 20 : Math.random() * W;
+  const y = side === 2 ? -20 : side === 3 ? H + 20 : Math.random() * H;
+  return { x, y, vx: 0, vy: 0, bvx: 0, bvy: 0, radius: Math.random() * 2 + 2, extra: true };
+}
+function sendOff(nd, now) {
+  const W = canvas.width, H = canvas.height, d = [nd.x, W - nd.x, nd.y, H - nd.y], m = d.indexOf(Math.min(...d));
+  const t = m === 0 ? [-30, nd.y] : m === 1 ? [W + 30, nd.y] : m === 2 ? [nd.x, -30] : [nd.x, H + 30];
+  nd.blow = { sx: nd.x, sy: nd.y, tx: t[0], ty: t[1], t0: now + Math.random() * 120, dur: BLOW_MS };
+}
+const baseCount = () => nodes.filter(nd => !nd.extra).length;
+
 // Give each target point the nearest free node, so every node takes a short path.
 function gather(s, rect) {
+  while (nodes.length < s.points.length) nodes.push(extraNode());
   const free = nodes.slice();
   const order = [];
   const now = performance.now();
@@ -183,17 +284,24 @@ function gather(s, rect) {
     nd.blow = null; // reopened mid blow-out: gather from wherever it is
     order.push(nd);
   });
-  free.forEach(nd => { nd.tx = undefined; });
+  free.forEach(nd => { nd.tx = undefined; if (nd.extra && !nd.blow) sendOff(nd, now); });
   shape.edges = s.edges.filter(e => e[0] < order.length && e[1] < order.length)
     .map(e => [order[e[0]], order[e[1]], e[2]]);
   shape.inner = s.rowStart !== undefined ? order.slice(s.rowStart) : []; // the paper's "text line" nodes, which can form symbols
   shape.rect = rect;
   shape.focus = null;
+  shape.dot = 1;
+  shape.groups = [...new Set(s.edges.map(e => e[2]).filter(Boolean))];
   shape.on = true;
 }
 function formShape(rect) { gather(paperShape(rect, nodes.length), rect); }
-function formContact(li, em) { gather(contactShape(li, em, nodes.length), null); }
-// Light up one of the contact shapes ('li' or 'em') and dim the other; null lights both evenly.
+function formContact(li, em) { gather(contactShape(li, em, baseCount()), null); }
+function formAbout(ca, pe) {
+  gather(pairShape(careerShape(ca), personalShape(pe), 'ca', 'pe'), null);
+  shape.dot = Math.max(0.4, Math.min(0.6, ca.w / 360)); // finer dots: these drawings have more detail
+}
+// Light up one of a pair of drawings (by its group: 'li', 'em', 'ca' or 'pe') and dim the other;
+// null lights both evenly.
 function focusShape(group) { shape.focus = group || null; }
 
 // While the CV paper is up: some of its text-line nodes rise out from under the page into the
@@ -239,13 +347,14 @@ function releaseShape() {
   const now = performance.now();
   nodes.forEach(nd => {
     nd.away = false; nd.inIcon = false;
+    if (nd.extra) { nd.tx = undefined; sendOff(nd, now); return; }
     if (nd.tx === undefined) return;
     nd.tx = undefined;
     nd.blow = { sx: nd.x, sy: nd.y, tx: Math.random() * canvas.width, ty: Math.random() * canvas.height,
                 t0: now + Math.random() * 120, dur: BLOW_MS * (0.8 + Math.random() * 0.4) };
   });
 }
-window.networkBg = { formPaper: formShape, formContact: formContact, focus: focusShape, formIcon: formIcon, release: releaseShape };
+window.networkBg = { formPaper: formShape, formContact: formContact, formAbout: formAbout, focus: focusShape, formIcon: formIcon, release: releaseShape };
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -291,7 +400,7 @@ function drawNetwork(now) {
       const b = node.blow, raw = Math.max(0, Math.min(1, (now - b.t0) / b.dur)), t = easeOut(raw);
       node.x = b.sx + (b.tx - b.sx) * t;
       node.y = b.sy + (b.ty - b.sy) * t;
-      if (raw >= 1) node.blow = null;
+      if (raw >= 1) { node.blow = null; if (node.extra && node.tx === undefined) node.gone = true; }
     } else if (!STILL) {
       node.x += node.vx;
       node.y += node.vy;
@@ -320,9 +429,13 @@ function drawNetwork(now) {
 
     ctx.beginPath();
     ctx.fillStyle = `rgba(${RGB}, 0.98)`;
-    ctx.arc(node.x, node.y, node.inIcon ? node.radius + 0.6 : node.radius, 0, Math.PI * 2);
+    // in a fine drawing the dots shrink as they arrive, and grow back as they scatter
+    const shrink = 1 - (1 - (shape.dot || 1)) * formed;
+    ctx.arc(node.x, node.y, (node.inIcon ? node.radius + 0.6 : node.radius) * shrink, 0, Math.PI * 2);
     ctx.fill();
   }
+
+  for (let i = nodes.length - 1; i >= 0; i--) if (nodes[i].gone) nodes.splice(i, 1); // extras that have left
 
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
@@ -346,8 +459,9 @@ function drawNetwork(now) {
 
   // the shape's own edges fade in as it forms (and out as it scatters); with a contact shape in
   // focus, its edges brighten and the other one's dim
-  shape.glow = shape.glow || { li: 0, em: 0 };
-  ['li', 'em'].forEach(g => {
+  shape.glow = shape.glow || {};
+  (shape.groups || []).forEach(g => {
+    shape.glow[g] = shape.glow[g] || 0;
     const want = !shape.focus ? 0 : (shape.focus === g ? 1 : -1);
     shape.glow[g] += Math.max(-dt / 250, Math.min(dt / 250, want - shape.glow[g]));
   });

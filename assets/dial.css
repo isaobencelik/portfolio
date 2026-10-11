@@ -137,30 +137,30 @@ body.cv-stacked { overflow: hidden; }
 body.cv-stacked .hint, body.cv-stacked footer { visibility: hidden; }
 @media (prefers-reduced-motion: reduce) { .cv-paper, .cv-paper.armed { filter: none; transform: none; transition: opacity .2s ease; } }
 
-/* Contact (homepage): the nodes draw the LinkedIn mark and an envelope (network-bg.js); these links
-   sit over them, with the profile and the email address fading in underneath. The SVGs only show
+/* Contact and About me (homepage): the nodes draw two pictures (network-bg.js); these links sit
+   over them, with a caption fading in underneath each. The SVGs only show
    with reduced motion, when the nodes don't move. */
-.contact-card {
+.pair-card {
   position: fixed; z-index: 4; display: block; text-decoration: none; color: var(--accent, #D4B483);
   visibility: hidden; pointer-events: none;
 }
-.contact-card.armed { visibility: visible; pointer-events: auto; }
-.contact-mark { display: block; width: 100%; }
-.contact-mark svg { display: none; width: 100%; height: 100%; overflow: visible; }
-.contact-cap {
+.pair-card.armed { visibility: visible; pointer-events: auto; }
+.pair-mark { display: block; width: 100%; }
+.pair-mark svg { display: none; width: 100%; height: 100%; overflow: visible; }
+.pair-cap {
   position: absolute; left: 50%; top: 100%; margin-top: 14px; width: max-content;
   display: flex; flex-direction: column; align-items: center; gap: 5px;
   opacity: 0; transform: translate(-50%, 6px);
   transition: opacity .5s ease, transform .6s cubic-bezier(.22, 1, .36, 1);
 }
-.contact-card.show .contact-cap { opacity: 1; transform: translate(-50%, 0); }
-.contact-kind { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent, #D4B483); }
-.contact-addr { font-family: 'Geist Mono', monospace; font-size: var(--cap, 13px); letter-spacing: .02em; color: var(--text, #A9AEB6); transition: color .25s ease; }
-.contact-card.lit .contact-addr, .contact-card:focus-visible .contact-addr { color: var(--ink, #F3EFE7); }
-.contact-card:focus-visible { outline: 1px solid var(--accent, #D4B483); outline-offset: 8px; }
+.pair-card.show .pair-cap { opacity: 1; transform: translate(-50%, 0); }
+.pair-kind { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent, #D4B483); }
+.pair-addr { font-family: 'Geist Mono', monospace; font-size: var(--cap, 13px); letter-spacing: .02em; color: var(--text, #A9AEB6); transition: color .25s ease; }
+.pair-card.lit .pair-addr, .pair-card:focus-visible .pair-addr { color: var(--ink, #F3EFE7); }
+.pair-card:focus-visible { outline: 1px solid var(--accent, #D4B483); outline-offset: 8px; }
 @media (prefers-reduced-motion: reduce) {
-  .contact-mark svg { display: block; }
-  .contact-cap { transition: opacity .2s ease; transform: translate(-50%, 0); }
+  .pair-mark svg { display: block; }
+  .pair-cap { transition: opacity .2s ease; transform: translate(-50%, 0); }
 }
 
 /* ---------- Menu overlay (every page except the homepage) ---------- */
