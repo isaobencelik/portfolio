@@ -78,14 +78,14 @@
   </header>
 
   <!-- Intro -->
-  <header class="max-w-5xl mx-auto px-6 pt-12 pb-12">
-    <span class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-400 bg-gold-950/60 border border-gold-500/20 rounded-full mb-6">
+  <header class="max-w-5xl mx-auto px-6 pt-4 pb-8 sm:pt-8 sm:pb-10">
+    <span class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-400 bg-gold-950/60 border border-gold-500/20 rounded-full mb-4 sm:mb-6">
       Built &amp; Shipped
     </span>
-    <h1 class="text-4xl sm:text-5xl font-light tracking-tight leading-tight text-white mb-5">
+    <h1 class="text-4xl sm:text-5xl font-light tracking-tight leading-tight text-white mb-3 sm:mb-5">
       My Apps
     </h1>
-    <p class="text-slate-400 text-lg sm:text-xl max-w-2xl leading-relaxed">
+    <p class="text-slate-400 text-sm sm:text-xl max-w-2xl leading-relaxed">
       Products I designed, built and run myself, from problem to live deployment. Every one is public, so you can try it right now.
     </p>
   </header>
@@ -94,18 +94,53 @@
 
     <!-- App: Job Analyser -->
     <article id="job-analyser" class="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden">
-      <div class="p-7 sm:p-10">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+      <div class="p-5 sm:p-10">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3 sm:mb-5">
           <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">AI · Job Search</span>
           <span class="inline-flex items-center gap-2 text-xs font-semibold text-gold-300 bg-gold-950/60 border border-gold-500/20 rounded-full px-3 py-1">
             <span class="live-dot"></span> Live
           </span>
         </div>
 
-        <h2 class="text-3xl sm:text-4xl font-light text-white mb-4">Job Analyser</h2>
-        <p class="text-slate-300 text-lg sm:text-xl leading-relaxed max-w-3xl">
-          A tool that turns a long list of job postings into a short list worth applying to.
-        </p>
+        <!-- First look: what it is, the app itself, and the way in -->
+        <div class="grid md:grid-cols-5 gap-4 md:gap-10 items-center">
+          <div class="md:col-span-2 min-w-0">
+            <h2 class="text-2xl sm:text-4xl font-light text-white mb-2 sm:mb-4">Job Analyser</h2>
+            <p class="text-slate-300 text-base sm:text-xl leading-relaxed">
+              A tool that turns a long list of job postings into a short list worth applying to.
+            </p>
+            <div class="hidden md:flex flex-wrap gap-3 mt-7">
+              <a href="https://jobanalyser.obencelik.com" target="_blank" rel="noopener"
+                 class="px-6 py-3 rounded-lg bg-gold-500 text-slate-950 font-medium hover:bg-gold-400 transition shadow-lg shadow-gold-500/10">
+                Try it live &rarr;
+              </a>
+            </div>
+          </div>
+
+          <!-- The app in a browser window; the whole window opens it -->
+          <a href="https://jobanalyser.obencelik.com" target="_blank" rel="noopener" aria-label="Open Job Analyser (opens in a new tab)"
+             class="app-shot md:col-span-3 group block rounded-xl overflow-hidden border border-slate-700 bg-slate-950 shadow-2xl shadow-black/60 transition hover:border-gold-500/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-400">
+            <div class="flex items-center gap-2 px-3 py-2 border-b border-slate-800 bg-slate-900">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span class="ml-2 flex-1 min-w-0 truncate rounded-md bg-slate-950 border border-slate-800 px-3 py-0.5 font-mono text-[11px] text-slate-400 group-hover:text-gold-300 transition">jobanalyser.obencelik.com</span>
+              <span class="hidden sm:inline font-mono text-[11px] text-gold-400 opacity-0 group-hover:opacity-100 transition">Open &#8599;</span>
+            </div>
+            <span class="relative block overflow-hidden">
+              <img src="assets/jobanalyser.png" width="1116" height="762"
+                   alt="Job Analyser showing live LinkedIn search results for Product Owner roles in Lisbon"
+                   class="block w-full h-auto transition duration-500 group-hover:scale-[1.015]" />
+              <!-- phones have no hover: say it's tappable right on the picture -->
+              <span class="md:hidden absolute right-3 bottom-3 inline-flex items-center gap-1 rounded-full bg-gold-500 text-slate-950 text-xs font-medium px-3 py-1.5 shadow-lg shadow-black/50">Open the app &#8599;</span>
+            </span>
+          </a>
+
+          <a href="https://jobanalyser.obencelik.com" target="_blank" rel="noopener"
+             class="md:hidden text-center px-6 py-3 rounded-lg bg-gold-500 text-slate-950 font-medium hover:bg-gold-400 transition shadow-lg shadow-gold-500/10">
+            Try it live &rarr;
+          </a>
+        </div>
 
         <!-- The product story, PM view -->
         <div class="mt-10 grid md:grid-cols-2 gap-x-10 gap-y-9">
