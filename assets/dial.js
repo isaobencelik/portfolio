@@ -537,9 +537,11 @@
     paperImg.alt = ''; paperImg.decoding = 'async';
     paper.appendChild(paperImg);
     document.body.appendChild(paper);
-    // a click anywhere outside the dial and the paper closes CV, which takes the paper away
+    // a click anywhere outside the dial and the paper (or the contact cards) closes the section,
+    // which takes its shape away
     document.addEventListener('click', function (ev) {
-      if (!paperShown || dial.contains(ev.target) || paper.contains(ev.target)) return;
+      if (!(paperShown || contactShown) || dial.contains(ev.target) || paper.contains(ev.target)) return;
+      if (contactCards && (contactCards.li.contains(ev.target) || contactCards.em.contains(ev.target))) return;
       turnTo(0); go('closed');
     });
     // fetch the page once everything else has loaded, so it's ready on the first hover
@@ -548,15 +550,25 @@
     window.addEventListener('resize', function () {
       // on phones the address bar showing or hiding changes only the height: keep the paper as it is
       var heightOnly = window.innerWidth === paperVW; paperVW = window.innerWidth;
-      if (paperShown && !(heightOnly && document.body.classList.contains('cv-stacked'))) { hidePaper(); updatePaper(); }
+      if (heightOnly && document.body.classList.contains('cv-stacked')) return;
+      if (paperShown) hidePaper();
+      if (contactShown) hideContact();
+      updatePaper();
     });
+    buildContact();
   }
+  // Takes away the shape that's no longer wanted before forming the new one (CV straight to
+  // Contact, or back), so the release doesn't blow the new shape apart.
   function updatePaper() {
     if (!paper) return;
-    var want = !demoRunning && level === 'cv';
-    if (want && !paperShown) showPaper();
-    else if (!want && paperShown) hidePaper();
+    var wantPaper = !demoRunning && level === 'cv';
+    var wantContact = !demoRunning && level === 'contact';
+    if (!wantPaper && paperShown) hidePaper();
+    if (!wantContact && contactShown) hideContact();
+    if (wantPaper && !paperShown) showPaper();
+    if (wantContact && !contactShown) showContact();
     updateIcon();
+    updateContactFocus();
   }
   // Hovering View or Download while the paper is up: its text-line nodes rise out of the page and
   // form a magnifying glass or a download arrow in the empty space above it (network-bg.js).
@@ -632,6 +644,101 @@
     paper.classList.remove('show', 'armed');
     unstackDial();
     iconKind = null;
+    if (window.networkBg) window.networkBg.release();
+  }
+
+  // ---------- Contact shapes (homepage only) ----------
+  // Opening Contact sends the background nodes into the LinkedIn mark on the left of the dial and
+  // an envelope on the right (network-bg.js), then my profile and email address fade in under them.
+  // Both are links. Hovering LinkedIn or Email (on the dial or on the shape) lights that one up.
+  // Like the paper, only a click takes them away. On phones they sit side by side above the dial.
+  var contactCards, contactShown = false, contactReveal = null, cardHover = null; // contactCards is set by buildContact(), above
+  function buildContact() {
+    // only shown with reduced motion, when the nodes stay where they are
+    var SVG_LI = '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="2" width="96" height="96" rx="18"/><circle cx="29" cy="27" r="3"/><path d="M29 42v36M45 78V42m0 8c3-6 9-10 16-9 8 1 13 6 13 16v21"/></svg>';
+    var SVG_EM = '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="17" width="96" height="66"/><path d="M2 17l48 38 48-38"/></svg>';
+    contactCards = {};
+    [['li', CONTACT.li, 'LinkedIn', 'in/isa-oben-celik', SVG_LI], ['em', CONTACT.em, 'Email', 'isaobencelik@gmail.com', SVG_EM]].forEach(function (c) {
+      var a = document.createElement('a');
+      a.className = 'contact-card';
+      a.href = c[1].href;
+      if (c[1].external) { a.target = '_blank'; a.rel = 'noopener'; }
+      a.setAttribute('aria-label', c[2] + ': ' + c[3]);
+      a.innerHTML = '<span class="contact-mark" aria-hidden="true">' + c[4] + '</span>' +
+        '<span class="contact-cap" aria-hidden="true"><span class="contact-kind">' + c[2] + '</span><span class="contact-addr">' + c[3] + '</span></span>';
+      a.addEventListener('mouseenter', function () { cardHover = c[0]; updateContactFocus(); });
+      a.addEventListener('mouseleave', function () { cardHover = null; updateContactFocus(); });
+      document.body.appendChild(a);
+      contactCards[c[0]] = a;
+    });
+  }
+  function updateContactFocus() {
+    if (!contactCards) return;
+    var f = contactShown ? (cardHover || ({ li: 'li', em: 'em' })[active] || null) : null;
+    contactCards.li.classList.toggle('lit', f === 'li');
+    contactCards.em.classList.toggle('lit', f === 'em');
+    if (window.networkBg && window.networkBg.focus) window.networkBg.focus(f);
+  }
+  // Wide screens: one square either side of the dial, as big as the narrower side allows.
+  var CAP_H = 46; // room for the caption under each shape
+  function contactRects() {
+    var d = dial.getBoundingClientRect(), vw = window.innerWidth, vh = window.innerHeight;
+    var GAP = 32, EDGE = 20;
+    var space = Math.min(d.left - GAP - EDGE, vw - d.right - GAP - EDGE);
+    if (space < 170) return null; // the email address needs about this much
+    var s = Math.min(space * 0.8, d.height * 0.4, vh - CAP_H - 60, 220);
+    if (s < 80) return null;
+    var y = Math.max(16, d.top + (d.height - s - CAP_H) / 2);
+    return { li: { x: d.left - GAP - space / 2 - s / 2, y: y, w: s }, em: { x: d.right + GAP + space / 2 - s / 2, y: y, w: s }, space: space };
+  }
+  // Phones and narrow windows: the dial shrinks to the bottom (as for the paper) and the two shapes
+  // sit side by side above it, LinkedIn on the left, email on the right.
+  function contactStacked() {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var head = document.querySelector('.site-header');
+    var top = Math.max(16, (head ? head.getBoundingClientRect().bottom : 0) + 8), bottom = vh - 20;
+    var GAP = 24, room = bottom - top;
+    var D = Math.min(vw * 0.72, room * 0.55);
+    var half = (vw - 40 - GAP) / 2;
+    var s = Math.min(half * 0.75, room - D - GAP - CAP_H, 150);
+    if (s < 60) return null;
+    var y = top + (room - (s + CAP_H + GAP + D)) / 2;
+    return {
+      li: { x: vw / 2 - GAP / 2 - half / 2 - s / 2, y: y, w: s },
+      em: { x: vw / 2 + GAP / 2 + half / 2 - s / 2, y: y, w: s },
+      space: half,
+      dial: { x: (vw - D) / 2, y: y + s + CAP_H + GAP, d: D }
+    };
+  }
+  function showContact() {
+    var r = contactRects();
+    if (!r) {
+      window.scrollTo(0, 0);
+      r = contactStacked();
+      if (!r) return;
+      stackDial(r.dial);
+    }
+    contactShown = true;
+    var fs = Math.max(10, Math.min(13, r.space / 14)); // the email address fits its side
+    ['li', 'em'].forEach(function (k) {
+      var a = contactCards[k], q = r[k];
+      a.style.left = q.x + 'px'; a.style.top = q.y + 'px'; a.style.width = q.w + 'px';
+      a.querySelector('.contact-mark').style.height = q.w + 'px';
+      a.style.setProperty('--cap', fs + 'px');
+      a.classList.add('armed');
+    });
+    if (!STILL && window.networkBg && window.networkBg.formContact) window.networkBg.formContact(r.li, r.em);
+    clearTimeout(contactReveal);
+    contactReveal = setTimeout(function () {
+      contactCards.li.classList.add('show'); contactCards.em.classList.add('show');
+    }, STILL ? 0 : REVEAL_MS);
+  }
+  function hideContact() {
+    contactShown = false;
+    cardHover = null;
+    clearTimeout(contactReveal);
+    ['li', 'em'].forEach(function (k) { contactCards[k].classList.remove('show', 'armed', 'lit'); });
+    unstackDial();
     if (window.networkBg) window.networkBg.release();
   }
 

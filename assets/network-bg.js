@@ -8,9 +8,9 @@ const STILL = window.matchMedia && window.matchMedia('(prefers-reduced-motion: r
 const nodes = [];
 const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, active: false };
 
-// Shape mode: the nodes leave their drift and fly into a shape (a sheet of paper for the CV),
-// drawn with the shape's own edges instead of the usual nearby-node lines. `form` blends
-// between the two: 0 = normal network, 1 = fully formed. Used by dial.js via window.networkBg.
+// Shape mode: the nodes leave their drift and fly into a shape (a sheet of paper for the CV, the
+// LinkedIn mark and an envelope for Contact), drawn with the shape's own edges instead of the
+// usual nearby-node lines. `form` blends between the two: 0 = normal network, 1 = fully formed. Used by dial.js via window.networkBg.
 const shape = { on: false, form: 0, edges: [] };
 // Slow enough to watch the network gather: each node travels for TRAVEL_MS, setting off up to
 // STAGGER_MS after the first, and the shape's edges fade in over FORM_MS as they arrive.
@@ -90,18 +90,93 @@ function iconShape(kind, r, max) {
   return { points: pts.slice(0, max), edges: edges.filter(e => e[0] < max && e[1] < max) };
 }
 
+// Walk a closed outline, dropping k evenly spaced points (every corner included).
+function walkOutline(outline, k) {
+  const pts = [];
+  const perimeter = outline.reduce((sum, p, i) => {
+    const q = outline[(i + 1) % outline.length];
+    return sum + Math.hypot(q[0] - p[0], q[1] - p[1]);
+  }, 0);
+  outline.forEach((p, i) => {
+    const q = outline[(i + 1) % outline.length];
+    const len = Math.hypot(q[0] - p[0], q[1] - p[1]);
+    const m = Math.max(1, Math.round(k * len / perimeter));
+    for (let j = 0; j < m; j++) pts.push([p[0] + (q[0] - p[0]) * j / m, p[1] + (q[1] - p[1]) * j / m]);
+  });
+  return pts;
+}
+// Exactly k points, evenly spaced along a closed outline (corners not kept: for rounded shapes).
+function sampleOutline(outline, k) {
+  const segs = outline.map((p, i) => { const q = outline[(i + 1) % outline.length]; return [p, q, Math.hypot(q[0] - p[0], q[1] - p[1])]; });
+  const total = segs.reduce((sum, g) => sum + g[2], 0), pts = [];
+  let si = 0, before = 0;
+  for (let j = 0; j < k; j++) {
+    const d = total * j / k;
+    while (before + segs[si][2] < d) { before += segs[si][2]; si++; }
+    const [p, q, len] = segs[si], t = len ? (d - before) / len : 0;
+    pts.push([p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t]);
+  }
+  return pts;
+}
+const loopEdges = (from, count) => Array.from({ length: count }, (_, i) => [from + i, from + (i + 1) % count]);
+
+// The LinkedIn mark in square r: a rounded square with "in" inside, its outline in k points.
+function linkedinShape(r, k) {
+  const s = r.w, c = s * 0.18, x = r.x, y = r.y;
+  const corner = (cx, cy, a0) => [0, 1, 2].map(i => {
+    const a = (a0 + i * 45) * Math.PI / 180;
+    return [cx + c * Math.cos(a), cy + c * Math.sin(a)];
+  });
+  const outline = [].concat(corner(x + c, y + c, 180), corner(x + s - c, y + c, 270),
+                            corner(x + s - c, y + s - c, 0), corner(x + c, y + s - c, 90));
+  const pts = sampleOutline(outline, k);
+  const edges = loopEdges(0, pts.length);
+  const at = (u, v) => [x + s * u, y + s * v];
+  const chain = list => { const f = pts.length; list.forEach(p => pts.push(p)); for (let i = f; i < pts.length - 1; i++) edges.push([i, i + 1]); };
+  pts.push(at(0.29, 0.27));                                            // the dot of the i
+  chain([at(0.29, 0.42), at(0.29, 0.6), at(0.29, 0.78)]);              // its stem
+  chain([at(0.45, 0.78), at(0.45, 0.6), at(0.45, 0.42),                // the n: up the left stem,
+         at(0.56, 0.4), at(0.68, 0.43), at(0.74, 0.55), at(0.74, 0.78)]); // over the arch, down the right
+  return { points: pts, edges };
+}
+
+// An envelope centred in square r: the outline in k points, and the flap's V.
+function envelopeShape(r, k) {
+  const w = r.w, h = w * 0.66, x = r.x, y = r.y + (r.w - h) / 2;
+  const pts = walkOutline([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], k);
+  const edges = loopEdges(0, pts.length);
+  const tr = pts.findIndex(p => p[0] === x + w && p[1] === y);
+  const v = pts.length;
+  pts.push([x + w * 0.25, y + h * 0.3], [x + w / 2, y + h * 0.58], [x + w * 0.75, y + h * 0.3]);
+  edges.push([0, v], [v, v + 1], [v + 1, v + 2]);
+  if (tr >= 0) edges.push([v + 2, tr]);
+  return { points: pts, edges };
+}
+
+// Contact: the LinkedIn mark in square li and an envelope in square em, sharing the n nodes.
+// Each edge is tagged with its shape ('li' or 'em') so one can be lit up on its own (focusShape).
+function contactShape(li, em, n) {
+  const rest = Math.max(0, n - 15); // 12 nodes make the "in", 3 the flap
+  const a = linkedinShape(li, Math.max(10, Math.round(rest * 0.55)));
+  // the envelope gets whatever is left (its four corners at least), so the flap is never cut off
+  const b = envelopeShape(em, Math.max(4, n - a.points.length - 3)), off = a.points.length;
+  return {
+    points: a.points.concat(b.points),
+    edges: a.edges.map(e => [e[0], e[1], 'li']).concat(b.edges.map(e => [e[0] + off, e[1] + off, 'em']))
+  };
+}
+
 // Give each target point the nearest free node, so every node takes a short path.
-function formShape(rect) {
-  const s = paperShape(rect, nodes.length);
+function gather(s, rect) {
   const free = nodes.slice();
   const order = [];
   const now = performance.now();
-  s.points.forEach(p => {
+  s.points.slice(0, nodes.length).forEach(p => {
     let best = 0, bestD = Infinity;
     free.forEach((nd, i) => { const d = (nd.x - p[0]) ** 2 + (nd.y - p[1]) ** 2; if (d < bestD) { bestD = d; best = i; } });
     const nd = free.splice(best, 1)[0];
     nd.tx = p[0]; nd.ty = p[1];
-    nd.hx = p[0]; nd.hy = p[1]; // its home in the paper
+    nd.hx = p[0]; nd.hy = p[1]; // its home in the shape
     nd.sx = nd.x; nd.sy = nd.y; // where it sets off from
     nd.t0 = now + Math.random() * STAGGER_MS;
     nd.dur = TRAVEL_MS;
@@ -109,11 +184,17 @@ function formShape(rect) {
     order.push(nd);
   });
   free.forEach(nd => { nd.tx = undefined; });
-  shape.edges = s.edges.map(e => [order[e[0]], order[e[1]]]);
-  shape.inner = order.slice(s.rowStart); // the "text line" nodes, which can form symbols
+  shape.edges = s.edges.filter(e => e[0] < order.length && e[1] < order.length)
+    .map(e => [order[e[0]], order[e[1]], e[2]]);
+  shape.inner = s.rowStart !== undefined ? order.slice(s.rowStart) : []; // the paper's "text line" nodes, which can form symbols
   shape.rect = rect;
+  shape.focus = null;
   shape.on = true;
 }
+function formShape(rect) { gather(paperShape(rect, nodes.length), rect); }
+function formContact(li, em) { gather(contactShape(li, em, nodes.length), null); }
+// Light up one of the contact shapes ('li' or 'em') and dim the other; null lights both evenly.
+function focusShape(group) { shape.focus = group || null; }
 
 // While the CV paper is up: some of its text-line nodes rise out from under the page into the
 // empty space above it (or below, if that's bigger) and gather into a symbol (kind 'view' or
@@ -153,6 +234,7 @@ const easeOut = t => 1 - Math.pow(1 - t, 3);
 function releaseShape() {
   if (!shape.on) return;
   shape.on = false;
+  shape.focus = null;
   shape.icon = null; shape.iconEdges = [];
   const now = performance.now();
   nodes.forEach(nd => {
@@ -163,7 +245,7 @@ function releaseShape() {
                 t0: now + Math.random() * 120, dur: BLOW_MS * (0.8 + Math.random() * 0.4) };
   });
 }
-window.networkBg = { formPaper: formShape, formIcon: formIcon, release: releaseShape };
+window.networkBg = { formPaper: formShape, formContact: formContact, focus: focusShape, formIcon: formIcon, release: releaseShape };
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -262,12 +344,19 @@ function drawNetwork(now) {
     }
   }
 
-  // the shape's own edges fade in as it forms (and out as it scatters)
+  // the shape's own edges fade in as it forms (and out as it scatters); with a contact shape in
+  // focus, its edges brighten and the other one's dim
+  shape.glow = shape.glow || { li: 0, em: 0 };
+  ['li', 'em'].forEach(g => {
+    const want = !shape.focus ? 0 : (shape.focus === g ? 1 : -1);
+    shape.glow[g] += Math.max(-dt / 250, Math.min(dt / 250, want - shape.glow[g]));
+  });
   if (formed > 0) {
-    ctx.strokeStyle = `rgba(${RGB}, ${0.6 * formed})`;
-    ctx.lineWidth = 1.2;
-    shape.edges.forEach(([a, b]) => {
+    shape.edges.forEach(([a, b, g]) => {
       if (a.away || b.away) return; // off forming a symbol
+      const glow = g ? shape.glow[g] : 0;
+      ctx.strokeStyle = `rgba(${RGB}, ${(0.6 + 0.35 * glow) * formed})`;
+      ctx.lineWidth = g ? 1.4 + 0.6 * Math.max(0, glow) : 1.2;
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
       ctx.lineTo(b.x, b.y);
