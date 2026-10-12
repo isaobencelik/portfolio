@@ -20,8 +20,9 @@
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; }
+    /* the whole homepage fits one screen: svh is the height with the phone's address bar showing */
     body {
-      min-height: 100vh;
+      min-height: 100vh; min-height: 100svh;
       background: var(--bg);
       color: var(--text);
       font-family: 'Geist', 'Helvetica Neue', sans-serif;
@@ -43,10 +44,10 @@
     .site-header, main, footer { position: relative; z-index: 1; }
     .site-header {
       display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 16px;
-      padding: 20px clamp(16px, 4vw, 56px);
+      padding: clamp(6px, 1.6vh, 20px) clamp(16px, 4vw, 56px);
     }
     /* the name in Roman capitals, like the engraved name on a watch dial; it scales down on narrow phones */
-    .brand { text-decoration: none; font-family: 'Cinzel', Georgia, serif; font-size: clamp(30px, 9vw, 44px); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding: 10px 0; }
+    .brand { text-decoration: none; font-family: 'Cinzel', Georgia, serif; font-size: clamp(30px, 9vw, 44px); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding: 4px 0; }
     .brand:hover { color: var(--accent); }
     /* entrance: the name drops in with the dial, the hint arrives last */
     @keyframes drop-in { from { opacity: 0; translate: 0 -8px; } }
@@ -67,14 +68,14 @@
 
     main {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 28px; padding: 8px 16px 40px;
+      gap: clamp(10px, 2.2vh, 24px); padding: 0 16px 6px;
     }
     .intro { text-align: center; display: flex; flex-direction: column; gap: 14px; max-width: 680px; }
     .eyebrow { margin: 0; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); }
     h1 { margin: 0; font-size: clamp(30px, 4.6vw, 54px); font-weight: 300; line-height: 1.04; letter-spacing: -0.025em; color: var(--ink); }
 
     .hint { margin: 0; font-size: 12px; letter-spacing: 0.04em; color: var(--muted); text-align: center; min-height: 1.4em; }
-    footer { padding: 0 16px 28px; text-align: center; font-size: 11px; color: #4C525A; letter-spacing: 0.04em; }
+    footer { padding: 0 16px clamp(8px, 1.6vh, 20px); text-align: center; font-size: 11px; color: #4C525A; letter-spacing: 0.04em; }
 
   </style>
 </head>
