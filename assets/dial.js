@@ -71,7 +71,7 @@
     var keys = Object.keys(list), start = centre - keys.length * w / 2;
     keys.forEach(function (k, i) { list[k].a = [start + i * w, start + (i + 1) * w]; });
   }
-  fan(ITEMS.apps, 30, 30); // both items sit exactly above My apps (0-60deg)
+  fan(ITEMS.apps, 30, 40); // centred above My apps (0-60deg), a little wider so their names stay readable
 
   // DOM order = tab order
   var ORDER = [
@@ -354,6 +354,20 @@
       paint(id, d, o);
     });
 
+    // one text size per ring: the size its longest label (for its arc) can take, but a ring never
+    // shrinks below RING_MIN of its size for one long label; that label alone gets smaller
+    if (!pendingLabels) {
+      var RING_MIN = 0.8, ringK = {};
+      ORDER.forEach(function (row) { var f = els[row[0]].fit; if (f) ringK[f.ring] = Math.min(ringK[f.ring] || 1, Math.max(RING_MIN, f.k)); });
+      ORDER.forEach(function (row) {
+        var e = els[row[0]], f = e.fit;
+        if (!f) return;
+        var fsK = f.fsU * Math.min(ringK[f.ring], f.k);
+        e.text.style.fontSize = fsK + 'px';
+        e.text.style.letterSpacing = (fsK * f.track) + 'px';
+      });
+    }
+
     // centre
     var core = document.getElementById('core');
     core.style.left = core.style.top = (50 - g.disk) + '%';
@@ -372,7 +386,7 @@
     }
     else if (cur && !cur.toggle) c = { title: cur.name, text: cur.text, meta: cur.meta };
     else if (demoRunning) c = restingCore();
-    else if (all) c = { title: 'Everything here', text: 'Every section and what is inside it, at a glance.', meta: 'Hover to explore' };
+    else if (all) c = { title: 'Everything', text: 'Every section and what\u2019s inside.', meta: TOUCH ? 'Tap one to open it' : 'Hover to explore' };
     else if (contactOpen) c = { title: 'Get in touch', text: 'LinkedIn or email, whichever you prefer.', meta: 'Choose one' };
     else if (aboutOpen) c = { title: 'About me', text: 'My career so far, and a bit about me outside work.', meta: 'Choose one' };
     else if (cvOpen) c = { title: 'My CV', text: 'View it in your browser, or download the PDF.', meta: 'Choose one' };
@@ -474,14 +488,13 @@
     e.text.style.letterSpacing = (fsU * LS.track) + 'px';
     e.text.style.opacity = o.shown ? 1 : 0;
     e.text.style.fill = (hov || sel) ? LS.on : (d.st === 'soon' ? '#6E747D' : LS.base);
+    e.fit = null;
     if (o.shown) {
       var avail = (r * Math.PI * (la1 - la0) / 180) * 0.9;
       var len = e.text.getComputedTextLength();
-      if (len > avail && len > 0) {
-        var k = avail / len;
-        e.text.style.fontSize = (fsU * k) + 'px';
-        e.text.style.letterSpacing = (fsU * k * LS.track) + 'px';
-      }
+      // how far this label would need to shrink to fit its arc; render() then sizes every label on
+      // a ring by the tightest one, so a ring never mixes text sizes
+      e.fit = { ring: o.r0, fsU: fsU, k: len > avail && len > 0 ? avail / len : 1, track: LS.track };
     }
   }
 
