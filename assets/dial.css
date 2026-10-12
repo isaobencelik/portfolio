@@ -4,9 +4,9 @@
   --ease: cubic-bezier(.22, 1, .36, 1); /* quick start, soft landing */
   font-family: 'Geist', 'Helvetica Neue', sans-serif;
 }
-/* as big as the screen allows, leaving room for the name above and the button, hint and footer below
+/* as big as the screen allows, leaving room for the welcome band above (--band, index.html) and the button, hint and footer below
    (svh: the height with a phone's address bar showing, so the homepage never needs a scroll) */
-.dial { position: relative; width: min(620px, 92vw, max(240px, calc(100vh - 210px))); width: min(620px, 92vw, max(240px, calc(100svh - 210px))); aspect-ratio: 1 / 1; }
+.dial { position: relative; width: min(620px, 92vw, max(240px, calc(100vh - 124px - var(--band, 0px)))); width: min(620px, 92vw, max(240px, calc(100svh - 124px - var(--band, 0px)))); aspect-ratio: 1 / 1; }
 .dial-glow { position: absolute; inset: 8%; border-radius: 50%; background: radial-gradient(circle, rgba(212,180,131,0.07) 0%, transparent 68%); pointer-events: none; }
 /* the watch case: a polished ring of brushed gold and steel, catching the light in bands */
 .dial-ring {

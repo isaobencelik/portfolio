@@ -531,6 +531,12 @@
   window.addEventListener('hashchange', resetToCurrent);
 
   window.addEventListener('resize', render);
+  // the dial can also change size without the window doing so (the homepage's welcome band folding
+  // away): redraw so the labels and the centre text fit the new size
+  if (window.ResizeObserver) {
+    var lastW = 0;
+    new ResizeObserver(function () { var w = dial.clientWidth; if (w && w !== lastW) { lastW = w; render(); } }).observe(dial);
+  }
   resetToCurrent();
 
   // After the entrance, once per visit, with no text in the wedges: each section's sub-menus open
