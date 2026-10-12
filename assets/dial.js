@@ -200,6 +200,13 @@
   allBtn.textContent = 'Show me everything';
   dial.after(allBtn); // below the dial, so the centre stays clean
   allBtn.addEventListener('click', function () { allMask = null; turnTo(0); go('all'); });
+  // While everything is showing, a click on empty space (anywhere but a section, link or button)
+  // folds it all away again.
+  document.addEventListener('click', function (ev) {
+    if (level !== 'all' || demoRunning) return;
+    if (ev.target.closest && ev.target.closest('.wedge, a, button')) return;
+    turnTo(0); go('closed');
+  });
   // The overview can open its groups one at a time (the intro does): null = every group.
   var allMask = null;
   var demoRunning = false; // while the intro plays: no text in the wedges, no hover-to-open
