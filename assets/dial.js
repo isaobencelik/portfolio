@@ -22,7 +22,7 @@
     ct: { name: 'Contact', st: 'info', a: [220, 300], toggle: 'contact', text: 'LinkedIn or email, whichever you prefer.', meta: 'Select to open' }
   };
   var HALVES = {
-    hc: { name: 'Case studies', st: 'case', a: [300, 360], href: 'case-studies.html', text: 'How I worked through real product problems.', meta: 'Problem · decisions · outcome' },
+    hc: { name: 'Case studies', st: 'case', a: [300, 360], href: 'case-studies.html', text: 'How I worked through real product problems, at work and in my MSc.', meta: 'Problem · decisions · outcome' },
     ha: { name: 'My apps', st: 'live', a: [0, 60], cat: 'apps', text: 'Small tools I designed, built and shipped.', meta: 'Running on obencelik.com' }
   };
   var ITEMS = {

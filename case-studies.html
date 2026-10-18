@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Case Studies · OBEN CELIK</title>
-  <meta name="description" content="Applied case studies by Oben Celik: CX platform strategy, Salesforce omnichannel, platform redesign and roadmap alignment." />
+  <meta name="description" content="Case studies by Oben Celik: Master's projects at NOVA IMS, including Helf, a patient-owned health app, plus CX platform strategy, Salesforce omnichannel, platform redesign and roadmap alignment." />
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -49,6 +49,53 @@
     }
 
     article:target { border-color: rgba(212, 180, 131, 0.6); }
+    .case { scroll-margin-top: 1.5rem; }
+
+    /* Index at the top */
+    .index-link { display: flex; align-items: center; gap: 0.9rem; padding: 0.7rem 0; font-size: 0.875rem; line-height: 1.35; }
+    a.index-link:hover .text-slate-100, a.index-link:focus-visible .text-slate-100 { color: #E6D2B0; }
+    .index-link.is-soon { color: #4C525A; }
+    .index-no { font-family: 'Geist Mono', monospace; font-size: 0.7rem; color: #6E747D; width: 1.25rem; flex: none; }
+    .index-arrow { color: #4C525A; transition: color .2s, transform .2s; }
+    a.index-link:hover .index-arrow { color: #D4B483; transform: translateY(2px); }
+
+    /* Shared pieces */
+    .case-no { display: block; font-family: 'Geist Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; color: #6E747D; margin-bottom: 0.5rem; }
+    .label { font-family: 'Geist Mono', monospace; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.24em; color: #D4B483; margin-bottom: 0.6rem; }
+    .tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: #D4B483; }
+    .tag-mint { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: #8FD3BC; background: rgba(93,186,157,0.12); border: 1px solid rgba(93,186,157,0.3); border-radius: 999px; padding: 0.2rem 0.7rem; }
+    .text-mint { color: #7CCBB1; }
+    .chip { font-size: 0.75rem; color: #C9CCD1; background: rgba(6,8,11,0.5); border: 1px solid #1C2027; border-radius: 0.5rem; padding: 0.375rem 0.75rem; }
+    .stat { min-width: 0; background: rgba(6,8,11,0.5); border: 1px solid #1C2027; border-radius: 0.75rem; padding: 0.75rem; }
+    .stat-v { font-size: 1.125rem; font-weight: 300; color: #D4B483; overflow-wrap: anywhere; }
+    .stat-l { font-size: 0.75rem; color: #A9AEB6; margin-top: 0.25rem; line-height: 1.35; }
+    @media (min-width: 640px) { .stat-v { font-size: 1.5rem; } }
+
+    /* Helf facts, journey and segments */
+    .fact { background: rgba(6,8,11,0.4); border: 1px solid #1C2027; border-radius: 0.75rem; padding: 0.6rem 0.8rem; }
+    .fact dt { font-family: 'Geist Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em; color: #6E747D; }
+    .fact dd { color: #E6E1D8; margin-top: 0.15rem; line-height: 1.4; }
+    .step, .seg { display: flex; flex-direction: column; gap: 0.3rem; background: rgba(6,8,11,0.5); border: 1px solid #1C2027; border-radius: 0.75rem; padding: 0.9rem; }
+    .step-k { font-family: 'Geist Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; color: #7CCBB1; }
+    .step-t, .seg-t { color: #F3EFE7; font-weight: 500; }
+    .step-d, .seg-d { font-size: 0.8rem; color: #A9AEB6; line-height: 1.45; }
+    .step-always { border-color: rgba(93,186,157,0.35); background: rgba(93,186,157,0.06); }
+    .seg-m { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: #6E747D; }
+
+    /* Work case studies: one shape for all */
+    .work-case { display: grid; gap: 1.25rem; background: rgba(14,17,22,0.6); border: 1px solid #1C2027; border-radius: 1rem; padding: 1.25rem; transition: border-color .2s; }
+    .work-case:hover { border-color: #2A2F37; }
+    .work-head { display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+    .work-head .case-no { margin-bottom: 0.15rem; }
+    .work-title { font-size: 1.25rem; font-weight: 500; color: #fff; line-height: 1.3; }
+    .work-steps { display: grid; gap: 1rem; }
+    .work-steps p { font-size: 0.875rem; color: #A9AEB6; line-height: 1.6; }
+    .work-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(28,32,39,0.8); }
+    @media (min-width: 640px) { .work-case { padding: 1.75rem; } }
+    @media (min-width: 768px) {
+      .work-case { grid-template-columns: 15rem 1fr; gap: 2.5rem; padding: 2rem; }
+      .work-steps { grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
+    }
   </style>
 </head>
 <body data-current="hc" class="bg-[#06080B] text-slate-200 antialiased selection:bg-gold-500 selection:text-white">
@@ -67,128 +114,288 @@
     <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
   </header>
 
-  <!-- Case Studies Section -->
-  <main id="work" class="max-w-5xl mx-auto px-6 pt-2 pb-10 sm:pt-8 sm:pb-16">
-    <div class="flex items-center justify-between mb-6 sm:mb-10 border-b border-slate-800 pb-4">
-      <h2 class="text-2xl font-medium tracking-tight text-white">Applied Case Studies</h2>
-      <span class="text-sm text-slate-500">Measurable Impact &amp; Systems</span>
+  <!-- Intro -->
+  <header class="max-w-5xl mx-auto px-6 pt-4 pb-6 sm:pt-8 sm:pb-10">
+    <span class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-400 bg-gold-950/60 border border-gold-500/20 rounded-full mb-4 sm:mb-6">
+      Problem &rarr; decision &rarr; outcome
+    </span>
+    <h1 class="text-4xl sm:text-5xl font-light tracking-tight leading-tight text-white mb-3 sm:mb-5">
+      Case Studies
+    </h1>
+    <p class="text-slate-400 text-sm sm:text-xl max-w-2xl leading-relaxed">
+      How I work through product problems, from my Master's projects at NOVA IMS to my day job. Each one follows the same path: the problem, what I did, and what changed.
+    </p>
+  </header>
+
+  <!-- Index: every case study at a glance, grouped by where it happened -->
+  <nav aria-label="Case studies on this page" class="max-w-5xl mx-auto px-6 pb-10 sm:pb-16">
+    <div class="grid md:grid-cols-2 gap-4 sm:gap-6">
+      <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-6">
+        <div class="flex items-baseline justify-between gap-3 mb-3">
+          <h2 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400"><a href="#msc" class="hover:text-gold-300">Master's projects</a></h2>
+          <span class="text-xs text-slate-500">MSc · NOVA IMS</span>
+        </div>
+        <ol class="divide-y divide-slate-800/80">
+          <li><a href="#helf" class="index-link"><span class="index-no">01</span><span class="min-w-0 flex-1"><span class="block text-slate-100">Helf: a patient-owned health companion</span><span class="block text-xs text-slate-500">Health-tech · Innovation</span></span><span class="index-arrow" aria-hidden="true">&darr;</span></a></li>
+          <li><span class="index-link is-soon"><span class="index-no">02</span><span class="min-w-0 flex-1"><span class="block">Second project</span><span class="block text-xs">Coming soon</span></span></span></li>
+          <li><span class="index-link is-soon"><span class="index-no">03</span><span class="min-w-0 flex-1"><span class="block">Third project</span><span class="block text-xs">Coming soon</span></span></span></li>
+        </ol>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-6">
+        <div class="flex items-baseline justify-between gap-3 mb-3">
+          <h2 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400"><a href="#work" class="hover:text-gold-300">At work</a></h2>
+          <span class="text-xs text-slate-500">Product &amp; CX platforms</span>
+        </div>
+        <ol class="divide-y divide-slate-800/80">
+          <li><a href="#cx-consolidation" class="index-link"><span class="index-no">04</span><span class="min-w-0 flex-1"><span class="block text-slate-100">European CX consolidation &amp; AI</span><span class="block text-xs text-slate-500">CX platform strategy · Europe</span></span><span class="index-arrow" aria-hidden="true">&darr;</span></a></li>
+          <li><a href="#omnichannel" class="index-link"><span class="index-no">05</span><span class="min-w-0 flex-1"><span class="block text-slate-100">Salesforce Omni-Channel standardisation</span><span class="block text-xs text-slate-500">Salesforce operations · EMEA</span></span><span class="index-arrow" aria-hidden="true">&darr;</span></a></li>
+          <li><a href="#platform-redesign" class="index-link"><span class="index-no">06</span><span class="min-w-0 flex-1"><span class="block text-slate-100">Global platform improvement &amp; redesign</span><span class="block text-xs text-slate-500">Global helpdesk · 70+ countries</span></span><span class="index-arrow" aria-hidden="true">&darr;</span></a></li>
+          <li><a href="#prioritisation" class="index-link"><span class="index-no">07</span><span class="min-w-0 flex-1"><span class="block text-slate-100">Enterprise root-cause &amp; prioritisation</span><span class="block text-xs text-slate-500">Roadmap alignment · Global</span></span><span class="index-arrow" aria-hidden="true">&darr;</span></a></li>
+        </ol>
+      </div>
     </div>
+  </nav>
 
-    <div class="grid md:grid-cols-2 gap-4 sm:gap-8">
+  <main class="max-w-5xl mx-auto px-6 pb-10 sm:pb-16">
 
-      <!-- Card 1 -->
-      <article id="cx-consolidation" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">CX Platform Strategy</span>
+    <!-- ===================== Master's projects ===================== -->
+    <section id="msc" aria-labelledby="msc-title" class="scroll-mt-6">
+      <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-1 mb-5 sm:mb-8 border-b border-slate-800 pb-4">
+        <h2 id="msc-title" class="text-2xl font-medium tracking-tight text-white">Master's projects</h2>
+        <span class="text-sm text-slate-500">MSc at NOVA IMS, Lisbon</span>
+      </div>
+
+      <div class="space-y-5 sm:space-y-8">
+
+        <!-- 01 · Helf -->
+        <article id="helf" class="case bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden">
+          <!-- Cover: the opening line of the pitch over the Lisbon map -->
+          <div class="relative">
+            <img src="assets/helf-lisbon.jpg" width="1056" height="576" alt="" class="block w-full h-44 sm:h-64 object-cover opacity-75" />
+            <div class="absolute inset-0 bg-gradient-to-r from-[#0E1116] via-[#0E1116]/75 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0E1116] to-transparent"></div>
+            <div class="absolute inset-0 p-5 sm:p-10 flex flex-col justify-between">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="tag-mint">Health-tech</span>
+                <span class="text-xs text-slate-400">Innovation course · 2026</span>
+              </div>
+              <p class="text-2xl sm:text-4xl font-light leading-tight text-white max-w-md">
+                The patient walks in <em class="text-mint">alone</em>.<br>Leaves alone.
+              </p>
+            </div>
+          </div>
+
+          <div class="p-5 sm:p-10 pt-2 sm:pt-4">
+            <div class="grid gap-5 sm:gap-7">
+              <div class="min-w-0 max-w-3xl">
+                <span class="case-no">01</span>
+                <h3 class="text-2xl sm:text-4xl font-light text-white mb-2 sm:mb-4">Helf <span class="text-slate-500">·</span> your better <em class="text-mint">Helf</em></h3>
+                <p class="text-slate-300 text-base sm:text-xl leading-relaxed">
+                  A patient-owned healthcare companion: an app that sits entirely on the patient's side, and needs nothing from the doctor, the hospital or the system.
+                </p>
+              </div>
+              <dl class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div class="fact"><dt>My role</dt><dd>Product delivery: led product execution from idea to deployment</dd></div>
+                <div class="fact"><dt>Team</dt><dd>Five students from different countries</dd></div>
+                <div class="fact"><dt>Where</dt><dd>NOVA IMS, Innovation course</dd></div>
+                <div class="fact"><dt>When</dt><dd>Pitched April &amp; June 2026</dd></div>
+              </dl>
+            </div>
+
+            <!-- The numbers behind the pitch -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 sm:mt-10">
+              <div class="stat"><div class="stat-v">54%</div><div class="stat-l">of chronic patients in Portugal trust their healthcare system</div></div>
+              <div class="stat"><div class="stat-v">$312.9B</div><div class="stat-l">digital health market size</div></div>
+              <div class="stat"><div class="stat-v">21.2%</div><div class="stat-l">annual growth rate</div></div>
+              <div class="stat"><div class="stat-v">$86.7B</div><div class="stat-l">patient engagement market by 2030</div></div>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-2">Market figures: Global Market Insights. Trust figure: OECD.</p>
+
+            <!-- Problem, gap, solution -->
+            <div class="mt-8 sm:mt-10 grid md:grid-cols-3 gap-x-10 gap-y-6">
+              <section>
+                <h4 class="label">The problem</h4>
+                <p class="text-slate-400 leading-relaxed">
+                  Patients leave consultations feeling lost. Portugal has one of the lowest trust rates in the OECD, and nearly half of chronic patients say they don't get enough support to manage their own health.
+                </p>
+              </section>
+              <section>
+                <h4 class="label">The gap</h4>
+                <p class="text-slate-400 leading-relaxed">
+                  No one is in the patient's corner. They turn to Google, WhatsApp groups and ChatGPT: tools that were never built for this.
+                </p>
+              </section>
+              <section>
+                <h4 class="label">The idea</h4>
+                <p class="text-slate-400 leading-relaxed">
+                  Put the patient in control. Helf records the appointment, explains it in plain language, and keeps their health record in a cloud they own.
+                </p>
+              </section>
+            </div>
+
+            <!-- How it works: the patient journey -->
+            <section class="mt-8 pt-6 sm:mt-10 sm:pt-9 border-t border-slate-800">
+              <h4 class="label mb-5">How it works</h4>
+              <ol class="grid sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <li class="step"><span class="step-k">Before</span><span class="step-t">Find &amp; book verified doctors</span><span class="step-d">Filtered by specialty, language and cost</span></li>
+                <li class="step"><span class="step-k">During</span><span class="step-t">Record &amp; transcribe</span><span class="step-d">Real-time transcription; the doctor doesn't need to do anything</span></li>
+                <li class="step"><span class="step-k">After</span><span class="step-t">Understand &amp; act</span><span class="step-d">Easy-read summary, medication reminders, one-tap caregiver sharing</span></li>
+                <li class="step step-always"><span class="step-k">Always</span><span class="step-t">Your health cloud</span><span class="step-d">Encrypted, patient-owned, never sold</span></li>
+              </ol>
+            </section>
+
+            <!-- Value: who it serves and how it makes money -->
+            <section class="mt-8 pt-6 sm:mt-10 sm:pt-9 border-t border-slate-800">
+              <h4 class="label mb-5">Where it creates value</h4>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="seg"><span class="seg-m">B2C · Consumer app</span><span class="seg-t">Patients</span><span class="seg-d">Understand every appointment</span></div>
+                <div class="seg"><span class="seg-m">B2C · Family sharing</span><span class="seg-t">Caregivers</span><span class="seg-d">Stay connected without intruding</span></div>
+                <div class="seg"><span class="seg-m">B2B · Engagement tool</span><span class="seg-t">Insurers</span><span class="seg-d">Reduce unnecessary appointments</span></div>
+                <div class="seg"><span class="seg-m">B2B · HR wellness add-on</span><span class="seg-t">Employers</span><span class="seg-d">Support employee health journeys</span></div>
+              </div>
+            </section>
+
+            <!-- Go-to-market and the ask -->
+            <div class="mt-8 pt-6 sm:mt-10 sm:pt-9 border-t border-slate-800 grid md:grid-cols-2 gap-x-10 gap-y-6">
+              <section>
+                <h4 class="label">Vision</h4>
+                <p class="text-slate-400 leading-relaxed">
+                  Start in Lisbon, where digital health adoption is low and trust is fragile. Then expand across Southern Europe through patient communities and health insurer partnerships.
+                </p>
+              </section>
+              <section>
+                <h4 class="label">What we asked for</h4>
+                <ul class="space-y-2 text-slate-400 leading-relaxed">
+                  <li><span class="text-gold-400 mr-2">&rarr;</span>Strategic mentorship</li>
+                  <li><span class="text-gold-400 mr-2">&rarr;</span>Support from NOVA Marketing Lab</li>
+                  <li><span class="text-gold-400 mr-2">&rarr;</span>Academic partnerships to expand</li>
+                  <li><span class="text-gold-400 mr-2">&rarr;</span>Pilot partners and initial funding</li>
+                </ul>
+              </section>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mt-8 sm:mt-10">
+              <span class="chip">Product vision</span>
+              <span class="chip">Market sizing</span>
+              <span class="chip">Business model</span>
+              <span class="chip">Go-to-market</span>
+              <span class="chip">Investor pitch</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- 02 and 03: the other two Master's projects, still to be added -->
+        <div class="grid md:grid-cols-2 gap-4 sm:gap-8">
+          <article class="border border-dashed border-slate-700 rounded-2xl p-6 sm:p-7">
+            <span class="case-no">02</span>
+            <p class="text-slate-300 font-medium">Second Master's project</p>
+            <p class="text-sm text-slate-500 mt-1">Write-up coming soon.</p>
+          </article>
+          <article class="border border-dashed border-slate-700 rounded-2xl p-6 sm:p-7">
+            <span class="case-no">03</span>
+            <p class="text-slate-300 font-medium">Third Master's project</p>
+            <p class="text-sm text-slate-500 mt-1">Write-up coming soon.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== At work ===================== -->
+    <section id="work" aria-labelledby="work-title" class="scroll-mt-6 mt-14 sm:mt-24">
+      <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-1 mb-5 sm:mb-8 border-b border-slate-800 pb-4">
+        <h2 id="work-title" class="text-2xl font-medium tracking-tight text-white">At work</h2>
+        <span class="text-sm text-slate-500">Measurable impact &amp; systems</span>
+      </div>
+
+      <!-- Every work case study has the same shape: who/where on the left, challenge → what I did → outcome on the right -->
+      <div class="space-y-5 sm:space-y-6">
+
+        <!-- 04 -->
+        <article id="cx-consolidation" class="case work-case">
+          <div class="work-head">
+            <span class="case-no">04</span>
+            <span class="tag">CX platform strategy</span>
+            <h3 class="work-title">European CX System Consolidation &amp; AI</h3>
             <span class="text-xs text-slate-500">Europe</span>
           </div>
-          <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
-            European CX System Consolidation &amp; AI 
-          </h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4 sm:mb-6">
-            Unified fragmented customer experience systems and legacy robotics workflows into a scalable strategy that improved service journeys and aligned engineering priorities with long-term CX goals.
-          </p>
-        </div>
-        <div>
-          <div class="grid grid-cols-2 gap-3 pt-4 sm:pt-6 border-t border-slate-800/80">
-            <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-lg sm:text-2xl font-light text-gold-400">Architecture</div>
-              <div class="text-xs text-slate-400 mt-1">Simplified Customer Journeys</div>
+          <div class="work-body">
+            <div class="work-steps">
+              <section><h4 class="label">Challenge</h4><p>Customer experience systems and legacy robotics workflows were fragmented across Europe.</p></section>
+              <section><h4 class="label">What I did</h4><p>Unified them into one scalable CX strategy and used AI discovery to shape the roadmap.</p></section>
+              <section><h4 class="label">Outcome</h4><p>Better service journeys, with engineering priorities aligned to long-term CX goals.</p></section>
             </div>
-            <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-lg sm:text-2xl font-light text-gold-400">AI</div>
-              <div class="text-xs text-slate-400 mt-1">Roadmap Discovery</div>
+            <div class="work-stats">
+              <div class="stat"><div class="stat-v">Architecture</div><div class="stat-l">Simplified customer journeys</div></div>
+              <div class="stat"><div class="stat-v">AI</div><div class="stat-l">Roadmap discovery</div></div>
             </div>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <!-- Card 2 -->
-      <article id="omnichannel" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Salesforce Operations</span>
+        <!-- 05 -->
+        <article id="omnichannel" class="case work-case">
+          <div class="work-head">
+            <span class="case-no">05</span>
+            <span class="tag">Salesforce operations</span>
+            <h3 class="work-title">EMEA Salesforce Omni-Channel Standardisation</h3>
             <span class="text-xs text-slate-500">EMEA</span>
           </div>
-          <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
-            EMEA Salesforce Omni-Channel Standardization
-          </h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4 sm:mb-6">
-            Standardized case distribution across the EMEA region, built self-service enablement materials, and increased operational visibility through Salesforce automation and Power BI reporting.
-          </p>
-        </div>
-        <div>
-          <div class="grid grid-cols-2 gap-3 pt-4 sm:pt-6 border-t border-slate-800/80">
-            <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-lg sm:text-2xl font-light text-gold-400">70%</div>
-              <div class="text-xs text-slate-400 mt-1">Increased Automation Rate</div>
+          <div class="work-body">
+            <div class="work-steps">
+              <section><h4 class="label">Challenge</h4><p>Case distribution wasn't standardised across the EMEA region, and operations had little visibility.</p></section>
+              <section><h4 class="label">What I did</h4><p>Standardised case routing, built self-service enablement materials, and added Salesforce automation and Power BI reporting.</p></section>
+              <section><h4 class="label">Outcome</h4><p>Far more cases handled automatically, shorter waits, and clear operational visibility.</p></section>
             </div>
-            <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-lg sm:text-2xl font-light text-gold-400">50%</div>
-              <div class="text-xs text-slate-400 mt-1">Reduction in Wait Time </div>
+            <div class="work-stats">
+              <div class="stat"><div class="stat-v">70%</div><div class="stat-l">Increase in automation rate</div></div>
+              <div class="stat"><div class="stat-v">50%</div><div class="stat-l">Reduction in wait time</div></div>
             </div>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <!-- Card 3 -->
-      <article id="platform-redesign" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Global Helpdesk</span>
-            <span class="text-xs text-slate-500">70+ Countries</span>
+        <!-- 06 -->
+        <article id="platform-redesign" class="case work-case">
+          <div class="work-head">
+            <span class="case-no">06</span>
+            <span class="tag">Global helpdesk</span>
+            <h3 class="work-title">Global Platform Improvement &amp; Redesign</h3>
+            <span class="text-xs text-slate-500">70+ countries</span>
           </div>
-          <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
-            Global Platform Improvement &amp; Redesign
-          </h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4 sm:mb-6">
-            Defined organizational requirements, aligned leadership expectations, redesigned digital properties, and owned storefront optimization to improve platform reliability and customer experience end-to-end.
-          </p>
-        </div>
-        <div>
-          <div class="grid grid-cols-2 gap-3 pt-4 sm:pt-6 border-t border-slate-800/80">
-            <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-lg sm:text-2xl font-light text-gold-400">95%</div>
-              <div class="text-xs text-slate-400 mt-1">Session Success</div>
+          <div class="work-body">
+            <div class="work-steps">
+              <section><h4 class="label">Challenge</h4><p>A platform serving 70+ countries needed to become more reliable and easier for customers to use.</p></section>
+              <section><h4 class="label">What I did</h4><p>Defined organisational requirements, aligned leadership expectations, redesigned digital properties and owned storefront optimisation.</p></section>
+              <section><h4 class="label">Outcome</h4><p>Platform reliability and customer experience improved end to end.</p></section>
             </div>
-            <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-lg sm:text-2xl font-light text-gold-400">30%</div>
-              <div class="text-xs text-slate-400 mt-1">Reduced Resolution Time</div>
+            <div class="work-stats">
+              <div class="stat"><div class="stat-v">95%</div><div class="stat-l">Session success</div></div>
+              <div class="stat"><div class="stat-v">30%</div><div class="stat-l">Faster resolution time</div></div>
             </div>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <!-- Card 4 -->
-      <article id="prioritisation" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-7 flex flex-col justify-between hover:border-slate-700 hover:shadow-xl transition group">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Roadmap Alignment</span>
-            <span class="text-xs text-slate-500">Global Strategy</span>
+        <!-- 07 -->
+        <article id="prioritisation" class="case work-case">
+          <div class="work-head">
+            <span class="case-no">07</span>
+            <span class="tag">Roadmap alignment</span>
+            <h3 class="work-title">Enterprise Root-Cause &amp; Feature Prioritisation</h3>
+            <span class="text-xs text-slate-500">Global strategy</span>
           </div>
-          <h3 class="text-xl font-medium text-white mb-3 group-hover:text-gold-300 transition">
-            Enterprise Root-Cause &amp; Feature Prioritization
-          </h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4 sm:mb-6">
-            Converted complex enterprise customer pain points into structured product problems, aligned engineering priorities, and improved release readiness through root-cause analysis and stakeholder communication.
-          </p>
-        </div>
-        <div>
-          <div class="grid grid-cols-2 gap-3 pt-4 sm:pt-6 border-t border-slate-800/80">
-            <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-lg sm:text-2xl font-light text-gold-400">Strategic</div>
-              <div class="text-xs text-slate-400 mt-1">Align with Enterprise Goals</div>
+          <div class="work-body">
+            <div class="work-steps">
+              <section><h4 class="label">Challenge</h4><p>Complex enterprise customer pain points weren't framed as problems the product team could act on.</p></section>
+              <section><h4 class="label">What I did</h4><p>Ran root-cause analysis to turn them into structured product problems, and aligned engineering and stakeholders around them.</p></section>
+              <section><h4 class="label">Outcome</h4><p>Engineering priorities aligned with enterprise goals, and better release readiness.</p></section>
             </div>
-            <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-              <div class="text-lg sm:text-2xl font-light text-gold-400">Clear</div>
-              <div class="text-xs text-slate-400 mt-1">Delivery Scope</div>
+            <div class="work-stats">
+              <div class="stat"><div class="stat-v">Strategic</div><div class="stat-l">Aligned with enterprise goals</div></div>
+              <div class="stat"><div class="stat-v">Clear</div><div class="stat-l">Delivery scope</div></div>
             </div>
           </div>
-        </div>
-      </article>
+        </article>
 
-    </div>
+      </div>
+    </section>
   </main>
 
 
