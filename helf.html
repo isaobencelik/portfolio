@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helf · OBEN CELIK</title>
+  <meta name="description" content="Helf: a patient-owned healthcare companion. A NOVA IMS design thinking project, with Oben Celik as Product Manager." />
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Shared theme: matches the dial homepage (near-black, warm greys, champagne gold)
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Geist', 'Helvetica Neue', 'sans-serif'], mono: ['Geist Mono', 'monospace'] },
+          colors: {
+            gold: { 200: '#EFE2CB', 300: '#E6D2B0', 400: '#D4B483', 500: '#C49A5C', 900: '#2A2116', 950: '#17120B' },
+            slate: { 100: '#F3EFE7', 200: '#E6E1D8', 300: '#C9CCD1', 400: '#A9AEB6', 500: '#6E747D', 600: '#4C525A', 700: '#2A2F37', 800: '#1C2027', 900: '#0E1116', 950: '#06080B' }
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/dial.css">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Geist', 'Helvetica Neue', sans-serif;
+      background: #06080B;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #network-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 1;
+    }
+
+    body > *:not(canvas) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 9999px; background: #6EE7A8;
+      box-shadow: 0 0 0 0 rgba(110, 231, 168, 0.6);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(110, 231, 168, 0.55); }
+      70%  { box-shadow: 0 0 0 8px rgba(110, 231, 168, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(110, 231, 168, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+  </style>
+</head>
+<body data-current="a2" class="bg-[#06080B] text-slate-200 antialiased selection:bg-gold-500 selection:text-white">
+  <canvas id="network-bg" data-rgb="212, 180, 131" aria-hidden="true"></canvas>
+
+  <!-- Header: the name opens the dial menu (assets/menu.js) -->
+  <header class="max-w-5xl mx-auto px-6 py-4 sm:py-6 flex flex-wrap gap-x-8 gap-y-2 items-center justify-between">
+    <button type="button" id="menu-open" class="menu-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-overlay">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" stroke-dasharray="12.1 2.04" transform="rotate(-45 12 12)"/>
+        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+      </svg>
+      <span>Oben Celik</span>
+      <span class="menu-label">Menu</span>
+    </button>
+    <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+  </header>
+
+  <!-- Intro -->
+  <header class="max-w-5xl mx-auto px-6 pt-4 pb-8 sm:pt-8 sm:pb-10">
+    <span class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-400 bg-gold-950/60 border border-gold-500/20 rounded-full mb-4 sm:mb-6">
+      NOVA IMS &middot; Innovation Management &amp; Design Thinking &middot; 2026
+    </span>
+    <h1 class="text-4xl sm:text-5xl font-light tracking-tight leading-tight text-white mb-3 sm:mb-5">
+      Helf <span class="text-gold-300">&middot; your better helf</span>
+    </h1>
+    <p class="text-slate-400 text-sm sm:text-xl max-w-2xl leading-relaxed">
+      A patient-owned healthcare companion. It sits entirely on the patient's side and asks nothing of the doctor, the hospital or the system.
+    </p>
+    <div class="flex flex-wrap gap-4 mt-6 sm:mt-8">
+      <a href="https://stitch.withgoogle.com/preview/12623552580555225340?node-id=62b514340cd04b4a98eb392315ce709d" target="_blank" rel="noopener"
+         class="px-6 py-3 rounded-lg bg-gold-500 text-slate-950 font-medium hover:bg-gold-400 transition shadow-lg shadow-gold-500/10">
+        View the app draft &#8599;
+      </a>
+      <a href="apps.html" class="px-6 py-3 rounded-lg bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition">Back to my apps</a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 pb-10 space-y-5 sm:pb-16 sm:space-y-8">
+    <article id="helf" class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sm:p-10">
+
+      <div class="grid sm:grid-cols-3 gap-3 sm:gap-4 mb-8 sm:mb-10">
+        <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+          <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">My role</div>
+          <div class="text-slate-100">Product Manager</div>
+        </div>
+        <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+          <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Team</div>
+          <div class="text-slate-100">Five people, five countries</div>
+        </div>
+        <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+          <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Status</div>
+          <div class="text-slate-100">Concept, prototype and pitch (June 2026)</div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-x-10 gap-y-6 sm:gap-y-9">
+          <section>
+            <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-3">The problem</h3>
+            <p class="text-slate-400 leading-relaxed">
+              Patients walk out of a consultation with a sheet of instructions, several new medications and more questions than they came with.
+              The system was never built with them in mind, so they fill the gap with Google, online groups and AI chatbots, tools that were never made for it.
+              It is not one bad day. It is every appointment.
+            </p>
+          </section>
+
+          <section>
+            <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-3">Who it's for</h3>
+            <p class="text-slate-400 leading-relaxed">
+              Adults between 18 and 65 who manage their own health, and the caregivers who look after someone else's:
+              the son who asks his dad how the surgery went and hears "better, I think".
+              We started in Portugal and Southern Europe, where trust in the system is fragile.
+            </p>
+          </section>
+
+          <section>
+            <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-3">The solution</h3>
+            <ul class="space-y-2 text-slate-400 leading-relaxed">
+              <li><span class="text-gold-400 mr-2">&rarr;</span>Find and book verified doctors, filtered by specialty, language and cost</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span>Record the appointment and get a live transcript and summary, with nothing asked of the doctor</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span>An easy-read summary of what the doctor said, plus next steps and medication reminders</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span>One-tap sharing with a caregiver, and a patient-owned health record that is encrypted and never sold</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-3">The value</h3>
+            <ul class="space-y-2 text-slate-400 leading-relaxed">
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Understanding:</b> every appointment is clear after you leave the room</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Continuity:</b> one record that follows you across doctors and countries</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Support:</b> family stays involved without intruding</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Ownership:</b> the data belongs to the patient, not the system</li>
+            </ul>
+          </section>
+
+      </div>
+
+      <section class="mt-7 pt-6 sm:mt-10 sm:pt-9 border-t border-slate-800">
+        <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-5">One companion, four moments</h3>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+              <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-gold-400 mb-2">Before</div>
+              <div class="text-slate-100 font-medium mb-1">Find &amp; book</div>
+              <p class="text-sm text-slate-400 leading-relaxed">Verified doctors, filtered by specialty, language and cost.</p>
+            </div>
+            <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+              <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-gold-400 mb-2">During</div>
+              <div class="text-slate-100 font-medium mb-1">Record &amp; transcribe</div>
+              <p class="text-sm text-slate-400 leading-relaxed">Real-time transcription. The doctor doesn't need to do anything.</p>
+            </div>
+            <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+              <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-gold-400 mb-2">After</div>
+              <div class="text-slate-100 font-medium mb-1">Understand &amp; act</div>
+              <p class="text-sm text-slate-400 leading-relaxed">Easy-read summary, medication reminders, one-tap caregiver share.</p>
+            </div>
+            <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+              <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-gold-400 mb-2">Always</div>
+              <div class="text-slate-100 font-medium mb-1">Your health cloud</div>
+              <p class="text-sm text-slate-400 leading-relaxed">Encrypted, patient-owned and never sold.</p>
+            </div>
+        </div>
+      </section>
+
+      <section class="mt-7 pt-6 sm:mt-10 sm:pt-9 border-t border-slate-800">
+        <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-5">Key product decisions</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div>
+              <h4 class="text-slate-100 font-medium mb-2">Stay on the patient's side</h4>
+              <p class="text-sm text-slate-400 leading-relaxed">Fitness-first products like Oura and WHOOP track the body. None of them help you inside the healthcare system, where you feel most vulnerable. Helf needs nothing from the doctor, so it can work with any doctor from day one.</p>
+            </div>
+            <div>
+              <h4 class="text-slate-100 font-medium mb-2">Patients pay, institutions scale it</h4>
+              <p class="text-sm text-slate-400 leading-relaxed">A single B2C subscription at &euro;9.99 a month, with 50% off the first two months and no free tier. Health insurers and employer benefits come later as a B2B channel.</p>
+            </div>
+            <div>
+              <h4 class="text-slate-100 font-medium mb-2">Start where trust is lowest</h4>
+              <p class="text-sm text-slate-400 leading-relaxed">Lisbon first, then Southern Europe through patient communities and insurer partnerships. The market is large (a global digital health market of around $300B), but trust is what we'd have to earn first.</p>
+            </div>
+        </div>
+      </section>
+
+      <section class="mt-7 pt-6 sm:mt-10 sm:pt-9 border-t border-slate-800">
+        <h3 class="font-mono text-xs uppercase tracking-[0.24em] text-gold-400 mb-4">How we worked</h3>
+        <p class="text-slate-400 leading-relaxed max-w-3xl">
+          We used design thinking: starting from real patient stories, defining the problem from the patient's side, and prototyping the app as screens in Google Stitch before pitching it.
+          As Product Manager I kept the team pointed at one problem and one user, and turned the findings into the scope you see above.
+          We closed the pitch by asking for the right doors rather than money: strategic mentorship, support from NOVA Marketing Lab, academic partnerships and pilot partners.
+        </p>
+      </section>
+
+      <div class="flex flex-wrap gap-2 mt-7 mb-6 sm:mt-10 sm:mb-8">
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Design thinking</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Product management</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Google Stitch prototype</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Business model</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Go-to-market</span>
+      </div>
+
+      <div class="flex flex-wrap gap-4">
+        <a href="https://stitch.withgoogle.com/preview/12623552580555225340?node-id=62b514340cd04b4a98eb392315ce709d" target="_blank" rel="noopener"
+           class="px-6 py-3 rounded-lg bg-gold-500 text-slate-950 font-medium hover:bg-gold-400 transition shadow-lg shadow-gold-500/10">
+          View the app draft &#8599;
+        </a>
+        <a href="apps.html" class="px-6 py-3 rounded-lg bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition">Back to my apps</a>
+      </div>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-5xl mx-auto px-6 py-8 sm:py-12 border-t border-slate-800 text-center text-xs text-slate-500">
+    &copy; 2026 OBEN CELIK. Built for making scalable systems, and team outcomes better.
+  </footer>
+
+  <script src="assets/network-bg.js"></script>
+  <script src="assets/menu.js"></script>
+  <script src="assets/dial.js"></script>
+</body>
+</html>

@@ -28,7 +28,7 @@
   var ITEMS = {
     apps: {
       a1: { name: 'Job Analyser', st: 'live', a: [0, 60], href: 'apps.html#job-analyser', text: 'Searches LinkedIn jobs and uses AI to break down each role, its requirements and salary.', meta: 'Python · Flask · Gemini · Cloud Run' },
-      a2: { name: 'Coming soon', st: 'soon', a: [60, 120], href: 'apps.html', text: 'The next tool in the pipeline, including AI agents.', meta: 'In the works' }
+      a2: { name: 'Helf', st: 'case', a: [60, 120], href: 'helf.html', text: 'A patient-owned healthcare companion, from my NOVA IMS design thinking course.', meta: 'Product Manager \u00b7 Team of five \u00b7 2026' }
     }
   };
   var ABOUT = {
