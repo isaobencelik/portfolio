@@ -79,21 +79,34 @@
 
   <!-- Intro -->
   <header class="max-w-5xl mx-auto px-6 pt-4 pb-8 sm:pt-8 sm:pb-10">
-    <span class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-400 bg-gold-950/60 border border-gold-500/20 rounded-full mb-4 sm:mb-6">
-      NOVA IMS &middot; Innovation Management &amp; Design Thinking &middot; 2026
-    </span>
-    <h1 class="text-4xl sm:text-5xl font-light tracking-tight leading-tight text-white mb-3 sm:mb-5">
-      Helf <span class="text-gold-300">&middot; your better helf</span>
-    </h1>
-    <p class="text-slate-400 text-sm sm:text-xl max-w-2xl leading-relaxed">
-      A patient-owned healthcare companion. It sits entirely on the patient's side and asks nothing of the doctor, the hospital or the system.
-    </p>
-    <div class="flex flex-wrap gap-4 mt-6 sm:mt-8">
+    <div class="grid md:grid-cols-5 gap-8 md:gap-10 items-center">
+      <div class="md:col-span-3 min-w-0">
+        <span class="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-400 bg-gold-950/60 border border-gold-500/20 rounded-full mb-4 sm:mb-6">
+          NOVA IMS &middot; Innovation Management &amp; Design Thinking &middot; 2026
+        </span>
+        <h1 class="text-4xl sm:text-5xl font-light tracking-tight leading-tight text-white mb-3 sm:mb-5">
+          Helf <span class="text-gold-300">&middot; your better helf</span>
+        </h1>
+        <p class="text-slate-400 text-sm sm:text-xl max-w-2xl leading-relaxed">
+          A patient-owned healthcare companion. It sits entirely on the patient's side and asks nothing of the doctor, the hospital or the system.
+        </p>
+        <div class="flex flex-wrap gap-4 mt-6 sm:mt-8">
+          <a href="https://stitch.withgoogle.com/preview/12623552580555225340?node-id=62b514340cd04b4a98eb392315ce709d" target="_blank" rel="noopener"
+             class="px-6 py-3 rounded-lg bg-gold-500 text-slate-950 font-medium hover:bg-gold-400 transition shadow-lg shadow-gold-500/10">
+            View the app draft &#8599;
+          </a>
+          <a href="apps.html" class="px-6 py-3 rounded-lg bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition">Back to my apps</a>
+        </div>
+      </div>
+
+      <!-- The app's home screen in a phone frame; the whole phone opens the draft -->
       <a href="https://stitch.withgoogle.com/preview/12623552580555225340?node-id=62b514340cd04b4a98eb392315ce709d" target="_blank" rel="noopener"
-         class="px-6 py-3 rounded-lg bg-gold-500 text-slate-950 font-medium hover:bg-gold-400 transition shadow-lg shadow-gold-500/10">
-        View the app draft &#8599;
+         aria-label="Open the Helf app draft (opens in a new tab)"
+         class="md:col-span-2 group block mx-auto w-[210px] sm:w-[240px] rounded-[2rem] border-4 border-slate-700 bg-slate-950 p-1.5 shadow-2xl shadow-black/60 transition hover:border-gold-500/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-400">
+        <img src="assets/helf-home.png" width="461" height="801"
+             alt="Helf app home screen: today's overview with the next medication and latest appointment summary, and quick actions to check symptoms, log vitals, book or record an appointment"
+             class="block w-full h-auto rounded-[1.5rem]" />
       </a>
-      <a href="apps.html" class="px-6 py-3 rounded-lg bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition">Back to my apps</a>
     </div>
   </header>
 
