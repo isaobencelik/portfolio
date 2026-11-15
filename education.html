@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Education · OBEN CELIK</title>
   <meta name="description" content="Case studies from Oben Celik's master's at NOVA IMS: Helf, a patient-owned healthcare companion." />
+  <script>document.documentElement.classList.add('js');</script>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -24,6 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="assets/dial.css">
+  <link rel="stylesheet" href="assets/folders.css">
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
     body {
@@ -109,7 +111,7 @@
       <span class="text-sm text-slate-500">Master's · NOVA IMS</span>
     </div>
 
-    <div class="cf-files">
+    <div class="cf-files" data-folder-style="rich">
 
       <!-- Case 01: the same story as the Helf page under My apps -->
       <article id="helf" class="file">
@@ -124,7 +126,7 @@
             <h3 class="text-3xl sm:text-5xl font-light tracking-tight leading-tight text-white mb-3 sm:mb-5">
               Helf <span class="text-gold-300">&middot; your better helf</span>
             </h3>
-            <p class="text-slate-400 text-sm sm:text-xl max-w-2xl leading-relaxed">
+            <p data-peek="tagline" class="text-slate-400 text-sm sm:text-xl max-w-2xl leading-relaxed">
               A patient-owned healthcare companion. It sits entirely on the patient's side and asks nothing of the doctor, the hospital or the system.
             </p>
             <div class="flex flex-wrap gap-3 sm:gap-4 mt-6 sm:mt-8">
@@ -140,22 +142,22 @@
           <a href="https://stitch.withgoogle.com/preview/12623552580555225340?node-id=62b514340cd04b4a98eb392315ce709d" target="_blank" rel="noopener"
              aria-label="Open the Helf app draft (opens in a new tab)"
              class="md:col-span-2 group block mx-auto w-[210px] sm:w-[240px] rounded-[2rem] border-4 border-slate-700 bg-slate-950 p-1.5 shadow-2xl shadow-black/60 transition hover:border-gold-500/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-400">
-            <img src="assets/helf-home.png" width="461" height="801"
+            <img data-peek="thumb" src="assets/helf-home.png" width="461" height="801"
                  alt="Helf app home screen: today's overview with the next medication and latest appointment summary, and quick actions to check symptoms, log vitals, book or record an appointment"
                  class="block w-full h-auto rounded-[1.5rem]" />
           </a>
         </div>
 
         <div class="grid sm:grid-cols-3 gap-3 sm:gap-4 mt-8 sm:mt-10 mb-8 sm:mb-10">
-          <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+          <div data-peek="chip" class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
             <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">My role</div>
             <div class="text-slate-100">Product Manager</div>
           </div>
-          <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+          <div data-peek="chip" class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
             <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Team</div>
             <div class="text-slate-100">Five people, five countries</div>
           </div>
-          <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+          <div data-peek="chip" class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
             <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Status</div>
             <div class="text-slate-100">Concept, prototype and pitch (June 2026)</div>
           </div>
@@ -283,6 +285,7 @@
   <script src="assets/network-bg.js"></script>
   <script src="assets/menu.js"></script>
   <script src="assets/dial.js"></script>
+  <script src="assets/folders.js"></script>
 
 </body>
 </html>

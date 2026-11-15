@@ -25,6 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="assets/dial.css">
+  <link rel="stylesheet" href="assets/folders.css">
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
     body {
@@ -87,63 +88,6 @@
     .redact li::before { content: ''; flex: none; width: .4rem; height: .4rem; margin-top: .5rem; border-radius: 50%; background: #C49A5C; }
     .redact[open] ul { animation: cf-in .4s cubic-bezier(.22, 1, .36, 1); }
 
-    /* ---------- Floating folders (assets: none, all CSS) ----------
-       With JavaScript the four files become folders that float over the network background; a click opens the file
-       in a panel (script at the bottom). Without it, the files above simply stay stacked on the page. */
-    :root { --cf-ease: cubic-bezier(.22, 1, .36, 1); }
-    .js .cf-files { display: none; }
-    .desk { --mx: 0; --my: 0; display: grid; gap: 2.4rem; padding: 1.4rem 0 2.5rem; perspective: 1100px; }
-    @media (min-width: 768px) {
-      .desk { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem 3.5rem; }
-      .slot:nth-child(even) { margin-top: 2.6rem; }
-    }
-    .desk-hint { grid-column: 1 / -1; margin: 0; text-align: center; font-family: 'Geist Mono', monospace; font-size: .7rem; letter-spacing: .24em; text-transform: uppercase; color: #6E747D; }
-    /* each folder drifts on its own slow loop... */
-    .slot { animation: cf-float var(--dur, 7s) ease-in-out var(--delay, 0s) infinite; }
-    @keyframes cf-float {
-      0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
-      50% { transform: translateY(-9px) rotate(calc(var(--tilt, 0deg) * -.6)); }
-    }
-    /* ...and leans a little towards the cursor, each by its own depth */
-    .folder {
-      position: relative; display: block; width: 100%; height: clamp(205px, 24vw, 250px); padding: 0; border: 0; background: none;
-      text-align: left; color: inherit; font: inherit; cursor: pointer; outline: none; transform-style: preserve-3d;
-      transform: translate3d(calc(var(--mx) * 9px * var(--d, 1)), calc(var(--my) * 6px * var(--d, 1)), 0) rotateX(calc(var(--my) * -4deg)) rotateY(calc(var(--mx) * 5deg));
-      transition: transform .4s var(--cf-ease), opacity .25s ease;
-    }
-    .folder.is-empty { opacity: 0; pointer-events: none; }
-    .f-back { position: absolute; inset: 16px 0 0 0; border-radius: 0 16px 16px 16px; background: #1B1710; border: 1px solid rgba(212, 180, 131, .4); box-shadow: 0 26px 50px -18px rgba(0, 0, 0, .85); }
-    .f-tab { position: absolute; top: 0; left: 0; height: 24px; padding: 0 16px; display: flex; align-items: center; border-radius: 10px 10px 0 0; background: #1B1710; border: 1px solid rgba(212, 180, 131, .4); border-bottom: 0; font-family: 'Geist Mono', monospace; font-size: .64rem; letter-spacing: .2em; color: #D4B483; }
-    /* two sheets of paper peeking out of the folder; they rise a little on hover */
-    .f-paper { position: absolute; left: 14px; right: 14px; top: 26px; bottom: 30px; border-radius: 4px; background: #E6E1D8; opacity: .9; transition: transform .45s var(--cf-ease); }
-    .f-paper + .f-paper { left: 20px; right: 20px; top: 32px; background: #CFC8B8; transform: rotate(-1.1deg); }
-    .f-front {
-      position: absolute; left: 0; right: 0; top: 52px; bottom: 0; padding: 1rem 1.15rem 1rem; border-radius: 4px 14px 14px 14px;
-      display: flex; flex-direction: column; justify-content: space-between; gap: .6rem;
-      background: radial-gradient(ellipse 80% 60% at 18% 0%, rgba(255, 246, 228, .09), transparent 70%), linear-gradient(165deg, #2B2418, #17120B 70%);
-      border: 1px solid rgba(212, 180, 131, .5); box-shadow: inset 0 1px 0 rgba(255, 246, 228, .12);
-      transform-origin: 50% 100%; transition: transform .45s var(--cf-ease), border-color .25s ease;
-    }
-    .f-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .8rem; }
-    .f-cat { font-size: .68rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #D4B483; }
-    .f-title { margin: 0; font-size: clamp(1.05rem, 1.7vw, 1.35rem); font-weight: 500; line-height: 1.25; color: #F3EFE7; }
-    .f-open { font-family: 'Geist Mono', monospace; font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; color: #6E747D; transition: color .25s ease; }
-    .folder:hover .f-paper, .folder:focus-visible .f-paper { transform: translateY(-13px); }
-    .folder:hover .f-paper + .f-paper, .folder:focus-visible .f-paper + .f-paper { transform: translateY(-8px) rotate(-1.6deg); }
-    .folder:hover .f-front, .folder:focus-visible .f-front { transform: perspective(900px) rotateX(-9deg); border-color: rgba(212, 180, 131, .85); }
-    .folder:hover .f-open, .folder:focus-visible .f-open { color: #D4B483; }
-    .folder:focus-visible .f-back { box-shadow: 0 0 0 2px #F2DFB4, 0 26px 50px -18px rgba(0, 0, 0, .85); }
-
-    /* the open file: a panel over the page; the file grows out of its folder */
-    .dossier { position: fixed; inset: 0; z-index: 40; overflow-y: auto; padding: 5.5rem 1rem 3rem; background: rgba(6, 8, 11, .88); opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s; }
-    .dossier.open { opacity: 1; visibility: visible; transition: opacity .35s ease; }
-    .dossier .file { display: block; max-width: 56rem; margin: 0 auto; transition: transform .55s var(--cf-ease), opacity .35s ease; will-change: transform; }
-    .dossier-close { position: fixed; top: 1.1rem; right: 1.1rem; z-index: 41; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(6, 8, 11, .7); border: 1px solid rgba(243, 239, 231, .16); color: #A9AEB6; cursor: pointer; }
-    .dossier-close:hover, .dossier-close:focus-visible { color: #D4B483; border-color: rgba(212, 180, 131, .55); outline: none; }
-    @media (prefers-reduced-motion: reduce) {
-      .slot { animation: none; }
-      .folder, .f-paper, .f-front, .dossier, .dossier .file { transition: none; }
-    }
   </style>
 </head>
 <body data-current="w" class="bg-[#06080B] text-slate-200 antialiased selection:bg-gold-500 selection:text-white">
@@ -374,149 +318,8 @@
   <script src="assets/network-bg.js"></script>
   <script src="assets/menu.js"></script>
   <script src="assets/dial.js"></script>
+  <script src="assets/folders.js"></script>
 
-  <!-- Floating folders: one per case file. A click opens the file in a panel; Esc, the cross or a click outside closes it. -->
-  <script>
-  (function () {
-    var vault = document.querySelector('.cf-files');
-    var files = vault ? [].slice.call(vault.querySelectorAll('article.file')) : [];
-    if (!files.length) return;
-    try {
-      var STILL = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var TOUCH = window.matchMedia && window.matchMedia('(hover: none)').matches;
-      var TILT = [-1.3, 1.1, .9, -1], DUR = [7, 8.2, 7.6, 6.6], DEPTH = [1, .8, 1.2, .9];
-
-      // ---- the desk of folders, built from each file's own heading ----
-      var desk = document.createElement('div');
-      desk.className = 'desk'; desk.id = 'desk';
-      var hint = document.createElement('p');
-      hint.className = 'desk-hint';
-      hint.textContent = TOUCH ? 'Tap a folder to open the file' : 'Click a folder to open the file';
-      desk.appendChild(hint);
-      var folders = files.map(function (a, i) {
-        var cat = a.querySelector('.text-xs.uppercase'), reg = a.querySelector('.stamp'), h = a.querySelector('h3'), tab = a.querySelector('.file-tab');
-        var slot = document.createElement('div');
-        slot.className = 'slot';
-        slot.style.setProperty('--tilt', TILT[i % 4] + 'deg');
-        slot.style.setProperty('--dur', DUR[i % 4] + 's');
-        slot.style.setProperty('--delay', (-i * 1.7) + 's');
-        var f = document.createElement('button');
-        f.type = 'button'; f.className = 'folder';
-        f.style.setProperty('--d', DEPTH[i % 4]);
-        f.setAttribute('aria-haspopup', 'dialog');
-        var t = h ? h.textContent.replace(/\s+/g, ' ').trim() : 'Case file';
-        f.setAttribute('aria-label', t + '. Open the file');
-        f.innerHTML =
-          '<span class="f-back" aria-hidden="true"></span>' +
-          '<span class="f-tab" aria-hidden="true"></span>' +
-          '<span class="f-paper" aria-hidden="true"></span><span class="f-paper" aria-hidden="true"></span>' +
-          '<span class="f-front"><span class="f-top"><span class="f-cat"></span><span class="stamp"></span></span>' +
-          '<span class="f-title"></span><span class="f-open" aria-hidden="true">Open file &rarr;</span></span>';
-        f.querySelector('.f-tab').textContent = tab ? tab.textContent : 'FILE ' + (i + 1);
-        f.querySelector('.f-cat').textContent = cat ? cat.textContent : '';
-        f.querySelector('.stamp').textContent = reg ? reg.textContent : '';
-        f.querySelector('.f-title').textContent = t;
-        f.addEventListener('click', function () { open(i); });
-        slot.appendChild(f); desk.appendChild(slot);
-        return f;
-      });
-      vault.parentNode.insertBefore(desk, vault);
-
-      // the folders lean towards the cursor, each by its own depth (not on touch screens or with reduced motion)
-      if (!STILL && !TOUCH) {
-        window.addEventListener('pointermove', function (e) {
-          desk.style.setProperty('--mx', ((e.clientX / window.innerWidth - .5) * 2).toFixed(3));
-          desk.style.setProperty('--my', ((e.clientY / window.innerHeight - .5) * 2).toFixed(3));
-        });
-      }
-
-      // ---- the panel an open file lives in ----
-      var dossier = document.createElement('div');
-      dossier.className = 'dossier';
-      dossier.setAttribute('role', 'dialog'); dossier.setAttribute('aria-modal', 'true');
-      var x = document.createElement('button');
-      x.type = 'button'; x.className = 'dossier-close'; x.setAttribute('aria-label', 'Close the file');
-      x.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-      dossier.appendChild(x);
-      document.body.appendChild(dossier);
-
-      var cur = -1, busy = false, lastFocus = null;
-      // where the file sits relative to its folder: move and shrink it onto the folder (and back)
-      function squeeze(a, f) {
-        var fr = f.getBoundingClientRect(), ar = a.getBoundingClientRect();
-        var s = Math.min(1, fr.width / ar.width);
-        var dx = (fr.left + fr.width / 2) - (ar.left + ar.width / 2), dy = (fr.top + fr.height / 2) - (ar.top + ar.height / 2);
-        return 'translate(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px) scale(' + s.toFixed(3) + ')';
-      }
-      function open(i) {
-        if (cur !== -1 || busy) return;
-        var a = files[i], f = folders[i];
-        cur = i; lastFocus = f;
-        dossier.appendChild(a);
-        dossier.setAttribute('aria-label', (a.querySelector('h3') || {}).textContent || 'Case file');
-        dossier.scrollTop = 0;
-        dossier.classList.add('open');
-        document.body.style.overflow = 'hidden';
-        if (!STILL) {
-          a.style.transition = 'none';
-          a.style.transform = squeeze(a, f);
-          a.style.opacity = '0';
-          void a.offsetWidth;
-          a.style.transition = ''; a.style.transform = ''; a.style.opacity = '';
-        }
-        f.classList.add('is-empty');
-        try { history.replaceState(null, '', '#' + a.id); } catch (e) {}
-        x.focus({ preventScroll: true });
-      }
-      function close() {
-        if (cur === -1 || busy) return;
-        var i = cur, a = files[i], f = folders[i];
-        cur = -1; busy = true;
-        function done() {
-          dossier.classList.remove('open');
-          vault.appendChild(a); a.style.cssText = '';
-          f.classList.remove('is-empty');
-          document.body.style.overflow = '';
-          busy = false;
-          if (lastFocus) lastFocus.focus({ preventScroll: true });
-        }
-        try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
-        if (STILL) { done(); return; }
-        f.classList.remove('is-empty');
-        a.style.transform = squeeze(a, f);
-        a.style.opacity = '0';
-        dossier.classList.remove('open');
-        setTimeout(done, 560);
-      }
-      x.addEventListener('click', close);
-      dossier.addEventListener('click', function (e) { if (e.target === dossier) close(); });
-      document.addEventListener('keydown', function (e) {
-        if (cur === -1) return;
-        if (e.key === 'Escape') { e.preventDefault(); close(); return; }
-        if (e.key !== 'Tab') return;
-        // keep the keyboard inside the open file
-        var els = [].slice.call(dossier.querySelectorAll('button, a[href], summary')).filter(function (n) { return n.offsetParent !== null; });
-        if (!els.length) return;
-        var first = els[0], last = els[els.length - 1];
-        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-      });
-
-      // a link like case-studies.html#omnichannel opens that file
-      function fromHash() {
-        var id = location.hash.slice(1), k = -1;
-        files.forEach(function (a, n) { if (a.id === id) k = n; });
-        return k;
-      }
-      var k0 = fromHash();
-      if (k0 > -1) setTimeout(function () { open(k0); }, 350);
-      window.addEventListener('hashchange', function () { var k = fromHash(); if (k > -1 && cur === -1) open(k); });
-    } catch (err) {
-      document.documentElement.classList.remove('js'); // anything went wrong: show the files stacked, as before
-      if (window.console) console.error(err);
-    }
-  })();
-  </script>
 
 </body>
 </html>
