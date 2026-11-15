@@ -49,45 +49,12 @@
     }
 
     /* ---------- Case files ---------- */
-    /* Without JavaScript every file is shown, stacked. With it (class "js" on <html>) the dial picks one at a time. */
-    .cf-files { display: grid; gap: 2.75rem; }
-    .cf-dial { display: none; }
-    .js .cf-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 2.5rem; align-items: start; }
-    .js .cf-dial { display: block; width: 250px; position: sticky; top: 1.5rem; }
-    .js .cf-files { display: block; }
-    .js .file { display: none; }
-    .js .file.active { display: block; animation: cf-in .45s cubic-bezier(.22, 1, .36, 1); }
-    @media (max-width: 767px) {
-      .js .cf-layout { display: block; }
-      .js .cf-dial { width: 210px; margin: 0 auto 2.25rem; position: static; }
-    }
+    /* All files are on the page, like the apps on the Apps page. The dial menu links to each one (case-studies.html#id). */
+    .cf-files { display: grid; gap: 2.75rem 2rem; }
+    @media (min-width: 768px) { .cf-files { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .file { scroll-margin-top: 2rem; }
     @keyframes cf-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-
-    /* the dial: same gold ring and tick marks as the homepage */
-    .cf-svg { width: 100%; height: auto; display: block; overflow: visible; }
-    .cf-ring { fill: none; stroke: #B8996A; stroke-width: 1.2; opacity: .8; }
-    .cf-ticks { fill: none; stroke: rgba(212, 180, 131, .4); stroke-width: 3; stroke-dasharray: .8 9.04; transform-origin: 0 0; animation: cf-spin 120s linear infinite; }
-    @keyframes cf-spin { to { transform: rotate(360deg); } }
-    .cf-glass { fill: rgba(6, 8, 11, .62); }
-    .cf-rotor { transform-box: view-box; }
-    .cf-ready .cf-rotor, .cf-ready .cf-label { transition: transform .55s cubic-bezier(.22, 1, .36, 1); }
-    .cf-tab { cursor: pointer; outline: none; }
-    .cf-tab path { fill: rgba(31, 34, 39, .94); stroke: rgba(243, 239, 231, .06); stroke-width: .6; transition: fill .2s ease; }
-    .cf-tab:hover path { fill: rgba(52, 56, 63, .96); }
-    .cf-tab[aria-selected="true"] path { fill: #D4B483; }
-    .cf-tab:focus-visible path { stroke: #F2DFB4; stroke-width: 1.6; }
-    .cf-label { font-family: 'Geist Mono', monospace; font-size: 11px; fill: #E6E1D8; text-anchor: middle; dominant-baseline: central; transform-box: fill-box; transform-origin: center; pointer-events: none; }
-    .cf-tab[aria-selected="true"] .cf-label { fill: #17120B; }
-    .cf-core { fill: rgba(9, 12, 16, .78); stroke: rgba(243, 239, 231, .12); stroke-width: .8; }
-    .cf-c-kicker { font-family: 'Geist Mono', monospace; font-size: 6.5px; letter-spacing: .22em; fill: #6E747D; text-anchor: middle; }
-    .cf-c-num { font-size: 30px; font-weight: 300; fill: #F3EFE7; text-anchor: middle; dominant-baseline: central; }
-    .cf-c-name { font-size: 7.5px; fill: #A9AEB6; text-anchor: middle; }
-    .cf-pointer { fill: #D4B483; }
-    @media (prefers-reduced-motion: reduce) {
-      .cf-ticks { animation: none; }
-      .cf-ready .cf-rotor, .cf-ready .cf-label { transition: none; }
-      .js .file.active { animation: none; }
-    }
+    @media (prefers-reduced-motion: reduce) { .redact[open] ul { animation: none; } }
 
     /* a case file */
     .file { position: relative; margin-top: 1.1rem; background: rgba(14, 17, 22, .6); border: 1px solid #1C2027; border-radius: 1rem; padding: 1.75rem 1.25rem 1.5rem; }
@@ -141,12 +108,7 @@
       <span class="text-sm text-slate-500">Measurable Impact &amp; Systems</span>
     </div>
 
-    <div class="cf-layout">
-
-      <!-- The dial is built by the script at the bottom (one segment per case file) -->
-      <div class="cf-dial" id="case-dial"></div>
-
-      <div class="cf-files">
+    <div class="cf-files">
 
         <!-- Case 01 -->
         <article id="cx-consolidation" class="file" data-short="CX Strategy">
@@ -339,7 +301,6 @@
           </details>
         </article>
 
-      </div>
     </div>
   </main>
 
@@ -352,95 +313,6 @@
   <script src="assets/network-bg.js"></script>
   <script src="assets/menu.js"></script>
   <script src="assets/dial.js"></script>
-
-  <!-- Case dial: one segment per file; turning it opens that file. Without JavaScript all files simply stay visible. -->
-  <script>
-  (function () {
-    var files = [].slice.call(document.querySelectorAll('article.file'));
-    var host = document.getElementById('case-dial');
-    if (!files.length || !host) return;
-    document.documentElement.classList.add('js');
-
-    var NS = 'http://www.w3.org/2000/svg', N = files.length, STEP = 360 / N, GAP = 4;
-    function pt(r, a) { var t = a * Math.PI / 180; return (r * Math.sin(t)).toFixed(2) + ' ' + (-r * Math.cos(t)).toFixed(2); }
-    function sector(a0, a1, r0, r1) {
-      return 'M' + pt(r1, a0) + ' A' + r1 + ' ' + r1 + ' 0 0 1 ' + pt(r1, a1) + ' L' + pt(r0, a1) + ' A' + r0 + ' ' + r0 + ' 0 0 0 ' + pt(r0, a0) + ' Z';
-    }
-    function el(name, attrs, parent) {
-      var e = document.createElementNS(NS, name);
-      for (var k in attrs) e.setAttribute(k, attrs[k]);
-      if (parent) parent.appendChild(e);
-      return e;
-    }
-    function two(n) { return n < 10 ? '0' + n : '' + n; }
-
-    var svg = el('svg', { 'class': 'cf-svg', viewBox: '-112 -118 224 230', role: 'group', 'aria-label': 'Choose a case file' }, host);
-    el('circle', { 'class': 'cf-ring', r: 99 }, svg);
-    el('circle', { 'class': 'cf-ticks', r: 103 }, svg);
-    el('circle', { 'class': 'cf-glass', r: 96 }, svg);
-    var rotor = el('g', { 'class': 'cf-rotor', role: 'tablist', 'aria-label': 'Case files' }, svg);
-
-    var tabs = [], labels = [];
-    files.forEach(function (f, i) {
-      var c = i * STEP;
-      var tab = el('g', { 'class': 'cf-tab', role: 'tab', id: 'cf-tab-' + i, 'aria-controls': f.id, 'aria-selected': 'false', tabindex: '-1' }, rotor);
-      el('path', { d: sector(c - STEP / 2 + GAP / 2, c + STEP / 2 - GAP / 2, 62, 96) }, tab);
-      var p = pt(79, c).split(' ');
-      var lab = el('text', { 'class': 'cf-label', x: p[0], y: p[1] }, tab);
-      lab.textContent = two(i + 1);
-      tab.addEventListener('click', function () { select(i); });
-      tab.addEventListener('keydown', function (e) {
-        var to = null;
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') to = i + 1;
-        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') to = i - 1;
-        else if (e.key === 'Home') to = 0;
-        else if (e.key === 'End') to = N - 1;
-        else if (e.key === 'Enter' || e.key === ' ') to = i;
-        if (to === null) return;
-        e.preventDefault();
-        select(to, true);
-      });
-      f.setAttribute('role', 'tabpanel');
-      f.setAttribute('aria-labelledby', 'cf-tab-' + i);
-      tabs.push(tab); labels.push(lab);
-    });
-
-    // centre of the dial
-    el('circle', { 'class': 'cf-core', r: 54 }, svg);
-    var kick = el('text', { 'class': 'cf-c-kicker', y: -17 }, svg); kick.textContent = 'CASE';
-    var num = el('text', { 'class': 'cf-c-num', y: 6 }, svg);
-    var name = el('text', { 'class': 'cf-c-name', y: 29 }, svg);
-    // fixed marker at the top: the open file sits under it
-    el('polygon', { 'class': 'cf-pointer', points: '0,-99 -5,-111 5,-111' }, svg);
-
-    var rot = 0, current = -1;
-    function select(i, focus) {
-      i = ((i % N) + N) % N;
-      rot += ((i * STEP - rot) % 360 + 540) % 360 - 180; // take the short way round
-      rotor.style.transform = 'rotate(' + (-rot) + 'deg)';
-      labels.forEach(function (l) { l.style.transform = 'rotate(' + rot + 'deg)'; }); // keep the numbers upright
-      tabs.forEach(function (t, k) {
-        t.setAttribute('aria-selected', k === i ? 'true' : 'false');
-        t.setAttribute('tabindex', k === i ? '0' : '-1');
-      });
-      files.forEach(function (f, k) { f.classList.toggle('active', k === i); });
-      num.textContent = two(i + 1);
-      name.textContent = files[i].getAttribute('data-short') || '';
-      if (focus) tabs[i].focus();
-      if (current !== -1) { try { history.replaceState(null, '', '#' + files[i].id); } catch (e) {} }
-      current = i;
-    }
-    function fromHash() {
-      var id = location.hash.slice(1), k = -1;
-      files.forEach(function (f, n) { if (f.id === id) k = n; });
-      return k;
-    }
-
-    select(Math.max(fromHash(), 0));
-    requestAnimationFrame(function () { requestAnimationFrame(function () { host.classList.add('cf-ready'); }); });
-    window.addEventListener('hashchange', function () { var k = fromHash(); if (k > -1) select(k); });
-  })();
-  </script>
 
 </body>
 </html>

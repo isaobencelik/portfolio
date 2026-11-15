@@ -1,6 +1,6 @@
 // Radial homepage menu.
-// Levels: closed -> projects (Case studies | My apps) -> apps (items on the outer ring)
-// Case studies is a direct link: all of them live on one page.
+// Levels: closed -> projects (Case studies | My apps) -> cases | apps (items on the outer ring)
+// Each case file links to its place on the Case studies page (case-studies.html#id).
 //         closed -> contact (LinkedIn | Email)
 (function () {
   'use strict';
@@ -22,10 +22,16 @@
     ct: { name: 'Contact', st: 'info', a: [220, 300], toggle: 'contact', text: 'LinkedIn or email, whichever you prefer.', meta: 'Select to open' }
   };
   var HALVES = {
-    hc: { name: 'Case studies', st: 'case', a: [300, 360], href: 'case-studies.html', text: 'How I worked through real product problems.', meta: 'Problem · decisions · outcome' },
+    hc: { name: 'Case studies', st: 'case', a: [300, 360], cat: 'cases', text: 'How I worked through real product problems.', meta: 'Problem · decisions · outcome' },
     ha: { name: 'My apps', st: 'live', a: [0, 60], cat: 'apps', text: 'Small tools I designed, built and shipped.', meta: 'Running on obencelik.com' }
   };
   var ITEMS = {
+    cases: {
+      c1: { name: 'CX Strategy', st: 'case', a: [0, 0], href: 'case-studies.html#cx-consolidation', text: 'European CX system consolidation, and AI roadmap discovery.', meta: 'CX platform strategy \u00b7 Europe' },
+      c2: { name: 'Omni-Channel', st: 'case', a: [0, 0], href: 'case-studies.html#omnichannel', text: 'Standardizing case distribution across EMEA in Salesforce.', meta: 'Salesforce \u00b7 Power BI \u00b7 EMEA' },
+      c3: { name: 'Platform Redesign', st: 'case', a: [0, 0], href: 'case-studies.html#platform-redesign', text: 'Improving and redesigning a global helpdesk platform.', meta: 'Global helpdesk \u00b7 70+ countries' },
+      c4: { name: 'Prioritization', st: 'case', a: [0, 0], href: 'case-studies.html#prioritisation', text: 'Turning enterprise customer pain points into clear product problems.', meta: 'Root cause \u00b7 Roadmap alignment' }
+    },
     apps: {
       a1: { name: 'Job Analyser', st: 'live', a: [0, 60], href: 'apps.html#job-analyser', text: 'Searches LinkedIn jobs and uses AI to break down each role, its requirements and salary.', meta: 'Python · Flask · Gemini · Cloud Run' },
       a2: { name: 'Helf', st: 'case', a: [60, 120], href: 'helf.html', text: 'A patient-owned healthcare companion, from my NOVA IMS design thinking course.', meta: 'Product Manager \u00b7 Team of five \u00b7 2026' }
@@ -53,7 +59,7 @@
         svg: '<rect x="2" y="17" width="96" height="66"/><path d="M2 17l48 38 48-38"/>' }
     ] },
     projects: { form: 'formProjects', items: [
-      { id: 'hc', d: HALVES.hc, kind: 'Case studies', cap: 'Problem \u2192 decision \u2192 outcome',
+      { id: 'hc', d: HALVES.hc, href: 'case-studies.html', kind: 'Case studies', cap: 'Problem \u2192 decision \u2192 outcome',
         svg: '<path d="M10 8v82h85M20 90V70h11v20M38 90V58h11v32M56 90V44h11v46M74 90V28h11v62M25 60l19-12 18-14 22-20M74 14h10v10"/>' },
       { id: 'ha', d: HALVES.ha, href: 'apps.html', kind: 'My apps', cap: 'Built and shipped',
         svg: '<rect x="4" y="14" width="92" height="72"/><circle cx="10" cy="21" r="1"/><circle cx="16" cy="21" r="1"/><circle cx="22" cy="21" r="1"/><path d="M4 28h92M38 44L26 57l12 13M55 42L45 72M62 44l12 13-12 13"/>' }
@@ -71,11 +77,13 @@
     var keys = Object.keys(list), start = centre - keys.length * w / 2;
     keys.forEach(function (k, i) { list[k].a = [start + i * w, start + (i + 1) * w]; });
   }
+  fan(ITEMS.cases, 330, 36); // centred above Case studies (300-360deg)
   fan(ITEMS.apps, 30, 40); // centred above My apps (0-60deg), a little wider so their names stay readable
 
   // DOM order = tab order
   var ORDER = [
     ['pr', MAIN.pr, 'main'], ['hc', HALVES.hc, 'half'],
+    ['c1', ITEMS.cases.c1, 'item:cases'], ['c2', ITEMS.cases.c2, 'item:cases'], ['c3', ITEMS.cases.c3, 'item:cases'], ['c4', ITEMS.cases.c4, 'item:cases'],
     ['ha', HALVES.ha, 'half'], ['a1', ITEMS.apps.a1, 'item:apps'], ['a2', ITEMS.apps.a2, 'item:apps'],
     ['ab', MAIN.ab, 'main'], ['ca', ABOUT.ca, 'sub:about'], ['pe', ABOUT.pe, 'sub:about'],
     ['cv', MAIN.cv, 'main'], ['vw', CVSUB.vw, 'sub:cv'], ['dl', CVSUB.dl, 'sub:cv'],
@@ -511,7 +519,7 @@
   function kindOf(id) { for (var i = 0; i < ORDER.length; i++) if (ORDER[i][0] === id) return ORDER[i][2]; return null; }
   function levelFor(id) {
     var k = kindOf(id);
-    if (id === 'hc') return 'projects'; // the Case studies page: Projects open, Case studies highlighted
+    if (k === 'item:cases' || id === 'hc') return 'cases'; // the Case studies page: its case files on the outer ring
     if (k === 'item:apps' || id === 'ha') return 'apps';
     if (k && k.indexOf('sub:') === 0) return k.slice(4);
     var d = findDef(id);
@@ -521,6 +529,7 @@
   function crumbsFor(id) {
     var k = kindOf(id), chain = [];
     if (k === 'item:apps') chain = ['pr', 'ha', id];
+    else if (k === 'item:cases') chain = ['pr', 'hc', id];
     else if (k === 'half') chain = ['pr', id];
     else if (k && k.indexOf('sub:') === 0) chain = [{ contact: 'ct', cv: 'cv', about: 'ab' }[k.slice(4)], id];
     else if (k) chain = [id];
@@ -731,7 +740,7 @@
   function updatePairFocus() {
     if (!pairShown) return;
     var ids = pairIds(pairShown);
-    var hov = active && kindOf(active) === 'item:apps' ? 'ha' : active; // Job Analyser & co. light up My apps
+    var hov = active && kindOf(active) === 'item:apps' ? 'ha' : active && kindOf(active) === 'item:cases' ? 'hc' : active; // Job Analyser & co. light up My apps, the case files light up Case studies
     var f = cardHover || (ids.indexOf(hov) >= 0 ? hov : null);
     ids.forEach(function (id) { pairCards[id].classList.toggle('lit', f === id); });
     if (window.networkBg && window.networkBg.focus) window.networkBg.focus(f);
