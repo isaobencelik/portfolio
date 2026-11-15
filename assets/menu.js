@@ -37,7 +37,12 @@
         '</div>' +
       '</div>' +
     '</div>' +
-    '<a class="menu-home" href="index.html">Back to homepage</a>';
+    '<a class="menu-home" href="index.html" aria-label="Back to homepage">' +
+      '<svg class="menu-home-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        '<path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M5.8 9.8V19.5h12.4V9.8"/><path d="M10 19.5v-5.2h4v5.2"/>' +
+      '</svg>' +
+      '<span>Back to homepage</span>' +
+    '</a>';
   document.body.appendChild(overlay);
 
   var opener = document.getElementById('menu-open');
