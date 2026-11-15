@@ -1,6 +1,6 @@
 // Radial homepage menu.
 // Levels: closed -> projects (Case studies | My apps) -> cases | apps (items on the outer ring)
-// Each case file links to its place on the Case studies page (case-studies.html#id).
+// Case studies opens two items: Work (case-studies.html) and Education (education.html).
 //         closed -> contact (LinkedIn | Email)
 (function () {
   'use strict';
@@ -27,10 +27,8 @@
   };
   var ITEMS = {
     cases: {
-      c1: { name: 'CX Strategy', st: 'case', a: [0, 0], href: 'case-studies.html#cx-consolidation', text: 'European CX system consolidation, and AI roadmap discovery.', meta: 'CX platform strategy \u00b7 Europe' },
-      c2: { name: 'Omni-Channel', st: 'case', a: [0, 0], href: 'case-studies.html#omnichannel', text: 'Standardizing case distribution across EMEA in Salesforce.', meta: 'Salesforce \u00b7 Power BI \u00b7 EMEA' },
-      c3: { name: 'Platform Redesign', st: 'case', a: [0, 0], href: 'case-studies.html#platform-redesign', text: 'Improving and redesigning a global helpdesk platform.', meta: 'Global helpdesk \u00b7 70+ countries' },
-      c4: { name: 'Prioritization', st: 'case', a: [0, 0], href: 'case-studies.html#prioritisation', text: 'Turning enterprise customer pain points into clear product problems.', meta: 'Root cause \u00b7 Roadmap alignment' }
+      w: { name: 'Work', st: 'case', a: [0, 0], href: 'case-studies.html', text: 'Product problems from my work: systems, operations and platforms.', meta: 'Problem \u00b7 decision \u00b7 outcome' },
+      e: { name: 'Education', st: 'case', a: [0, 0], href: 'education.html', text: 'Projects from my master\u2019s at NOVA IMS.', meta: 'MSc \u00b7 NOVA IMS' }
     },
     apps: {
       a1: { name: 'Job Analyser', st: 'live', a: [0, 60], href: 'apps.html#job-analyser', text: 'Searches LinkedIn jobs and uses AI to break down each role, its requirements and salary.', meta: 'Python · Flask · Gemini · Cloud Run' },
@@ -77,13 +75,13 @@
     var keys = Object.keys(list), start = centre - keys.length * w / 2;
     keys.forEach(function (k, i) { list[k].a = [start + i * w, start + (i + 1) * w]; });
   }
-  fan(ITEMS.cases, 330, 36); // centred above Case studies (300-360deg)
+  fan(ITEMS.cases, 330, 40); // centred above Case studies (300-360deg)
   fan(ITEMS.apps, 30, 40); // centred above My apps (0-60deg), a little wider so their names stay readable
 
   // DOM order = tab order
   var ORDER = [
     ['pr', MAIN.pr, 'main'], ['hc', HALVES.hc, 'half'],
-    ['c1', ITEMS.cases.c1, 'item:cases'], ['c2', ITEMS.cases.c2, 'item:cases'], ['c3', ITEMS.cases.c3, 'item:cases'], ['c4', ITEMS.cases.c4, 'item:cases'],
+    ['w', ITEMS.cases.w, 'item:cases'], ['e', ITEMS.cases.e, 'item:cases'],
     ['ha', HALVES.ha, 'half'], ['a1', ITEMS.apps.a1, 'item:apps'], ['a2', ITEMS.apps.a2, 'item:apps'],
     ['ab', MAIN.ab, 'main'], ['ca', ABOUT.ca, 'sub:about'], ['pe', ABOUT.pe, 'sub:about'],
     ['cv', MAIN.cv, 'main'], ['vw', CVSUB.vw, 'sub:cv'], ['dl', CVSUB.dl, 'sub:cv'],

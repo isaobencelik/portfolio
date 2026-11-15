@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Education · OBEN CELIK</title>
+  <meta name="description" content="Case studies from Oben Celik's master's at NOVA IMS: Helf, a patient-owned healthcare companion." />
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Shared theme: matches the dial homepage (near-black, warm greys, champagne gold)
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Geist', 'Helvetica Neue', 'sans-serif'], mono: ['Geist Mono', 'monospace'] },
+          colors: {
+            gold: { 200: '#EFE2CB', 300: '#E6D2B0', 400: '#D4B483', 500: '#C49A5C', 900: '#2A2116', 950: '#17120B' },
+            slate: { 100: '#F3EFE7', 200: '#E6E1D8', 300: '#C9CCD1', 400: '#A9AEB6', 500: '#6E747D', 600: '#4C525A', 700: '#2A2F37', 800: '#1C2027', 900: '#0E1116', 950: '#06080B' }
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="assets/dial.css">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Geist', 'Helvetica Neue', sans-serif;
+      background: #06080B;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #network-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 1;
+    }
+
+    body > *:not(canvas) {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ---------- Case files ---------- */
+    /* All files are on the page, like the apps on the Apps page. The dial menu links to each one (case-studies.html#id). */
+    .cf-files { display: grid; gap: 2.75rem 2rem; }
+    .cf-files { max-width: 48rem; }
+    .file { scroll-margin-top: 2rem; }
+    @keyframes cf-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .redact[open] ul { animation: none; } }
+
+    /* a case file */
+    .file { position: relative; margin-top: 1.1rem; background: rgba(14, 17, 22, .6); border: 1px solid #1C2027; border-radius: 1rem; padding: 1.75rem 1.25rem 1.5rem; }
+    @media (min-width: 640px) { .file { padding: 2rem 1.75rem 1.75rem; } }
+    .file:target { border-color: rgba(212, 180, 131, .6); }
+    .file-tab { position: absolute; top: -1.1rem; left: 1.25rem; padding: .3rem .8rem; background: #2A2116; border: 1px solid rgba(212, 180, 131, .35); border-bottom: 0; border-radius: .5rem .5rem 0 0; font-family: 'Geist Mono', monospace; font-size: .7rem; letter-spacing: .18em; color: #D4B483; }
+    .stamp { font-family: 'Geist Mono', monospace; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: #D4B483; border: 1.5px dashed rgba(212, 180, 131, .55); border-radius: .35rem; padding: .25rem .6rem; transform: rotate(-3deg); white-space: nowrap; }
+    .lbl { font-family: 'Geist Mono', monospace; font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: #6E747D; margin-bottom: .5rem; }
+    .blk { margin-top: 1.4rem; }
+    /* Unfinished text: hidden until it is written. Delete the "pending" class to show it. */
+    .pending { display: none; }
+    .todo { border: 1px dashed #4C525A; border-radius: .6rem; padding: .7rem .9rem; font-size: .85rem; line-height: 1.5; color: #6E747D; }
+    .todo b { font-family: 'Geist Mono', monospace; font-weight: 400; color: #C49A5C; letter-spacing: .08em; }
+
+    /* "declassify" a block: the redaction bar disappears when the section opens */
+    .redact { margin-top: 1.6rem; border-top: 1px solid rgba(28, 32, 39, .9); padding-top: 1.1rem; }
+    .redact summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: .9rem; outline: none; }
+    .redact summary::-webkit-details-marker { display: none; }
+    .redact .bar { flex: 0 1 11rem; height: 1.05rem; border-radius: 2px; background: repeating-linear-gradient(135deg, #000 0 6px, #0b0d11 6px 12px); box-shadow: 0 0 0 1px #1C2027; transition: flex-basis .4s cubic-bezier(.22, 1, .36, 1), opacity .3s ease; }
+    .redact summary:hover .bar { box-shadow: 0 0 0 1px rgba(212, 180, 131, .5); }
+    .redact summary:focus-visible .bar { box-shadow: 0 0 0 2px #F2DFB4; }
+    .redact[open] .bar { flex-basis: 0; opacity: 0; }
+    .redact .hint { font-family: 'Geist Mono', monospace; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: #D4B483; }
+    .redact .hint-open { display: none; }
+    .redact[open] .hint-closed { display: none; }
+    .redact[open] .hint-open { display: inline; }
+    .redact ul { margin-top: .9rem; display: grid; gap: .5rem; font-size: .9rem; line-height: 1.55; color: #A9AEB6; }
+    .redact li { display: flex; gap: .65rem; }
+    .redact li::before { content: ''; flex: none; width: .4rem; height: .4rem; margin-top: .5rem; border-radius: 50%; background: #C49A5C; }
+    .redact[open] ul { animation: cf-in .4s cubic-bezier(.22, 1, .36, 1); }
+  </style>
+</head>
+<body data-current="e" class="bg-[#06080B] text-slate-200 antialiased selection:bg-gold-500 selection:text-white">
+  <canvas id="network-bg" data-rgb="212, 180, 131" aria-hidden="true"></canvas>
+
+  <!-- Header: the name opens the dial menu (assets/menu.js) -->
+  <header class="max-w-5xl mx-auto px-6 py-4 sm:py-6 flex flex-wrap gap-x-8 gap-y-2 items-center justify-between">
+    <button type="button" id="menu-open" class="menu-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu-overlay">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" stroke-dasharray="12.1 2.04" transform="rotate(-45 12 12)"/>
+        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+      </svg>
+      <span>Oben Celik</span>
+      <span class="menu-label">Menu</span>
+    </button>
+    <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+  </header>
+
+  <!-- Case Studies Section -->
+  <main id="work" class="max-w-5xl mx-auto px-6 pt-2 pb-10 sm:pt-8 sm:pb-16">
+    <div class="flex items-center justify-between mb-8 sm:mb-12 border-b border-slate-800 pb-4">
+      <h2 class="text-2xl font-medium tracking-tight text-white">Education Case Studies</h2>
+      <span class="text-sm text-slate-500">Master's · NOVA IMS</span>
+    </div>
+
+    <div class="cf-files">
+
+        <!-- Case 01 -->
+        <article id="helf" class="file">
+          <div class="file-tab">FILE 01</div>
+          <div class="flex items-start justify-between gap-4">
+            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Master's Project · Healthcare</span>
+            <span class="stamp">NOVA IMS</span>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-medium text-white mt-3">Helf: a patient-owned healthcare companion</h3>
+
+          <section class="blk">
+            <h4 class="lbl">Briefing</h4>
+            <p class="text-slate-400 text-sm sm:text-base leading-relaxed">Patients leave a consultation with a sheet of instructions, new medications and more questions than they came with. The system was never built with them in mind, so they fill the gap with Google, online groups and AI chatbots. It is not one bad day. It is every appointment.</p>
+          </section>
+
+          <section class="blk">
+            <h4 class="lbl">Decision</h4>
+            <p class="text-slate-400 text-sm sm:text-base leading-relaxed">Stay on the patient's side. Fitness-first products track the body, but none help you inside the healthcare system, where you feel most vulnerable. Helf needs nothing from the doctor, so it works with any doctor from day one.</p>
+          </section>
+
+          <section class="blk">
+            <h4 class="lbl">Outcome</h4>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
+                <div class="text-lg sm:text-2xl font-light text-gold-400">Prototype</div>
+                <div class="text-xs text-slate-400 mt-1">Concept, prototype and pitch · June 2026</div>
+              </div>
+              <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
+                <div class="text-lg sm:text-2xl font-light text-gold-400">5</div>
+                <div class="text-xs text-slate-400 mt-1">People, five countries</div>
+              </div>
+            </div>
+          </section>
+
+          <details class="redact">
+            <summary>
+              <span class="bar" aria-hidden="true"></span>
+              <span class="hint hint-closed">Scope of work · declassify</span>
+              <span class="hint hint-open">Scope of work</span>
+            </summary>
+            <ul>
+              <li>Product Manager: kept the team pointed at one problem and one user</li>
+              <li>Used design thinking, starting from real patient stories and defining the problem from the patient's side</li>
+              <li>Prototyped the app as screens in Google Stitch before pitching it</li>
+              <li>Closed the pitch by asking for the right doors rather than money: mentorship, NOVA Marketing Lab, academic partnerships and pilot partners</li>
+            </ul>
+          </details>
+
+          <p class="mt-6 text-sm"><a href="helf.html" class="text-gold-400 hover:text-gold-300 transition">Read the full Helf story &rarr;</a></p>
+        </article>
+
+    </div>
+  </main>
+
+
+  <!-- Footer -->
+  <footer class="max-w-5xl mx-auto px-6 py-8 sm:py-12 border-t border-slate-800 text-center text-xs text-slate-500">
+    &copy; 2026 OBEN CELIK. Built for making scalable systems, and team outcomes better.
+  </footer>
+
+  <script src="assets/network-bg.js"></script>
+  <script src="assets/menu.js"></script>
+  <script src="assets/dial.js"></script>
+
+</body>
+</html>
