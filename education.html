@@ -51,14 +51,13 @@
     /* ---------- Case files ---------- */
     /* All files are on the page, like the apps on the Apps page. The dial menu links to each one (case-studies.html#id). */
     .cf-files { display: grid; gap: 2.75rem 2rem; }
-    .cf-files { max-width: 48rem; }
     .file { scroll-margin-top: 2rem; }
     @keyframes cf-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
     @media (prefers-reduced-motion: reduce) { .redact[open] ul { animation: none; } }
 
     /* a case file */
     .file { position: relative; margin-top: 1.1rem; background: rgba(14, 17, 22, .6); border: 1px solid #1C2027; border-radius: 1rem; padding: 1.75rem 1.25rem 1.5rem; }
-    @media (min-width: 640px) { .file { padding: 2rem 1.75rem 1.75rem; } }
+    @media (min-width: 640px) { .file { padding: 2.5rem; } }
     .file:target { border-color: rgba(212, 180, 131, .6); }
     .file-tab { position: absolute; top: -1.1rem; left: 1.25rem; padding: .3rem .8rem; background: #2A2116; border: 1px solid rgba(212, 180, 131, .35); border-bottom: 0; border-radius: .5rem .5rem 0 0; font-family: 'Geist Mono', monospace; font-size: .7rem; letter-spacing: .18em; color: #D4B483; }
     .stamp { font-family: 'Geist Mono', monospace; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: #D4B483; border: 1.5px dashed rgba(212, 180, 131, .55); border-radius: .35rem; padding: .25rem .6rem; transform: rotate(-3deg); white-space: nowrap; }
@@ -112,55 +111,165 @@
 
     <div class="cf-files">
 
-        <!-- Case 01 -->
-        <article id="helf" class="file">
-          <div class="file-tab">FILE 01</div>
-          <div class="flex items-start justify-between gap-4">
-            <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">Master's Project · Healthcare</span>
-            <span class="stamp">NOVA IMS</span>
-          </div>
-          <h3 class="text-xl sm:text-2xl font-medium text-white mt-3">Helf: a patient-owned healthcare companion</h3>
+      <!-- Case 01: the same story as the Helf page under My apps -->
+      <article id="helf" class="file">
+        <div class="file-tab">FILE 01</div>
 
-          <section class="blk">
-            <h4 class="lbl">Briefing</h4>
-            <p class="text-slate-400 text-sm sm:text-base leading-relaxed">Patients leave a consultation with a sheet of instructions, new medications and more questions than they came with. The system was never built with them in mind, so they fill the gap with Google, online groups and AI chatbots. It is not one bad day. It is every appointment.</p>
-          </section>
-
-          <section class="blk">
-            <h4 class="lbl">Decision</h4>
-            <p class="text-slate-400 text-sm sm:text-base leading-relaxed">Stay on the patient's side. Fitness-first products track the body, but none help you inside the healthcare system, where you feel most vulnerable. Helf needs nothing from the doctor, so it works with any doctor from day one.</p>
-          </section>
-
-          <section class="blk">
-            <h4 class="lbl">Outcome</h4>
-            <div class="grid grid-cols-2 gap-3">
-              <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-                <div class="text-lg sm:text-2xl font-light text-gold-400">Prototype</div>
-                <div class="text-xs text-slate-400 mt-1">Concept, prototype and pitch · June 2026</div>
-              </div>
-              <div class="min-w-0 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-                <div class="text-lg sm:text-2xl font-light text-gold-400">5</div>
-                <div class="text-xs text-slate-400 mt-1">People, five countries</div>
-              </div>
+        <div class="grid md:grid-cols-5 gap-8 md:gap-10 items-center">
+          <div class="md:col-span-3 min-w-0">
+            <div class="flex items-start justify-between gap-4 mb-4 sm:mb-6">
+              <span class="text-xs uppercase tracking-wider font-semibold text-gold-400">NOVA IMS &middot; Innovation Management &amp; Design Thinking &middot; 2026</span>
+              <span class="stamp">Master's</span>
             </div>
+            <h3 class="text-3xl sm:text-5xl font-light tracking-tight leading-tight text-white mb-3 sm:mb-5">
+              Helf <span class="text-gold-300">&middot; your better helf</span>
+            </h3>
+            <p class="text-slate-400 text-sm sm:text-xl max-w-2xl leading-relaxed">
+              A patient-owned healthcare companion. It sits entirely on the patient's side and asks nothing of the doctor, the hospital or the system.
+            </p>
+            <div class="flex flex-wrap gap-3 sm:gap-4 mt-6 sm:mt-8">
+              <a href="https://stitch.withgoogle.com/preview/12623552580555225340?node-id=62b514340cd04b4a98eb392315ce709d" target="_blank" rel="noopener"
+                 class="flex-1 sm:flex-none text-center text-sm sm:text-base px-3 sm:px-6 py-3 rounded-lg bg-gold-500 text-slate-950 font-medium hover:bg-gold-400 transition shadow-lg shadow-gold-500/10">
+                View the app draft &#8599;
+              </a>
+              <a href="https://obencelik.com/helf" class="flex-1 sm:flex-none text-center text-sm sm:text-base px-3 sm:px-6 py-3 rounded-lg bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition">Open the Helf page</a>
+            </div>
+          </div>
+
+          <!-- The app's home screen in a phone frame; the whole phone opens the draft -->
+          <a href="https://stitch.withgoogle.com/preview/12623552580555225340?node-id=62b514340cd04b4a98eb392315ce709d" target="_blank" rel="noopener"
+             aria-label="Open the Helf app draft (opens in a new tab)"
+             class="md:col-span-2 group block mx-auto w-[210px] sm:w-[240px] rounded-[2rem] border-4 border-slate-700 bg-slate-950 p-1.5 shadow-2xl shadow-black/60 transition hover:border-gold-500/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-400">
+            <img src="assets/helf-home.png" width="461" height="801"
+                 alt="Helf app home screen: today's overview with the next medication and latest appointment summary, and quick actions to check symptoms, log vitals, book or record an appointment"
+                 class="block w-full h-auto rounded-[1.5rem]" />
+          </a>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-3 sm:gap-4 mt-8 sm:mt-10 mb-8 sm:mb-10">
+          <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+            <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">My role</div>
+            <div class="text-slate-100">Product Manager</div>
+          </div>
+          <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+            <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Team</div>
+            <div class="text-slate-100">Five people, five countries</div>
+          </div>
+          <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+            <div class="text-xs uppercase tracking-wider text-slate-500 mb-1">Status</div>
+            <div class="text-slate-100">Concept, prototype and pitch (June 2026)</div>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-x-10 gap-y-6 sm:gap-y-9">
+          <section>
+            <h4 class="lbl">The problem</h4>
+            <p class="text-slate-400 leading-relaxed">
+              Patients walk out of a consultation with a sheet of instructions, several new medications and more questions than they came with.
+              The system was never built with them in mind, so they fill the gap with Google, online groups and AI chatbots, tools that were never made for it.
+              It is not one bad day. It is every appointment.
+            </p>
           </section>
 
-          <details class="redact">
-            <summary>
-              <span class="bar" aria-hidden="true"></span>
-              <span class="hint hint-closed">Scope of work · declassify</span>
-              <span class="hint hint-open">Scope of work</span>
-            </summary>
-            <ul>
-              <li>Product Manager: kept the team pointed at one problem and one user</li>
-              <li>Used design thinking, starting from real patient stories and defining the problem from the patient's side</li>
-              <li>Prototyped the app as screens in Google Stitch before pitching it</li>
-              <li>Closed the pitch by asking for the right doors rather than money: mentorship, NOVA Marketing Lab, academic partnerships and pilot partners</li>
-            </ul>
-          </details>
+          <section>
+            <h4 class="lbl">Who it's for</h4>
+            <p class="text-slate-400 leading-relaxed">
+              Adults between 18 and 65 who manage their own health, and the caregivers who look after someone else's:
+              the son who asks his dad how the surgery went and hears "better, I think".
+              We started in Portugal and Southern Europe, where trust in the system is fragile.
+            </p>
+          </section>
 
-          <p class="mt-6 text-sm"><a href="https://obencelik.com/helf" class="text-gold-400 hover:text-gold-300 transition">Read the full Helf story &rarr;</a></p>
-        </article>
+          <section>
+            <h4 class="lbl">The solution</h4>
+            <ul class="space-y-2 text-slate-400 leading-relaxed">
+              <li><span class="text-gold-400 mr-2">&rarr;</span>Find and book verified doctors, filtered by specialty, language and cost</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span>Record the appointment and get a live transcript and summary, with nothing asked of the doctor</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span>An easy-read summary of what the doctor said, plus next steps and medication reminders</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span>One-tap sharing with a caregiver, and a patient-owned health record that is encrypted and never sold</li>
+            </ul>
+          </section>
+
+          <section>
+            <h4 class="lbl">The value</h4>
+            <ul class="space-y-2 text-slate-400 leading-relaxed">
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Understanding:</b> every appointment is clear after you leave the room</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Continuity:</b> one record that follows you across doctors and countries</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Support:</b> family stays involved without intruding</li>
+              <li><span class="text-gold-400 mr-2">&rarr;</span><b class="font-medium text-slate-200">Ownership:</b> the data belongs to the patient, not the system</li>
+            </ul>
+          </section>
+        </div>
+
+        <section class="mt-7 pt-6 sm:mt-10 sm:pt-9 border-t border-slate-800">
+          <h4 class="lbl mb-5">One companion, four moments</h4>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+              <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-gold-400 mb-2">Before</div>
+              <div class="text-slate-100 font-medium mb-1">Find &amp; book</div>
+              <p class="text-sm text-slate-400 leading-relaxed">Verified doctors, filtered by specialty, language and cost.</p>
+            </div>
+            <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+              <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-gold-400 mb-2">During</div>
+              <div class="text-slate-100 font-medium mb-1">Record &amp; transcribe</div>
+              <p class="text-sm text-slate-400 leading-relaxed">Real-time transcription. The doctor doesn't need to do anything.</p>
+            </div>
+            <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+              <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-gold-400 mb-2">After</div>
+              <div class="text-slate-100 font-medium mb-1">Understand &amp; act</div>
+              <p class="text-sm text-slate-400 leading-relaxed">Easy-read summary, medication reminders, one-tap caregiver share.</p>
+            </div>
+            <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-4">
+              <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-gold-400 mb-2">Always</div>
+              <div class="text-slate-100 font-medium mb-1">Your health cloud</div>
+              <p class="text-sm text-slate-400 leading-relaxed">Encrypted, patient-owned and never sold.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-7 pt-6 sm:mt-10 sm:pt-9 border-t border-slate-800">
+          <h4 class="lbl mb-5">Key product decisions</h4>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div>
+              <h5 class="text-slate-100 font-medium mb-2">Stay on the patient's side</h5>
+              <p class="text-sm text-slate-400 leading-relaxed">Fitness-first products like Oura and WHOOP track the body. None of them help you inside the healthcare system, where you feel most vulnerable. Helf needs nothing from the doctor, so it can work with any doctor from day one.</p>
+            </div>
+            <div>
+              <h5 class="text-slate-100 font-medium mb-2">Patients pay, institutions scale it</h5>
+              <p class="text-sm text-slate-400 leading-relaxed">A single B2C subscription at &euro;9.99 a month, with 50% off the first two months and no free tier. Health insurers and employer benefits come later as a B2B channel.</p>
+            </div>
+            <div>
+              <h5 class="text-slate-100 font-medium mb-2">Start where trust is lowest</h5>
+              <p class="text-sm text-slate-400 leading-relaxed">Lisbon first, then Southern Europe through patient communities and insurer partnerships. The market is large (a global digital health market of around $300B), but trust is what we'd have to earn first.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-7 pt-6 sm:mt-10 sm:pt-9 border-t border-slate-800">
+          <h4 class="lbl mb-4">How we worked</h4>
+          <p class="text-slate-400 leading-relaxed max-w-3xl">
+            We used design thinking: starting from real patient stories, defining the problem from the patient's side, and prototyping the app as screens in Google Stitch before pitching it.
+            As Product Manager I kept the team pointed at one problem and one user, and turned the findings into the scope you see above.
+            We closed the pitch by asking for the right doors rather than money: strategic mentorship, support from NOVA Marketing Lab, academic partnerships and pilot partners.
+          </p>
+        </section>
+
+        <div class="flex flex-wrap gap-2 mt-7 mb-6 sm:mt-10 sm:mb-8">
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Design thinking</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Product management</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Google Stitch prototype</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Business model</span>
+          <span class="text-xs text-slate-300 bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-1.5">Go-to-market</span>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="https://stitch.withgoogle.com/preview/12623552580555225340?node-id=62b514340cd04b4a98eb392315ce709d" target="_blank" rel="noopener"
+             class="px-6 py-3 rounded-lg bg-gold-500 text-slate-950 font-medium hover:bg-gold-400 transition shadow-lg shadow-gold-500/10">
+            View the app draft &#8599;
+          </a>
+          <a href="https://obencelik.com/helf" class="px-6 py-3 rounded-lg bg-slate-800 text-slate-200 font-semibold hover:bg-slate-700 transition">Open the Helf page</a>
+        </div>
+      </article>
 
     </div>
   </main>
